@@ -1,0 +1,32 @@
+"""
+A flashcard is a set of two or more sides. Each side has a label and a text.
+The label is used to specify which side of the flashcard is being shown to the user first for learning
+and which sides he has to guess.
+"""
+type Flashcard {
+    """
+    Unique identifier of this flashcard.
+    """
+    id: UUID!
+    """
+    List of sides of this flashcard.
+    """
+    sides: [FlashcardSide!]!
+    """
+    The labels of the sides that are shown to the user first (as a question).
+    """
+    questionLabels: [String!]!
+    """
+    Last time this flashcard was learned by the user. Can be null if the user has never learned this flashcard.
+    """
+    lastLearned: DateTime
+    """
+    Interval in days after which this flashcard should be learned again.
+    This increases which each successful learning.
+    """
+    learnInterval: Int!
+    """
+    Date when this flashcard should be learned again. This is calculated from the lastLearned and learnInterval fields.
+    """
+    nextLearn: DateTime!
+}

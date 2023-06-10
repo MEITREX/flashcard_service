@@ -1,0 +1,28 @@
+"""
+Mutations for the flashcard service. Provides mutations for creating, updating, and deleting flashcard as well as
+creating and deleting flashcard sets. To update a flashcard set, update, delete, and create flashcards individually.
+"""
+type Mutation {
+    """
+    Creates a new flashcard set.
+    """
+    createFlashcardSet(input: CreateFlashcardSetInput!): FlashcardSet!
+    """
+    Deletes a flashcard set. Throws an error if the flashcard set does not exist.
+    The contained flashcards are deleted as well.
+    """
+    deleteFlashcardSet(input: UUID!): UUID!
+
+    """
+    Creates a new flashcard. Throws an error if the flashcard set does not exist.
+    """
+    createFlashcard(input: CreateFlashcardInput!): Flashcard!
+    """
+    Updates a flashcard. Throws an error if the flashcard does not exist.
+    """
+    updateFlashcard(input: UpdateFlashcardInput!): Flashcard!
+    """
+    Deletes a flashcard. Throws an error if the flashcard does not exist.
+    """
+    deleteFlashcard(input: UUID!): UUID!
+}

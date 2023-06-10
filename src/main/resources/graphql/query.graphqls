@@ -1,0 +1,16 @@
+type Query {
+    """
+    Get flashcards by their ids
+    """
+    flashcardsByIds(ids: [UUID!]!): [Flashcard!]!
+    """
+    Get flashcard sets by their ids
+    """
+    flashcardSetsByIds(ids: [UUID!]!): [FlashcardSet!]!
+    """
+    Get flashcard sets by their assessment ids.
+    Returns a list of lists of flashcard sets, where each list corresponds to a single assessment id.
+    """
+    flashcardSetsByAssessmentIds(assessmentIds: [UUID!]!): [[FlashcardSet!]!]!
+
+}
