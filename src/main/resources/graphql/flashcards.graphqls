@@ -30,3 +30,118 @@ type Flashcard {
     """
     nextLearn: DateTime!
 }
+
+type FlashcardSide {
+    """
+    Text of this flashcard side. This can be markdown.
+    """
+    text: String!
+    """
+    Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
+    Labels are used to specify which side of the flashcard is being shown to the user first and
+    which side he has to guess.
+    """
+    label: String!
+}
+
+
+input CreateFlashcardInput {
+    """
+    Id of the flashcard this side belongs to.
+    """
+    setId: UUID!
+    """
+    List of sides of this flashcard. Must be at least two sides.
+    """
+    sides: [CreateFlashcardSideInput!]! @ContainerSize(min: 2)
+    """
+    The labels of the sides that are shown to the user first (as a question).
+    """
+    questionLabels: [String!]! @ContainerSize(min: 1)
+}
+
+input CreateFlashcardSideInput {
+    """
+    Text of this flashcard side. This can be markdown. Max length is 3000 characters.
+    """
+    text: String! @Size(max: 3000)
+    """
+    Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
+    Labels are used to specify which side of the flashcard is being shown to the user first and
+    which side he has to guess.
+    """
+    label: String! @NotBlank @Size(max: 255)
+}
+
+input UpdateFlashcardInput {
+    """
+    Id of the flashcard to update.
+    """
+    id: UUID!
+    """
+    List of sides of this flashcard. Must be at least two sides.
+    """
+    sides: [UpdateFlashcardSideInput!]! @ContainerSize(min: 2)
+    """
+    The labels of the sides that are shown to the user first (as a question).
+    """
+    questionLabels: [String!]! @ContainerSize(min: 1)
+    """
+    Interval in days after which this flashcard should be learned again.
+    This increases which each successful learning.
+    """
+    learnInterval: Int! @PositiveOrZero
+}
+
+input UpdateFlashcardSideInput {
+    """
+    Text of this flashcard side. This can be markdown. Max length is 3000 characters.
+    """
+    text: String! @Size(max: 3000)
+    """
+    Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
+    Labels are used to specify which side of the flashcard is being shown to the user first and
+    which side he has to guess.
+    """
+    label: String! @NotBlank @Size(max: 255)
+}
+
+"""
+A set of flashcards. A flashcard set belongs to exactly one assessment. Therefore, the uuid of the assessment
+also serves as the identifier of a flashcard set.
+"""
+type FlashcardSet {
+    """
+    The uuid of the assessment this flashcard set belongs to.
+    This also serves as the identifier of this flashcard set.
+    """
+    assessmentId: UUID!
+    """
+    List of flashcards in this set.
+    """
+    flashcards: [Flashcard!]!
+}
+
+input CreateFlashcardSetInput {
+    """
+    The uuid of the assessment this flashcard set belongs to.
+    """
+    assessmentId: UUID!
+    """
+    List of flashcards in this set.
+    """
+    flashcards: [CreateFlashcardInSetInput!]!
+}
+
+input CreateFlashcardInSetInput {
+    """
+    List of sides of this flashcard. Must be at least two sides.
+    """
+    sides: [CreateFlashcardSideInput!]! @ContainerSize(min: 2)
+    """
+    The labels of the sides that are shown to the user first (as a question).
+    """
+    questionLabels: [String!]! @ContainerSize(min: 1)
+}
+
+
