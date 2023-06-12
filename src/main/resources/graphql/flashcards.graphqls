@@ -12,23 +12,8 @@ type Flashcard {
     List of sides of this flashcard.
     """
     sides: [FlashcardSide!]!
-    """
-    The labels of the sides that are shown to the user first (as a question).
-    """
-    questionLabels: [String!]!
-    """
-    Last time this flashcard was learned by the user. Can be null if the user has never learned this flashcard.
-    """
-    lastLearned: DateTime
-    """
-    Interval in days after which this flashcard should be learned again.
-    This increases which each successful learning.
-    """
-    learnInterval: Int!
-    """
-    Date when this flashcard should be learned again. This is calculated from the lastLearned and learnInterval fields.
-    """
-    nextLearn: DateTime!
+
+    # TODO for later: add the user data (last learned, learn interval etc.)
 }
 
 type FlashcardSide {
@@ -38,26 +23,24 @@ type FlashcardSide {
     text: String!
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
-    Labels are used to specify which side of the flashcard is being shown to the user first and
-    which side he has to guess.
     """
     label: String!
+    """
+    Whether this side is a question, i.e. should be shown to the user to guess the other sides or not.
+    """
+    isQuestion: Boolean!
 }
 
 
 input CreateFlashcardInput {
     """
-    Id of the flashcard this side belongs to.
+    Id of the flashcard set this flashcard belongs to.
     """
     setId: UUID!
     """
     List of sides of this flashcard. Must be at least two sides.
     """
     sides: [CreateFlashcardSideInput!]! @ContainerSize(min: 2)
-    """
-    The labels of the sides that are shown to the user first (as a question).
-    """
-    questionLabels: [String!]! @ContainerSize(min: 1)
 }
 
 input CreateFlashcardSideInput {
@@ -67,10 +50,12 @@ input CreateFlashcardSideInput {
     text: String! @Size(max: 3000)
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
-    Labels are used to specify which side of the flashcard is being shown to the user first and
-    which side he has to guess.
     """
     label: String! @NotBlank @Size(max: 255)
+    """
+    Whether this side is a question, i.e. should be shown to the user to guess the other sides or not.
+    """
+    isQuestion: Boolean!
 }
 
 input UpdateFlashcardInput {
@@ -82,10 +67,6 @@ input UpdateFlashcardInput {
     List of sides of this flashcard. Must be at least two sides.
     """
     sides: [UpdateFlashcardSideInput!]! @ContainerSize(min: 2)
-    """
-    The labels of the sides that are shown to the user first (as a question).
-    """
-    questionLabels: [String!]! @ContainerSize(min: 1)
     """
     Interval in days after which this flashcard should be learned again.
     This increases which each successful learning.
@@ -100,10 +81,12 @@ input UpdateFlashcardSideInput {
     text: String! @Size(max: 3000)
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
-    Labels are used to specify which side of the flashcard is being shown to the user first and
-    which side he has to guess.
     """
     label: String! @NotBlank @Size(max: 255)
+    """
+    Whether this side is a question, i.e. should be shown to the user to guess the other sides or not.
+    """
+    isQuestion: Boolean!
 }
 
 """
@@ -138,10 +121,6 @@ input CreateFlashcardInSetInput {
     List of sides of this flashcard. Must be at least two sides.
     """
     sides: [CreateFlashcardSideInput!]! @ContainerSize(min: 2)
-    """
-    The labels of the sides that are shown to the user first (as a question).
-    """
-    questionLabels: [String!]! @ContainerSize(min: 1)
 }
 
 
