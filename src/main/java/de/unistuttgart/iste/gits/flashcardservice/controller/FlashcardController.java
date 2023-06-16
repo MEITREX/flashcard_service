@@ -1,9 +1,6 @@
 package de.unistuttgart.iste.gits.flashcardservice.controller;
 import de.unistuttgart.iste.gits.flashcardservice.service.FlashcardService;
-import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardInput;
-import de.unistuttgart.iste.gits.generated.dto.UpdateFlashcardInput;
-import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardSetInput;
-import lombok.RequiredArgsConstructor;
+import de.unistuttgart.iste.gits.generated.dto.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -11,12 +8,11 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
-import java.util.UUID;
 
 
 @Slf4j
 @Controller
-@RequiredArgsConstructor
+
 public class FlashcardController {
 
     private final FlashcardService flashcardService;
@@ -31,12 +27,12 @@ public class FlashcardController {
         return flashcardService.getFlashcardById(ids);
     }
     @QueryMapping
-    public List<FlashcardSet> flashcardSetsByIds(@Argument(name = "ids") List<Long> ids) {
+    public List<Flashcard> flashcardSetsByIds(@Argument(name = "ids") List<Long> ids) {
         log.info("Request flashcard by Ids");
         return flashcardService.getFlashcardSetsById(ids);
     }
     @QueryMapping
-    public List<FlashcardSet> flashcardSetsByAssessmentIds(@Argument(name = "ids") List<Long> ids) {
+    public List<Flashcard> flashcardSetsByAssessmentIds(@Argument(name = "ids") List<Long> ids) {
         log.info("Request flashcard by Ids");
         return flashcardService.getFlashcardSetsByAssessmentId(ids);
     }

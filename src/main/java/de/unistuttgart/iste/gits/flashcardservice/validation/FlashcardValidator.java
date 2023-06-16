@@ -1,4 +1,7 @@
 package de.unistuttgart.iste.gits.flashcardservice.validation;
+import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardInput;
+import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardSetInput;
+import de.unistuttgart.iste.gits.generated.dto.UpdateFlashcardInput;
 import org.springframework.stereotype.Component;
 
 @Component

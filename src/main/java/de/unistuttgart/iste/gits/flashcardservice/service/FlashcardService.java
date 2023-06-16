@@ -1,11 +1,10 @@
 package de.unistuttgart.iste.gits.flashcardservice.service;
-import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardInput;
-import de.unistuttgart.iste.gits.generated.dto.UpdateFlashcardInput;
-import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardSetInput;
+
 import de.unistuttgart.iste.gits.flashcardservice.persistence.dao.FlashcardEntity;
 import de.unistuttgart.iste.gits.flashcardservice.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcardservice.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcardservice.validation.FlashcardValidator;
+import de.unistuttgart.iste.gits.generated.dto.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +27,11 @@ public class FlashcardService {
 
         return flashcardMapper.entityToDto(flashcardEntity);
     }
+
+
     public Flashcard updateFlashcard(UpdateFlashcardInput input) {
         flashcardValidator.validateUpdateFlashcardInput(input);
-        requireFlashcardExisting(input.getId());
+        //requireFlashcardExisting(input.getId());
 
         FlashcardEntity updatedFlashcardEntity = flashcardRepository.save(flashcardMapper.dtoToEntity(input));
 
@@ -62,11 +63,11 @@ public class FlashcardService {
     public List<Flashcard> getFlashcardById(List<Long> ids) {
         return flashcardRepository.findById(ids).stream().map(flashcardMapper::entityToDto).toList();
     }
-    public List<FlashcardSet> getFlashcardSetsById(List<Long> ids) {
+    public List<Flashcard> getFlashcardSetsById(List<Long> ids) {
         return flashcardRepository.findById(ids).stream().map(flashcardMapper::entityToDto).toList();
     }
 
-    public List<FlashcardSet> getFlashcardSetsByAssessmentId(List<Long> ids) {
+    public List<Flashcard> getFlashcardSetsByAssessmentId(List<Long> ids) {
         return flashcardRepository.findById(ids).stream().map(flashcardMapper::entityToDto).toList();
     }
 }
