@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.gits.flashcardservice;
+package de.unistuttgart.iste.gits.flashcard_service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;

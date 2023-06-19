@@ -1,14 +1,12 @@
-version: "3"
-
 services:
   database-flashcard:
     image: postgres:alpine
     restart: always
     network_mode: bridge
     expose:
-      - 3032
+      - 6032
     ports:
-      - "3032:5432"
+      - "6032:5432"
     volumes:
       - flashcarddata:/var/lib/postgresql/data
     environment:
@@ -23,7 +21,7 @@ services:
     ports:
       - "6033:5432"
     volumes:
-      - testdata:/var/lib/postgresql/testdata
+      - flashcarddata:/var/lib/postgresql/testdata
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
@@ -34,11 +32,11 @@ services:
     network_mode: bridge
     container_name: flashcard_service
     expose:
-      - 3000
-      - 3001
+      - 6000
+      - 6001
     ports:
-      - 3000:3000
-      - 3001:3001
+      - 6000:6000
+      - 6001:6001
     depends_on:
       - database-flashcard
     links:

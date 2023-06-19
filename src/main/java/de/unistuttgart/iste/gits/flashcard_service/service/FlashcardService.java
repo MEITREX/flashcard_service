@@ -1,15 +1,18 @@
-package de.unistuttgart.iste.gits.flashcardservice.service;
+package de.unistuttgart.iste.gits.flashcard_service.service;
 
-import de.unistuttgart.iste.gits.flashcardservice.persistence.dao.FlashcardEntity;
-import de.unistuttgart.iste.gits.flashcardservice.persistence.mapper.FlashcardMapper;
-import de.unistuttgart.iste.gits.flashcardservice.persistence.repository.FlashcardRepository;
-import de.unistuttgart.iste.gits.flashcardservice.validation.FlashcardValidator;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
+import de.unistuttgart.iste.gits.flashcard_service.validation.FlashcardValidator;
 import de.unistuttgart.iste.gits.generated.dto.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -37,11 +40,13 @@ public class FlashcardService {
 
         return flashcardMapper.entityToDto(updatedFlashcardEntity);
     }
-    public Long deleteFlashcard(Long long1) {
-        requireFlashcardExisting(long1);
-        flashcardRepository.deleteById(long1);
-        return long1;
+
+    public UUID deleteFlashcard(UUID uuid) {
+        requireFlashcardExisting(uuid);
+        flashcardRepository.deleteById(uuid);
+        return uuid;
     }
+
     public Flashcard createFlashcardSet(CreateFlashcardSetInput flashcardSetInput) {
         flashcardValidator.validateCreateFlashcardSetInput(flashcardSetInput);
 
@@ -50,24 +55,27 @@ public class FlashcardService {
         return flashcardMapper.entityToDto(flashcardSetEntity);
     }
 
-    public Long deleteFlashcardSet(Long long1) {
-        requireFlashcardExisting(long1);
-        flashcardRepository.deleteById(long1);
-        return long1;
+    public UUID deleteFlashcardSet(UUID uuid) {
+        requireFlashcardExisting(uuid);
+        flashcardRepository.deleteById(uuid);
+        return uuid;
     }
-    public void requireFlashcardExisting(Long id) {
+
+    public void requireFlashcardExisting(UUID id) {
         if (!flashcardRepository.existsById(id)) {
             throw new EntityNotFoundException("Flashcard with id " + id + " not found");
         }
     }
-    public List<Flashcard> getFlashcardById(List<Long> ids) {
-        return flashcardRepository.findById(ids).stream().map(flashcardMapper::entityToDto).toList();
-    }
-    public List<Flashcard> getFlashcardSetsById(List<Long> ids) {
+
+    public List<Flashcard> getFlashcardById(List<UUID> ids) {
         return flashcardRepository.findById(ids).stream().map(flashcardMapper::entityToDto).toList();
     }
 
-    public List<Flashcard> getFlashcardSetsByAssessmentId(List<Long> ids) {
+    public List<Flashcard> getFlashcardSetsById(List<UUID> ids) {
+        return flashcardRepository.findById(ids).stream().map(flashcardMapper::entityToDto).toList();
+    }
+
+    public List<Flashcard> getFlashcardSetsByAssessmentId(List<UUID> ids) {
         return flashcardRepository.findById(ids).stream().map(flashcardMapper::entityToDto).toList();
     }
 }

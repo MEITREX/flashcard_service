@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.gits.flashcardservice.config;
+package de.unistuttgart.iste.gits.flashcard_service.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;

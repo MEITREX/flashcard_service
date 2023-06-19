@@ -1,4 +1,5 @@
-package de.unistuttgart.iste.gits.flashcardservice.validation;
+package de.unistuttgart.iste.gits.flashcard_service.validation;
+
 import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardInput;
 import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardSetInput;
 import de.unistuttgart.iste.gits.generated.dto.UpdateFlashcardInput;
