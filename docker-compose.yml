@@ -1,3 +1,5 @@
+version: "3"
+
 services:
   database-flashcard:
     image: postgres:alpine
@@ -17,11 +19,11 @@ services:
     image: postgres:alpine
     restart: always
     expose:
-      - 4033
+      - 6033
     ports:
-      - "4033:5432"
+      - "6033:5432"
     volumes:
-      - flashcarddata:/var/lib/postgresql/testdata
+      - testdata:/var/lib/postgresql/testdata
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
