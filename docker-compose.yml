@@ -6,9 +6,9 @@ services:
     restart: always
     network_mode: bridge
     expose:
-      - 3032
+      - 6032
     ports:
-      - "3032:5432"
+      - "6032:5432"
     volumes:
       - flashcarddata:/var/lib/postgresql/data
     environment:
@@ -29,22 +29,49 @@ services:
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=test_data
   app-flashcard:
-    build: .
+    build:
+      context: ./../flashcard_service # necessary because otherwise docker-compose overrides the context path when merging multiple docker-compose.yml files
+      dockerfile: Dockerfile
     restart: always
     network_mode: bridge
     container_name: flashcard_service
     expose:
-      - 3000
-      - 3001
+      - 6000
+      - 6001
     ports:
-      - 3000:3000
-      - 3001:3001
+      - "6000:6000"
+      - "6001:6001"
     depends_on:
       - database-flashcard
     links:
       - database-flashcard
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database-flashcard:5432/flashcard_service
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+  dapr-template:
+    image: "daprio/daprd"
+    command: [
+      "./daprd",
+      "--app-id", "flashcard_service",
+      "--app-port", "6001",
+      "--dapr-http-port", "6000",
+      "--resources-path", "./components"
+    ]
+    volumes:
+      - "./components/:/components" # Mount our components folder for the runtime to use. The mounted location must match the --resources-path argument.
+    depends_on:
+      - app-flashcard
+      - redis
+    network_mode: "service:app-flashcard"
+  redis:
+    image: "redis:alpine"
+    expose:
+      - "6379"
 volumes:
   flashcarddata:
-
+  testdata:
+  #networks:
+  # default:
+  #  name: dapr-network
+  # external: true
