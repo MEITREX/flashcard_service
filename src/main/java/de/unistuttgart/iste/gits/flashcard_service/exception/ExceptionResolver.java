@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.gits.flashcardservice.exception;
+package de.unistuttgart.iste.gits.flashcard_service.exception;
 
 import graphql.ErrorType;
 import graphql.GraphQLError;
