@@ -23,8 +23,8 @@ public class FlashcardEntity {
     @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlashcardSideEntity> sides;
 
-    @ManyToOne
-    private FlashcardSetEntity flashcardSet;
+    @Column(name = "set_id", nullable = false)
+    private UUID setId;
 
 }
 

@@ -67,11 +67,6 @@ input UpdateFlashcardInput {
     List of sides of this flashcard. Must be at least two sides.
     """
     sides: [UpdateFlashcardSideInput!]! @ContainerSize(min: 2)
-    """
-    Interval in days after which this flashcard should be learned again.
-    This increases which each successful learning.
-    """
-    learnInterval: Int! @PositiveOrZero
 }
 
 input UpdateFlashcardSideInput {

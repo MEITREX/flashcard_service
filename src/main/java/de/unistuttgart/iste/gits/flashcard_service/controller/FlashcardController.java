@@ -25,17 +25,12 @@ public class FlashcardController {
     }
 
     @QueryMapping
-    public List<Flashcard> flashcardByIds(@Argument(name = "ids") List<UUID> ids) {
-        return flashcardService.getFlashcardById(ids);
+    public List<Flashcard> flashcardsByIds(@Argument(name = "ids") List<UUID> ids) {
+        return flashcardService.getFlashcardsById(ids);
     }
 
     @QueryMapping
-    public List<Flashcard> flashcardSetsByIds(@Argument(name = "ids") List<UUID> ids) {
-        return flashcardService.getFlashcardSetsById(ids);
-    }
-
-    @QueryMapping
-    public List<Flashcard> flashcardSetsByAssessmentIds(@Argument(name = "ids") List<UUID> ids) {
+    public List<FlashcardSet> flashcardSetsByAssessmentIds(@Argument(name = "assessmentIds") List<UUID> ids) {
         return flashcardService.getFlashcardSetsByAssessmentId(ids);
     }
 
@@ -50,17 +45,17 @@ public class FlashcardController {
     }
 
     @MutationMapping
-    public UUID deleteFlashcard(@Argument(name = "id") UUID id) {
+    public UUID deleteFlashcard(@Argument(name = "input") UUID id) {
         return flashcardService.deleteFlashcard(id);
     }
 
     @MutationMapping
-    public Flashcard createFlashcardSet(@Argument(name = "input") CreateFlashcardSetInput input) {
+    public FlashcardSet createFlashcardSet(@Argument(name = "input") CreateFlashcardSetInput input) {
         return flashcardService.createFlashcardSet(input);
     }
 
     @MutationMapping
-    public UUID deleteFlashcardSet(@Argument(name = "id") UUID id) {
+    public UUID deleteFlashcardSet(@Argument(name = "input") UUID id) {
         return flashcardService.deleteFlashcardSet(id);
     }
 

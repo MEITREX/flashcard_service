@@ -1,6 +1,9 @@
 package de.unistuttgart.iste.gits.flashcard_service.persistence.dao;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,10 +19,9 @@ import java.util.UUID;
 @AllArgsConstructor
 public class FlashcardSetEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID assessmentId;
 
-    @OneToMany(mappedBy = "flashcardSet", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "setId")
     private List<FlashcardEntity> flashcards;
 
 }

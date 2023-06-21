@@ -1,10 +1,7 @@
 package de.unistuttgart.iste.gits.flashcard_service.persistence.dao;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -28,6 +25,8 @@ public class FlashcardSideEntity {
     private boolean isQuestion;
 
     @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private FlashcardEntity flashcard;
 
 

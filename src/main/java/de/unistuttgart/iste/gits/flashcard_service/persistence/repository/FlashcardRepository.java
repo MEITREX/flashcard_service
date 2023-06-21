@@ -16,7 +16,7 @@ import java.util.UUID;
 @Repository
 public interface FlashcardRepository extends JpaRepository<FlashcardEntity, UUID>, JpaSpecificationExecutor<FlashcardEntity> {
     @Query("select flashcard from Flashcard flashcard where flashcard.id in (:ids)")
-    List<FlashcardEntity> findById(List<UUID> ids);
+    List<FlashcardEntity> findByIdIn(List<UUID> ids);
 
 
 }

@@ -44,7 +44,7 @@ services:
     links:
       - database-flashcard
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database-flashcard:5432/flashcard_service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database-flashcard:6032/flashcard_service
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
   dapr-template:
