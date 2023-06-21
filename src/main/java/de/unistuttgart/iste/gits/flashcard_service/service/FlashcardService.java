@@ -37,9 +37,7 @@ public class FlashcardService {
             flashcardSideEntity.setFlashcard(mappedEntity);
         }
         mappedEntity.setSetId(flashcardInput.getSetId());
-
         FlashcardEntity flashcardEntity = flashcardRepository.save(mappedEntity);
-
         return flashcardMapper.entityToDto(flashcardEntity);
     }
 
@@ -68,7 +66,6 @@ public class FlashcardService {
         flashcardValidator.validateCreateFlashcardSetInput(flashcardSetInput);
 
         FlashcardSetEntity mappedEntity = flashcardMapper.flashcardSetDtoToEntity(flashcardSetInput);
-        log.debug("Mapped entity: " + mappedEntity);
         for (FlashcardEntity flashcardEntity : mappedEntity.getFlashcards()) {
             flashcardEntity.setSetId(mappedEntity.getAssessmentId());
 
@@ -77,8 +74,6 @@ public class FlashcardService {
             }
         }
         FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.save(mappedEntity);
-        log.debug("Saved entity: " + flashcardSetEntity);
-
         return flashcardMapper.flashcardSetEntityToDto(flashcardSetEntity);
     }
 
@@ -102,8 +97,6 @@ public class FlashcardService {
 
     public List<Flashcard> getFlashcardsById(List<UUID> ids) {
         var entities = flashcardRepository.findByIdIn(ids);
-
-        log.info("Flashcard entities: " + entities);
         return entities.stream()
                 .map(flashcardMapper::entityToDto)
                 .toList();

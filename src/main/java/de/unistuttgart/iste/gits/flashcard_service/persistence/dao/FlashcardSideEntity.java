@@ -2,7 +2,6 @@ package de.unistuttgart.iste.gits.flashcard_service.persistence.dao;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.UUID;
 
 @Entity(name = "FlashcardSide")
@@ -28,8 +27,4 @@ public class FlashcardSideEntity {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private FlashcardEntity flashcard;
-
-
-
-
 }
