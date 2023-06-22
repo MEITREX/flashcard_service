@@ -3,17 +3,12 @@ name: Testing CI pipeline
 on: push
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-    steps:        
+    steps:
       - uses: actions/checkout@v3
-      - name: Build the docker image
-        run: docker-compose build
-      - name: create the network
-        run: docker network create -d bridge dapr-network
-
-      - name: up postgresql container runs
-        run: docker-compose up -d
+        with:
+          fetch-depth: 0
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -22,42 +17,14 @@ jobs:
       - name: Validate Gradle wrapper
         uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
       - name: Run chmod to make gradlew executable
-        run:  chmod +x gradlew
-      - name: Build with Gradle
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:1032/templatedatabase
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: root
-        uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
-        with:
-          arguments: build
+        run: chmod +x gradlew
+
       - name: Execute tests
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:1032/templatedatabase
-          SPRING_DATASOURCE_USERNAME: root
-          SPRING_DATASOURCE_PASSWORD: root
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: gradle/gradle-build-action@749f47bda3e44aa060e82d7b3ef7e40d953bd629
         with:
-          arguments: cleanTest test
+          arguments: cleanTest test jacocoTestReport sonar
 
-  docker-build:
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Setup docker buildx
-        uses: docker/setup-buildx-action@v2
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build docker container
-        uses: docker/build-push-action@v4
-        with:
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: ghcr.io/it-rex-platform/template_microservice:latest
-          push: true

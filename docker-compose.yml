@@ -1,74 +1,59 @@
 version: "3"
-
 services:
-  database-template:
-    image: postgres:alpine
-    restart: always
-    network_mode: bridge
-    expose:
-      - 1032
-    ports:
-      - "1032:5432"
-    volumes:
-      - templatedata:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=templatedatabase
-  testDb:
+  database-flashcard:
     image: postgres:alpine
     restart: always
     expose:
-      - 1033
+      - 6032
     ports:
-      - "1033:5432"
+      - "6032:5432"
     volumes:
-      - testdata:/var/lib/postgresql/testdata
+      - flashcarddata:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=test_data
-  app-template:
+      - POSTGRES_DB=flashcard_service
+  app-flashcard:
     build:
-      context: ./../template-microservice # necessary because otherwise docker-compose overrides the context path when merging multiple docker-compose.yml files
+      context: ./../flashcard_service # necessary because otherwise docker-compose overrides the context path when merging multiple docker-compose.yml files
       dockerfile: Dockerfile
     restart: always
-    container_name: template_microservice
-    expose:
-      - 1000
-      - 1001
     ports:
-      - "1000:1000"
-      - "1001:1001"
+      - "6000:6000"
+      - "6001:6001"
     depends_on:
-      - database-template
+      - database-flashcard
+    links:
+      - database-flashcard
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database-template:5432/templatedatabase
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database-flashcard:6032/flashcard_service
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
   dapr-template:
     image: "daprio/daprd"
     command: [
       "./daprd",
-      "--app-id", "template_service",
-      "--app-port", "1001",
-      "--dapr-http-port", "1000",
+      "--app-id", "flashcard_service",
+      "--app-port", "6001",
+      "--dapr-http-port", "6000",
       "--resources-path", "./components"
     ]
     volumes:
       - "./components/:/components" # Mount our components folder for the runtime to use. The mounted location must match the --resources-path argument.
     depends_on:
-      - app-template
+      - app-flashcard
       - redis
-    network_mode: "service:app-template"
+    network_mode: "service:app-flashcard"
   redis:
     image: "redis:alpine"
     expose:
       - "6379"
 volumes:
-  templatedata:
+  flashcarddata:
   testdata:
+
 networks:
   default:
     name: dapr-network
     external: true
+

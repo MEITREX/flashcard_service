@@ -83,6 +83,7 @@ After cloning the repository, you need to do the following steps:
 - [ ] Setup the gradle files correctly. This means
   - [ ] Change the project name in the `settings.gradle` file
   - [ ] Change the package name in the `build.gradle` file (there is a TODO comment)
+  - [ ] Change the sonar project key in the `build.gradle` file (should be IT-REX-Platform_repository_name)
   - [ ] Add/Remove dependencies in the `build.gradle` file
 - [ ] Rename the package in the `src/main/java` folder to  a more suitable name (should be the same as the package name in the `build.gradle` file)
 - [ ] Remove the package-info.java files in the `src/main/java` folder (or update with the microservice specific information)
@@ -121,3 +122,5 @@ For further reference, please consider the following sections:
 * [Spring for GraphQL](https://docs.spring.io/spring-boot/docs/3.0.6/reference/html/web.html#web.graphql)
 * [Spring Data JPA](https://docs.spring.io/spring-boot/docs/3.0.6/reference/htmlsingle/#data.sql.jpa-and-spring-data)
 * [Validation](https://docs.spring.io/spring-boot/docs/3.0.6/reference/htmlsingle/#io.validation)
+* [Generating Sonarqube Token](https://docs.sonarqube.org/latest/user-guide/user-account/generating-and-using-tokens/)
+* [Adding secrets on Github](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
