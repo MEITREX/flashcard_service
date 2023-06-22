@@ -3,7 +3,6 @@ services:
   database-flashcard:
     image: postgres:alpine
     restart: always
-    network_mode: bridge
     expose:
       - 6032
     ports:
@@ -14,29 +13,11 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=flashcard_service
-  testDb:
-    image: postgres:alpine
-    restart: always
-    expose:
-      - 6033
-    ports:
-      - "6033:5432"
-    volumes:
-      - flashcarddata:/var/lib/postgresql/testdata
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=test_data
   app-flashcard:
     build:
       context: ./../flashcard_service # necessary because otherwise docker-compose overrides the context path when merging multiple docker-compose.yml files
       dockerfile: Dockerfile
     restart: always
-    network_mode: bridge
-    container_name: flashcard_service
-    expose:
-      - 6000
-      - 6001
     ports:
       - "6000:6000"
       - "6001:6001"
@@ -70,7 +51,9 @@ services:
 volumes:
   flashcarddata:
   testdata:
-  #networks:
-  # default:
-  #  name: dapr-network
-  # external: true
+
+networks:
+  default:
+    name: dapr-network
+    external: true
+
