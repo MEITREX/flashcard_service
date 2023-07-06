@@ -25,4 +25,9 @@ type Mutation {
     Deletes a flashcard. Throws an error if the flashcard does not exist.
     """
     deleteFlashcard(input: UUID!): UUID!
+
+    """
+    Logs that a user has learned a flashcard.
+    """
+    logFlashcardLearned(input: LogFlashcardLearnedInput!): Flashcard!
 }

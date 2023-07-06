@@ -13,8 +13,48 @@ type Flashcard {
     """
     sides: [FlashcardSide!]!
 
-    # TODO for later: add the user data (last learned, learn interval etc.)
+    """
+    Progress data of the flashcard, specific to given users.
+    If userId is not provided, the progress data of the current user is returned.
+    """
+    userProgressData: FlashcardProgressData!
 }
+
+type FlashcardProgressData {
+
+    """
+    The date the user learned the flashcard.
+    This is null it the user has not learned the content item once.
+    """
+    lastLearned: DateTime
+    """
+    The learning interval in days for the content item.
+    """
+    learningInterval: Int
+    """
+    The next time the content should be learned.
+    Calculated using the date the user completed the content item and the learning interval.
+    This is null if the user has not completed the content item once.
+    """
+    nextLearn: DateTime
+}
+
+type FlashcardProgressDataLog {
+    """
+    The id of the Log
+    """
+    id: UUID
+
+    """
+    The date the user learned the flashcard.
+    """
+    learnedAt: DateTime!
+    """
+    Whether the user knew the flashcard or not.
+    """
+    success: Boolean!
+}
+
 
 type FlashcardSide {
     """
@@ -118,4 +158,34 @@ input CreateFlashcardInSetInput {
     sides: [CreateFlashcardSideInput!]! @ContainerSize(min: 2)
 }
 
+
+input LogFlashcardLearnedInput {
+    """
+    The id of the flashcard that was learned.
+    """
+    flashcardId: UUID!
+    """
+    The id of the user that learned the flashcard.
+    """
+    userId: UUID!
+    """
+    If the user knew the flashcard or not.
+    """
+    successful: Boolean!
+}
+
+input LogFlashcardSetLearnedInput {
+    """
+    The id of the flashcard that was learned.
+    """
+    flashcardSetId: UUID!
+    """
+    The id of the user that learned the flashcard.
+    """
+    userId: UUID!
+    """
+    The percentage of flashcards in the set that the user knew.
+    """
+    percentageSuccess: Float!
+}
 
