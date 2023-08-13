@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.gits.flashcard_service.api.mutation;
 
+import de.unistuttgart.iste.gits.common.resource_markdown.ResourceMarkdownEntity;
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
 
@@ -50,7 +51,7 @@ public class MutationDeleteFlashcardSetTest {
         FlashcardSideEntity side1 = new FlashcardSideEntity();
         side1.setLabel("Side 1");
         side1.setQuestion(true);
-        side1.setText("Question 1");
+        side1.setText(new ResourceMarkdownEntity("Question 1"));
         side1.setFlashcard(flashcard);
         side1 = flashcardSideRepository.save(side1);
         sides.add(side1);
@@ -60,7 +61,7 @@ public class MutationDeleteFlashcardSetTest {
         FlashcardSideEntity side2 = new FlashcardSideEntity();
         side2.setLabel("Side 2");
         side2.setQuestion(false);
-        side2.setText("Answer 1");
+        side2.setText(new ResourceMarkdownEntity("Answer 1"));
         side2.setFlashcard(flashcard);
         side2 = flashcardSideRepository.save(side2);
         sides.add(side2);

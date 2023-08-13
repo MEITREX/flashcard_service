@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.gits.flashcard_service.api.mutation.query;
 
+import de.unistuttgart.iste.gits.common.resource_markdown.ResourceMarkdownEntity;
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
@@ -82,7 +83,10 @@ public class QueryByAssessmentIdTest {
                   sides {
                     label
                     isQuestion
-                    text
+                    text {
+                        text,
+                        referencedMediaRecordIds
+                    }
                   }
                 }
               }
@@ -117,7 +121,9 @@ public class QueryByAssessmentIdTest {
 
                     assertEquals(expectedSide.getLabel(), actualSide.getLabel());
                     assertEquals(expectedSide.isQuestion(), actualSide.getIsQuestion());
-                    assertEquals(expectedSide.getText(), actualSide.getText());
+                    assertEquals(expectedSide.getText().getText(), actualSide.getText().getText());
+                    assertEquals(expectedSide.getText().getReferencedMediaRecordIds(),
+                                 actualSide.getText().getReferencedMediaRecordIds());
 
                 }
             }
@@ -148,7 +154,7 @@ public class QueryByAssessmentIdTest {
         side.setFlashcard(flashcard);
         side.setLabel(label);
         side.setQuestion(isQuestion);
-        side.setText(text);
+        side.setText(new ResourceMarkdownEntity(text));
         side = flashcardSideRepository.save(side);
 
         return side;

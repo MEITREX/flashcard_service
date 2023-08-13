@@ -58,9 +58,9 @@ type FlashcardProgressDataLog {
 
 type FlashcardSide {
     """
-    Text of this flashcard side. This can be markdown.
+    Text of this flashcard side as ResourceMarkdown.
     """
-    text: String!
+    text: ResourceMarkdown!
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
     """
@@ -87,7 +87,7 @@ input CreateFlashcardSideInput {
     """
     Text of this flashcard side. This can be markdown. Max length is 3000 characters.
     """
-    text: String! @Size(max: 3000)
+    text: ResourceMarkdownInput!
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
     """
@@ -113,7 +113,7 @@ input UpdateFlashcardSideInput {
     """
     Text of this flashcard side. This can be markdown. Max length is 3000 characters.
     """
-    text: String! @Size(max: 3000)
+    text: ResourceMarkdownInput!
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
     """

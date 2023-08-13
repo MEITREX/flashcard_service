@@ -18,8 +18,7 @@ import java.util.List;
 @GraphQlApiTest
 @TablesToDelete({"flashcard_side", "flashcard", "flashcard_set"})
 class MutationCreateFlashcardSetTest {
-    @Autowired
-    private FlashcardRepository flashcardRepository;
+
     @Test
     @Transactional
     @Commit
@@ -36,12 +35,12 @@ class MutationCreateFlashcardSetTest {
                         {
                           label: "Side 1",
                           isQuestion: true,
-                          text: "Question 1"
+                          text: {text: "Question 1"}
                         },
                         {
                           label: "Side 2",
                           isQuestion: false,
-                          text: "Answer 1"
+                          text: {text: "Answer 1"}
                         }
                       ]
                     },
@@ -50,27 +49,30 @@ class MutationCreateFlashcardSetTest {
                         {
                           label: "Side 1",
                           isQuestion: true,
-                          text: "Question 2"
+                          text: {text: "Question 2"}
                         },
                         {
                           label: "Side 2",
                           isQuestion: false,
-                          text: "Answer 2"
+                          text: {text: "Answer 2"}
                         }
                       ]
                     }
                  
               ]
-            }) 
+            })
             {
                assessmentId
                flashcards
                {
-                   sides 
+                   sides
                    {
                      label
                      isQuestion
-                     text
+                     text {
+                        text,
+                        referencedMediaRecordIds
+                     }
                    }      
                }
             }
@@ -95,12 +97,13 @@ class MutationCreateFlashcardSetTest {
         FlashcardSide flashcard1Side1 = flashcard1.getSides().get(0);
         assertThat(flashcard1Side1.getLabel(), is("Side 1"));
         assertThat(flashcard1Side1.getIsQuestion(), is(true));
-        assertThat(flashcard1Side1.getText(), is("Question 1"));
+        assertThat(flashcard1Side1.getText().getText(), is("Question 1"));
+        assertThat(flashcard1Side1.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
         FlashcardSide flashcard1Side2 = flashcard1.getSides().get(1);
         assertThat(flashcard1Side2.getLabel(), is("Side 2"));
         assertThat(flashcard1Side2.getIsQuestion(), is(false));
-        assertThat(flashcard1Side2.getText(), is("Answer 1"));
+        assertThat(flashcard1Side2.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
         Flashcard flashcard2 = flashcards.get(1);
         assertThat(flashcard2.getSides(), hasSize(2));
@@ -108,12 +111,13 @@ class MutationCreateFlashcardSetTest {
         FlashcardSide flashcard2Side1 = flashcard2.getSides().get(0);
         assertThat(flashcard2Side1.getLabel(), is("Side 1"));
         assertThat(flashcard2Side1.getIsQuestion(), is(true));
-        assertThat(flashcard2Side1.getText(), is("Question 2"));
+        assertThat(flashcard2Side1.getText().getText(), is("Question 2"));
+        assertThat(flashcard2Side1.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
         FlashcardSide flashcard2Side2 = flashcard2.getSides().get(1);
         assertThat(flashcard2Side2.getLabel(), is("Side 2"));
         assertThat(flashcard2Side2.getIsQuestion(), is(false));
-        assertThat(flashcard2Side2.getText(), is("Answer 2"));
+        assertThat(flashcard2Side2.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
     }
 }

@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.gits.flashcard_service.api.mutation;
 
+import de.unistuttgart.iste.gits.common.resource_markdown.ResourceMarkdownEntity;
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
@@ -8,6 +9,7 @@ import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.Flashc
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSideRepository;
 import de.unistuttgart.iste.gits.generated.dto.Flashcard;
 import de.unistuttgart.iste.gits.generated.dto.FlashcardSide;
+import de.unistuttgart.iste.gits.generated.dto.ResourceMarkdown;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +19,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 
 @GraphQlApiTest
 @TablesToDelete({"flashcard_side", "flashcard", "flashcard_set"})
@@ -43,7 +44,7 @@ class MutationUpdateFlashcardTest {
         FlashcardSideEntity side1 = new FlashcardSideEntity();
         side1.setLabel("Side 1");
         side1.setQuestion(true);
-        side1.setText("Question 1");
+        side1.setText(new ResourceMarkdownEntity("Question 1"));
         side1.setFlashcard(flashcard);
         flashcardSideRepository.save(side1); // Save the side using the side repository
         sides.add(side1);
@@ -52,7 +53,7 @@ class MutationUpdateFlashcardTest {
         FlashcardSideEntity side2 = new FlashcardSideEntity();
         side2.setLabel("Side 2");
         side2.setQuestion(false);
-        side2.setText("Answer 1");
+        side2.setText(new ResourceMarkdownEntity("Answer 1"));
         side2.setFlashcard(flashcard);
         flashcardSideRepository.save(side2); // Save the side using the side repository
         sides.add(side2);
@@ -72,12 +73,12 @@ class MutationUpdateFlashcardTest {
                 {
                   label: "New_Side 1",
                   isQuestion: true,
-                  text: "New_Question 1"
+                  text: {text: "New_Question 1"}
                 },
                 {
                   label: "New_Side 2",
                   isQuestion: false,
-                  text: "New_Answer 1"
+                  text: {text: "New_Answer 1 [[media/b4f2e8d1-a1e6-4834-8f5d-ac793f18e854]]"}
                 }
               ]
             }) {
@@ -85,7 +86,7 @@ class MutationUpdateFlashcardTest {
               sides {
                 label
                 isQuestion
-                text
+                text {text, referencedMediaRecordIds}
               }
             }
           }
@@ -108,11 +109,15 @@ class MutationUpdateFlashcardTest {
         FlashcardSide updatedSide1 = updatedSides.get(0);
         assertThat(updatedSide1.getLabel(), is("New_Side 1"));
         assertThat(updatedSide1.getIsQuestion(), is(true));
-        assertThat(updatedSide1.getText(), is("New_Question 1"));
+        assertThat(updatedSide1.getText().getText(), is("New_Question 1"));
+        assertThat(updatedSide1.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
         FlashcardSide updatedSide2 = updatedSides.get(1);
         assertThat(updatedSide2.getLabel(), is("New_Side 2"));
         assertThat(updatedSide2.getIsQuestion(), is(false));
-        assertThat(updatedSide2.getText(), is("New_Answer 1"));
+        assertThat(updatedSide2.getText().getText(),
+                is("New_Answer 1 [[media/b4f2e8d1-a1e6-4834-8f5d-ac793f18e854]]"));
+        assertThat(updatedSide2.getText().getReferencedMediaRecordIds(),
+                contains(equalTo(UUID.fromString("b4f2e8d1-a1e6-4834-8f5d-ac793f18e854"))));
     }
 }

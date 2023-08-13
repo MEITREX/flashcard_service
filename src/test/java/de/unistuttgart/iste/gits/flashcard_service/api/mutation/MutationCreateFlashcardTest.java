@@ -32,12 +32,12 @@ class MutationCreateFlashcardTest {
               {
                   label: "Side 11",
                   isQuestion: true,
-                  text: "Question 1"
+                  text: {text: "Question 1"}
               },
               {
                  label: "Side 21",
                  isQuestion: false,
-                 text: "Answer 1"
+                 text: {text: "Answer 1"}
               }
               ]
             }) {
@@ -45,7 +45,10 @@ class MutationCreateFlashcardTest {
                sides {
                    label
                    isQuestion
-                   text
+                   text {
+                    text,
+                    referencedMediaRecordIds
+                   }
                }
             }
         }
@@ -69,12 +72,14 @@ class MutationCreateFlashcardTest {
         FlashcardSide side1 = sides.get(0);
         assertThat(side1.getLabel(), is("Side 11"));
         assertThat(side1.getIsQuestion(), is(true));
-        assertThat(side1.getText(), is("Question 1"));
+        assertThat(side1.getText().getText(), is("Question 1"));
+        assertThat(side1.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
         FlashcardSide side2 = sides.get(1);
         assertThat(side2.getLabel(), is("Side 21"));
         assertThat(side2.getIsQuestion(), is(false));
-        assertThat(side2.getText(), is("Answer 1"));
+        assertThat(side2.getText().getText(), is("Answer 1"));
+        assertThat(side2.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
     }
 }
