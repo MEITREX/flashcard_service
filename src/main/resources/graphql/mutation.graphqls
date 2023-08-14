@@ -7,27 +7,43 @@ type Mutation {
     Creates a new flashcard set.
     """
     createFlashcardSet(input: CreateFlashcardSetInput!): FlashcardSet!
+
     """
     Deletes a flashcard set. Throws an error if the flashcard set does not exist.
     The contained flashcards are deleted as well.
     """
     deleteFlashcardSet(input: UUID!): UUID!
+    @deprecated(reason: "Only for development, will be removed in production. Use deleteAssessment in contents service instead.")
 
     """
-    Creates a new flashcard. Throws an error if the flashcard set does not exist.
+    Modify a flashcard set.
     """
-    createFlashcard(input: CreateFlashcardInput!): Flashcard!
-    """
-    Updates a flashcard. Throws an error if the flashcard does not exist.
-    """
-    updateFlashcard(input: UpdateFlashcardInput!): Flashcard!
-    """
-    Deletes a flashcard. Throws an error if the flashcard does not exist.
-    """
-    deleteFlashcard(input: UUID!): UUID!
+    mutateFlashcardSet(assessmentId: UUID!): FlashcardSetMutation!
 
     """
     Logs that a user has learned a flashcard.
     """
     logFlashcardLearned(input: LogFlashcardLearnedInput!): Flashcard!
+}
+
+type FlashcardSetMutation {
+    """
+    ID of the flashcard set that is being modified.
+    """
+    assessmentId: UUID!
+
+    """
+    Creates a new flashcard. Throws an error if the flashcard set does not exist.
+    """
+    createFlashcard(input: CreateFlashcardInput!): Flashcard!
+
+    """
+    Updates a flashcard. Throws an error if the flashcard does not exist.
+    """
+    updateFlashcard(input: UpdateFlashcardInput!): Flashcard!
+
+    """
+    Deletes the flashcard with the specified ID. Throws an error if the flashcard does not exist.
+    """
+    deleteFlashcard(id: UUID!): UUID!
 }

@@ -3,7 +3,6 @@ package de.unistuttgart.iste.gits.flashcard_service.service;
 import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetEntity;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSideEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -17,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,50 +31,47 @@ public class FlashcardService {
     private final TopicPublisher topicPublisher;
 
 
-    public Flashcard createFlashcard(CreateFlashcardInput flashcardInput) {
+    public Flashcard createFlashcard(UUID assessmentId, CreateFlashcardInput flashcardInput) {
         flashcardValidator.validateCreateFlashcardInput(flashcardInput);
 
-        FlashcardEntity mappedEntity = flashcardMapper.dtoToEntity(flashcardInput);
-        for (FlashcardSideEntity flashcardSideEntity : mappedEntity.getSides()) {
-            flashcardSideEntity.setFlashcard(mappedEntity);
-        }
-        mappedEntity.setSetId(flashcardInput.getSetId());
-        FlashcardEntity flashcardEntity = flashcardRepository.save(mappedEntity);
-        return flashcardMapper.entityToDto(flashcardEntity);
+        FlashcardSetEntity set = flashcardSetRepository.findById(assessmentId)
+                .orElseThrow(() -> new EntityNotFoundException("FlashcardSet with id " + assessmentId
+                        + " not found while trying to create a new flashcard for it."));
+
+        FlashcardEntity flashcard = flashcardMapper.dtoToEntity(flashcardInput);
+
+        flashcard = flashcardRepository.save(flashcard);
+
+        set.getFlashcards().add(flashcard);
+        flashcardSetRepository.save(set);
+
+        return flashcardMapper.entityToDto(flashcard);
     }
 
 
     public Flashcard updateFlashcard(UpdateFlashcardInput input) {
         flashcardValidator.validateUpdateFlashcardInput(input);
 
-        FlashcardEntity oldFlashcardEntity = flashcardRepository.getReferenceById(input.getId());
-        FlashcardEntity mappedEntity = flashcardMapper.dtoToEntity(input);
-        for (FlashcardSideEntity flashcardSideEntity : mappedEntity.getSides()) {
-            flashcardSideEntity.setFlashcard(mappedEntity);
-        }
-        mappedEntity.setSetId(oldFlashcardEntity.getSetId());
-        FlashcardEntity updatedFlashcardEntity = flashcardRepository.save(mappedEntity);
+        FlashcardEntity updatedFlashcard = flashcardMapper.dtoToEntity(input);
 
-        return flashcardMapper.entityToDto(updatedFlashcardEntity);
+        updatedFlashcard = flashcardRepository.save(updatedFlashcard);
+
+        return flashcardMapper.entityToDto(updatedFlashcard);
     }
 
-    public UUID deleteFlashcard(UUID uuid) {
-        requireFlashcardExisting(uuid);
-        flashcardRepository.deleteById(uuid);
-        return uuid;
+    public UUID deleteFlashcard(UUID assessmentId, UUID flashcardId) {
+        FlashcardSetEntity set = flashcardSetRepository.getReferenceById(assessmentId);
+        if(!set.getFlashcards().removeIf(x -> x.getId().equals(flashcardId))) {
+            throw new EntityNotFoundException("Flashcard with id " + flashcardId + " not found.");
+        }
+        flashcardSetRepository.save(set);
+        return flashcardId;
     }
 
     public FlashcardSet createFlashcardSet(CreateFlashcardSetInput flashcardSetInput) {
         flashcardValidator.validateCreateFlashcardSetInput(flashcardSetInput);
 
         FlashcardSetEntity mappedEntity = flashcardMapper.flashcardSetDtoToEntity(flashcardSetInput);
-        for (FlashcardEntity flashcardEntity : mappedEntity.getFlashcards()) {
-            flashcardEntity.setSetId(mappedEntity.getAssessmentId());
-
-            for (FlashcardSideEntity flashcardSideEntity : flashcardEntity.getSides()) {
-                flashcardSideEntity.setFlashcard(flashcardEntity);
-            }
-        }
         FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.save(mappedEntity);
         return flashcardMapper.flashcardSetEntityToDto(flashcardSetEntity);
     }
@@ -91,23 +88,20 @@ public class FlashcardService {
         }
     }
 
-    public void requireFlashcardExisting(UUID id) {
-        if (!flashcardRepository.existsById(id)) {
-            throw new EntityNotFoundException("Flashcard with id " + id + " not found");
+    public Flashcard getFlashcardById(UUID flashcardId) {
+        return flashcardMapper.entityToDto(flashcardRepository.getReferenceById(flashcardId));
+    }
+
+    public List<Flashcard> getFlashcardsByIds(List<UUID> ids) {
+        List<FlashcardEntity> entities = flashcardRepository.findByIdIn(ids);
+
+        ids.removeAll(entities.stream().map(FlashcardEntity::getId).toList());
+        if(!ids.isEmpty()) {
+            throw new EntityNotFoundException("Flashcards with ids "
+                    + ids.stream().map(UUID::toString).collect(Collectors.joining(", "))
+                    + " not found.");
         }
-    }
 
-    public Flashcard mapEntityToFlashcard(FlashcardEntity entity) {
-        return flashcardMapper.entityToDto(entity);
-    }
-
-    public Flashcard getFlashCardById(UUID flashcardId) {
-        requireFlashcardExisting(flashcardId);
-        return mapEntityToFlashcard(flashcardRepository.getReferenceById(flashcardId));
-    }
-
-    public List<Flashcard> getFlashcardsById(List<UUID> ids) {
-        var entities = flashcardRepository.findByIdIn(ids);
         return entities.stream()
                 .map(flashcardMapper::entityToDto)
                 .toList();

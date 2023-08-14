@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.gits.flashcard_service.api.mutation;
+package de.unistuttgart.iste.gits.flashcard_service.api;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.generated.dto.Flashcard;
@@ -22,7 +22,7 @@ class MutationCreateFlashcardSetTest {
     @Test
     @Transactional
     @Commit
-    void testCreateFlashcardSet(GraphQlTester graphQlTester) {
+    void testCreateFlashcardSet(GraphQlTester tester) {
         UUID assessmentId = UUID.randomUUID();
         String query = """
                 
@@ -73,13 +73,13 @@ class MutationCreateFlashcardSetTest {
                         text,
                         referencedMediaRecordIds
                      }
-                   }      
+                   }
                }
             }
         }
         """;
 
-        FlashcardSet createdFlashcardSet = graphQlTester.document(query)
+        FlashcardSet createdFlashcardSet = tester.document(query)
                 .variable("assessmentId", assessmentId)
                 .execute()
                 .path("createFlashcardSet").entity(FlashcardSet.class).get();
@@ -103,6 +103,7 @@ class MutationCreateFlashcardSetTest {
         FlashcardSide flashcard1Side2 = flashcard1.getSides().get(1);
         assertThat(flashcard1Side2.getLabel(), is("Side 2"));
         assertThat(flashcard1Side2.getIsQuestion(), is(false));
+        assertThat(flashcard1Side2.getText().getText(), is("Answer 1"));
         assertThat(flashcard1Side2.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
         Flashcard flashcard2 = flashcards.get(1);

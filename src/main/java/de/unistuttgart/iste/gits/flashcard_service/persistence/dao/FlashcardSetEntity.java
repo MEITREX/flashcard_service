@@ -21,7 +21,6 @@ public class FlashcardSetEntity {
     @Id
     private UUID assessmentId;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "setId")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "parentSet")
     private List<FlashcardEntity> flashcards;
-
 }
