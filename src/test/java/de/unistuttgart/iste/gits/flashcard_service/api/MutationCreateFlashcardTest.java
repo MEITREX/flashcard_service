@@ -2,7 +2,9 @@ package de.unistuttgart.iste.gits.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSideEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -97,7 +99,19 @@ class MutationCreateFlashcardTest {
                 .getReferenceById(setId)
                 .getFlashcards()
                 .stream()
-                .map(x -> flashcardMapper.entityToDto(x)))
-                .contains(createdFlashcard);
+                .map(FlashcardEntity::getId))
+                .contains(createdFlashcard.getId());
+
+        FlashcardEntity flashcardFromRepo = flashcardRepository.getReferenceById(createdFlashcard.getId());
+
+        assertThat(flashcardFromRepo.getParentSet().getAssessmentId()).isEqualTo(setId);
+        assertThat(flashcardFromRepo.getSides().get(0))
+                .returns("Side 11", FlashcardSideEntity::getLabel)
+                .returns(true, FlashcardSideEntity::isQuestion)
+                .returns("Question 1", side -> side.getText().getText());
+        assertThat(flashcardFromRepo.getSides().get(1))
+                .returns("Side 21", FlashcardSideEntity::getLabel)
+                .returns(false, FlashcardSideEntity::isQuestion)
+                .returns("Answer 1", side -> side.getText().getText());
     }
 }

@@ -28,23 +28,36 @@ public class FlashcardMapper {
     }
 
     public FlashcardEntity dtoToEntity(UpdateFlashcardInput input) {
-        return modelMapper.map(input, FlashcardEntity.class);
-    }
+        FlashcardEntity flashcardEntity = modelMapper.map(input, FlashcardEntity.class);
 
-    public FlashcardEntity dtoToEntity(CreateFlashcardSetInput flashcardSetInput) {
-        return modelMapper.map(flashcardSetInput, FlashcardEntity.class);
+        for (FlashcardSideEntity side : flashcardEntity.getSides()) {
+            side.setFlashcard(flashcardEntity);
+        }
+
+        return flashcardEntity;
     }
 
     public FlashcardEntity dtoToEntity(CreateFlashcardInput flashcardInput) {
-        return modelMapper.map(flashcardInput, FlashcardEntity.class);
-    }
+        FlashcardEntity flashcardEntity = modelMapper.map(flashcardInput, FlashcardEntity.class);
 
-    public FlashcardEntity dtoToEntity(Flashcard flashcard) {
-        return modelMapper.map(flashcard, FlashcardEntity.class);
+        for (FlashcardSideEntity side : flashcardEntity.getSides()) {
+            side.setFlashcard(flashcardEntity);
+        }
+
+        return flashcardEntity;
     }
 
     public FlashcardSetEntity flashcardSetDtoToEntity(CreateFlashcardSetInput flashcardSetInput) {
-        return modelMapper.map(flashcardSetInput, FlashcardSetEntity.class);
+        FlashcardSetEntity flashcardSetEntity = modelMapper.map(flashcardSetInput, FlashcardSetEntity.class);
+
+        for (FlashcardEntity flashcard : flashcardSetEntity.getFlashcards()) {
+            flashcard.setParentSet(flashcardSetEntity);
+            for (FlashcardSideEntity side : flashcard.getSides()) {
+                side.setFlashcard(flashcard);
+            }
+        }
+
+        return flashcardSetEntity;
     }
 
     public FlashcardSet flashcardSetEntityToDto(FlashcardSetEntity flashcardSetEntity) {

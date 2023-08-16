@@ -1,6 +1,5 @@
 package de.unistuttgart.iste.gits.flashcard_service.service;
 
-import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
@@ -28,8 +27,6 @@ public class FlashcardService {
     private final FlashcardSetRepository flashcardSetRepository;
     private final FlashcardMapper flashcardMapper;
     private final FlashcardValidator flashcardValidator;
-    private final TopicPublisher topicPublisher;
-
 
     public Flashcard createFlashcard(UUID assessmentId, CreateFlashcardInput flashcardInput) {
         flashcardValidator.validateCreateFlashcardInput(flashcardInput);
@@ -39,11 +36,11 @@ public class FlashcardService {
                         + " not found while trying to create a new flashcard for it."));
 
         FlashcardEntity flashcard = flashcardMapper.dtoToEntity(flashcardInput);
+        flashcard.setParentSet(set);
 
         flashcard = flashcardRepository.save(flashcard);
 
         set.getFlashcards().add(flashcard);
-        flashcardSetRepository.save(set);
 
         return flashcardMapper.entityToDto(flashcard);
     }
@@ -52,7 +49,11 @@ public class FlashcardService {
     public Flashcard updateFlashcard(UpdateFlashcardInput input) {
         flashcardValidator.validateUpdateFlashcardInput(input);
 
+        FlashcardEntity oldFlashcard = flashcardRepository.findById(input.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Flashcard with id " + input.getId() + " not found."));
+
         FlashcardEntity updatedFlashcard = flashcardMapper.dtoToEntity(input);
+        updatedFlashcard.setParentSet(oldFlashcard.getParentSet());
 
         updatedFlashcard = flashcardRepository.save(updatedFlashcard);
 
