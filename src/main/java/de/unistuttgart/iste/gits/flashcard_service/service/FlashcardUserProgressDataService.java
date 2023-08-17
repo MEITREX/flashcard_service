@@ -2,32 +2,22 @@ package de.unistuttgart.iste.gits.flashcard_service.service;
 
 import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
 import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardProgressDataEntity;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardProgressDataLogEntity;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetEntity;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashCardProgressDataLogRepository;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardProgressDataRepository;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
-import de.unistuttgart.iste.gits.generated.dto.Flashcard;
-import de.unistuttgart.iste.gits.generated.dto.FlashcardProgressData;
-import de.unistuttgart.iste.gits.generated.dto.FlashcardProgressDataLog;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.*;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.*;
+import de.unistuttgart.iste.gits.generated.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class FlashcardUserProgressDataService {
 
     private final FlashcardProgressDataRepository flashcardProgressDataRepository;
-    private final FlashCardProgressDataLogRepository flashCardProgressDataLogRepository;
+    private final FlashcardProgressDataLogRepository flashCardProgressDataLogRepository;
     private final FlashcardRepository flashcardRepository;
     private final FlashcardSetRepository flashcardSetRepository;
     private final ModelMapper modelMapper;
@@ -63,9 +53,13 @@ public class FlashcardUserProgressDataService {
         logData.setSuccess(successful);
         logData.setFlashcardProgressData(progressData);
         logData.setLearnedAt(OffsetDateTime.now());
+        if (progressData.getFlashcardProgressDataLogs() == null) {
+            progressData.setFlashcardProgressDataLogs(new ArrayList<>());
+        }
+        progressData.getFlashcardProgressDataLogs().add(logData);
 
         updateProgressDataEntity(progressData, successful);
-        flashCardProgressDataLogRepository.save(logData);
+        flashcardProgressDataRepository.save(progressData);
 
         publishFlashcardSetLearned(userId, getFlashCardSetAssessmentId(flashcardId));
 
@@ -106,24 +100,32 @@ public class FlashcardUserProgressDataService {
     }
 
     private void publishFlashcardSetLearned(UUID userId, UUID flashcardSetId) {
-        List<FlashcardProgressDataLogEntity> dataLogEntities = flashCardProgressDataLogRepository.findLatestLogsPerFlashcardProgressData();
-        List<FlashcardProgressDataLog> dataLogs = new ArrayList<>();
+        FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.getReferenceById(flashcardSetId);
+        List<FlashcardProgressDataLogEntity> dataLogEntities = flashCardProgressDataLogRepository
+                .findLatestLogsPerFlashcardProgressData(userId);
 
-        for (var datalogEntity : dataLogEntities) {
-            dataLogs.add(mapLogEntityToDto(datalogEntity));
+        if (flashcardSetEntity.getLastLearned().isPresent()) {
+            // exclude all logs that have been learned before the last time the set was learned
+            dataLogEntities.removeIf(log -> log.getLearnedAt().isBefore(flashcardSetEntity.getLastLearned().get()));
         }
 
-        int total = 0;
-        int correct = 0;
-
-        for (var datalog : dataLogs) {
-            total++;
-            if (datalog.getSuccess()) {
-                correct++;
-            }
+        if (dataLogEntities.size() < flashcardSetEntity.getFlashcards().size()) {
+            // not all flashcards have been learned yet
+            return;
         }
+
+        List<FlashcardProgressDataLog> dataLogs = dataLogEntities
+                .stream()
+                .map(this::mapLogEntityToDto)
+                .toList();
+
+        int total = dataLogs.size();
+        int correct = dataLogs.stream().mapToInt(log -> log.getSuccess() ? 1 : 0).sum();
 
         float correctness = (float) correct / total;
+
+        flashcardSetEntity.setLastLearned(OffsetDateTime.now());
+        flashcardSetRepository.save(flashcardSetEntity);
 
         publishUserProgressEvent(userId, flashcardSetId, correctness);
     }

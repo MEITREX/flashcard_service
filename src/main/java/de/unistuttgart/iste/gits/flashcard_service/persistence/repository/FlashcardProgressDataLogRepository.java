@@ -3,13 +3,14 @@ package de.unistuttgart.iste.gits.flashcard_service.persistence.repository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardProgressDataLogEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface FlashCardProgressDataLogRepository extends JpaRepository<FlashcardProgressDataLogEntity, UUID> {
+public interface FlashcardProgressDataLogRepository extends JpaRepository<FlashcardProgressDataLogEntity, UUID> {
 
     @Query("""
             SELECT log FROM FlashcardProgressDataLog log
@@ -19,6 +20,7 @@ public interface FlashCardProgressDataLogRepository extends JpaRepository<Flashc
                FROM FlashcardProgressDataLog latestLog
                WHERE latestLog.flashcardProgressData = log.flashcardProgressData
             )
+            AND progressData.primaryKey.userId = :userId
             """)
-    List<FlashcardProgressDataLogEntity> findLatestLogsPerFlashcardProgressData();
+    List<FlashcardProgressDataLogEntity> findLatestLogsPerFlashcardProgressData(@Param("userId") UUID userId);
 }
