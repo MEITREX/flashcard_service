@@ -27,8 +27,7 @@ class MutationCreateFlashcardSetTest {
         String query = """
                 
             mutation ($assessmentId: UUID!){
-              createFlashcardSet(input: {
-                 assessmentId: $assessmentId
+              createFlashcardSet(assessmentId: $assessmentId, input: {
                  flashcards: [
                     {
                       sides: [

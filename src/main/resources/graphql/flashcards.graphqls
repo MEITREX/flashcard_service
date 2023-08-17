@@ -138,10 +138,6 @@ type FlashcardSet {
 
 input CreateFlashcardSetInput {
     """
-    The uuid of the assessment this flashcard set belongs to.
-    """
-    assessmentId: UUID!
-    """
     List of flashcards in this set.
     """
     flashcards: [CreateFlashcardInSetInput!]!

@@ -61,8 +61,8 @@ public class FlashcardController {
     }
 
     @MutationMapping
-    public FlashcardSet createFlashcardSet(@Argument(name = "input") CreateFlashcardSetInput input) {
-        return flashcardService.createFlashcardSet(input);
+    public FlashcardSet createFlashcardSet(@Argument UUID assessmentId, @Argument CreateFlashcardSetInput input) {
+        return flashcardService.createFlashcardSet(assessmentId, input);
     }
 
     @MutationMapping

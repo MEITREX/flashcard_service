@@ -69,10 +69,11 @@ public class FlashcardService {
         return flashcardId;
     }
 
-    public FlashcardSet createFlashcardSet(CreateFlashcardSetInput flashcardSetInput) {
+    public FlashcardSet createFlashcardSet(UUID assessmentId, CreateFlashcardSetInput flashcardSetInput) {
         flashcardValidator.validateCreateFlashcardSetInput(flashcardSetInput);
 
         FlashcardSetEntity mappedEntity = flashcardMapper.flashcardSetDtoToEntity(flashcardSetInput);
+        mappedEntity.setAssessmentId(assessmentId);
         FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.save(mappedEntity);
         return flashcardMapper.flashcardSetEntityToDto(flashcardSetEntity);
     }
