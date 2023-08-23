@@ -6,11 +6,9 @@ import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetE
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSideEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.boot.test.context.TestComponent;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Component
@@ -34,11 +32,13 @@ public class TestUtils {
                         new ResourceMarkdownEntity("Question 1"),
                         "Question Label",
                         true,
+                        false,
                         flashcard1),
                 new FlashcardSideEntity(UUID.randomUUID(),
                         new ResourceMarkdownEntity("Answer 1"),
                         "Answer Label",
                         false,
+                        true,
                         flashcard1)
         ));
 
@@ -50,11 +50,13 @@ public class TestUtils {
                         new ResourceMarkdownEntity("Question 2"),
                         "Question Label",
                         true,
+                        false,
                         flashcard2),
                 new FlashcardSideEntity(UUID.randomUUID(),
                         new ResourceMarkdownEntity("Answer 2"),
                         "Answer Label",
                         false,
+                        true,
                         flashcard2)
         ));
 
@@ -71,11 +73,13 @@ public class TestUtils {
                         new ResourceMarkdownEntity("Question 3"),
                         "Question Label",
                         true,
+                        false,
                         flashcard3),
                 new FlashcardSideEntity(UUID.randomUUID(),
                         new ResourceMarkdownEntity("Answer 3"),
                         "Answer Label",
                         false,
+                        true,
                         flashcard3)
         ));
 
@@ -87,11 +91,13 @@ public class TestUtils {
                         new ResourceMarkdownEntity("Question 4"),
                         "Question Label",
                         true,
+                        false,
                         flashcard4),
                 new FlashcardSideEntity(UUID.randomUUID(),
                         new ResourceMarkdownEntity("Answer 4"),
                         "Answer Label",
                         false,
+                        true,
                         flashcard4)
         ));
 

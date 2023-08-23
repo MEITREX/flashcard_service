@@ -1,12 +1,10 @@
 package de.unistuttgart.iste.gits.flashcard_service.api;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.generated.dto.Flashcard;
 import de.unistuttgart.iste.gits.generated.dto.FlashcardSet;
 import de.unistuttgart.iste.gits.generated.dto.FlashcardSide;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.annotation.Commit;
 import java.util.UUID;
@@ -34,11 +32,13 @@ class MutationCreateFlashcardSetTest {
                         {
                           label: "Side 1",
                           isQuestion: true,
+                          isAnswer: false,
                           text: {text: "Question 1"}
                         },
                         {
                           label: "Side 2",
                           isQuestion: false,
+                          isAnswer: true,
                           text: {text: "Answer 1"}
                         }
                       ]
@@ -48,11 +48,13 @@ class MutationCreateFlashcardSetTest {
                         {
                           label: "Side 1",
                           isQuestion: true,
+                          isAnswer: false,
                           text: {text: "Question 2"}
                         },
                         {
                           label: "Side 2",
                           isQuestion: false,
+                          isAnswer: true,
                           text: {text: "Answer 2"}
                         }
                       ]
@@ -68,6 +70,7 @@ class MutationCreateFlashcardSetTest {
                    {
                      label
                      isQuestion
+                     isAnswer
                      text {
                         text,
                         referencedMediaRecordIds
@@ -96,12 +99,14 @@ class MutationCreateFlashcardSetTest {
         FlashcardSide flashcard1Side1 = flashcard1.getSides().get(0);
         assertThat(flashcard1Side1.getLabel(), is("Side 1"));
         assertThat(flashcard1Side1.getIsQuestion(), is(true));
+        assertThat(flashcard1Side1.getIsAnswer(), is(false));
         assertThat(flashcard1Side1.getText().getText(), is("Question 1"));
         assertThat(flashcard1Side1.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
         FlashcardSide flashcard1Side2 = flashcard1.getSides().get(1);
         assertThat(flashcard1Side2.getLabel(), is("Side 2"));
         assertThat(flashcard1Side2.getIsQuestion(), is(false));
+        assertThat(flashcard1Side2.getIsAnswer(), is(true));
         assertThat(flashcard1Side2.getText().getText(), is("Answer 1"));
         assertThat(flashcard1Side2.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
@@ -111,12 +116,14 @@ class MutationCreateFlashcardSetTest {
         FlashcardSide flashcard2Side1 = flashcard2.getSides().get(0);
         assertThat(flashcard2Side1.getLabel(), is("Side 1"));
         assertThat(flashcard2Side1.getIsQuestion(), is(true));
+        assertThat(flashcard2Side1.getIsAnswer(), is(false));
         assertThat(flashcard2Side1.getText().getText(), is("Question 2"));
         assertThat(flashcard2Side1.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
         FlashcardSide flashcard2Side2 = flashcard2.getSides().get(1);
         assertThat(flashcard2Side2.getLabel(), is("Side 2"));
         assertThat(flashcard2Side2.getIsQuestion(), is(false));
+        assertThat(flashcard2Side2.getIsAnswer(), is(true));
         assertThat(flashcard2Side2.getText().getReferencedMediaRecordIds().isEmpty(), is(true));
 
     }

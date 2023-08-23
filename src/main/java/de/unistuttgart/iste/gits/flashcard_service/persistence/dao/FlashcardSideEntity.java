@@ -24,6 +24,9 @@ public class FlashcardSideEntity {
     @Column(nullable = false)
     private boolean isQuestion;
 
+    @Column(nullable = false)
+    private boolean isAnswer;
+
     @ManyToOne
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

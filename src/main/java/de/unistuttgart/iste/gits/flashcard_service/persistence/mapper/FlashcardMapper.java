@@ -22,6 +22,7 @@ public class FlashcardMapper {
             FlashcardSideEntity sideEntity = flashcardEntity.getSides().get(i);
             FlashcardSide side = result.getSides().get(i);
             side.setIsQuestion(sideEntity.isQuestion()); // manual mapping necessary because of naming difference
+            side.setIsAnswer(sideEntity.isAnswer());
             result.getSides().set(i, side);
         }
         return result;

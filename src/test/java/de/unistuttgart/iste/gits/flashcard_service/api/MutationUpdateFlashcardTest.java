@@ -53,11 +53,13 @@ class MutationUpdateFlashcardTest {
                   {
                     label: "New_Side 1",
                     isQuestion: true,
+                    isAnswer: false,
                     text: {text: "New_Question 1"}
                   },
                   {
                     label: "New_Side 2",
                     isQuestion: false,
+                    isAnswer: true,
                     text: {text: "New_Answer 1 [[media/b4f2e8d1-a1e6-4834-8f5d-ac793f18e854]]"}
                   }
                 ]
@@ -66,6 +68,7 @@ class MutationUpdateFlashcardTest {
                 sides {
                   label
                   isQuestion
+                  isAnswer
                   text {text, referencedMediaRecordIds}
                 }
               }
@@ -87,11 +90,11 @@ class MutationUpdateFlashcardTest {
         assertThat(updatedFlashcard.getSides()).containsExactlyInAnyOrder(
                 new FlashcardSide(new ResourceMarkdown("New_Question 1", Collections.emptyList()),
                         "New_Side 1",
-                        true),
+                        true, false),
                 new FlashcardSide(new ResourceMarkdown("New_Answer 1 [[media/b4f2e8d1-a1e6-4834-8f5d-ac793f18e854]]",
                                                        List.of(UUID.fromString("b4f2e8d1-a1e6-4834-8f5d-ac793f18e854"))),
                         "New_Side 2",
-                        false)
+                        false, true)
         );
 
         assertThat(flashcardRepository.count()).isEqualTo(4);

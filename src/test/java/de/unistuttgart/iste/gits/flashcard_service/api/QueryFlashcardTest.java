@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
 
 import java.util.List;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -48,6 +47,7 @@ class QueryFlashcardTest {
                     sides {
                       label
                       isQuestion
+                      isAnswer
                       text {text, referencedMediaRecordIds}
                     }
                   }
