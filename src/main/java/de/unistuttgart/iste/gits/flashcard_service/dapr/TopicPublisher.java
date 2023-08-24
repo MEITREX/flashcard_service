@@ -1,8 +1,6 @@
 package de.unistuttgart.iste.gits.flashcard_service.dapr;
 
-import de.unistuttgart.iste.gits.common.event.CrudOperation;
-import de.unistuttgart.iste.gits.common.event.ResourceUpdateEvent;
-import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
+import de.unistuttgart.iste.gits.common.event.*;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
 import io.dapr.client.DaprClient;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +14,7 @@ public class TopicPublisher {
     private static final String PUBSUB_NAME = "gits";
     private static final String RESOURCE_UPDATE_TOPIC = "resource-update";
 
-    private static final String USER_PROGRESS_LOG_TOPIC = "flashcardset-learned";
+    private static final String USER_PROGRESS_LOG_TOPIC = "content-progressed";
 
     private final DaprClient client;
 
@@ -30,7 +28,7 @@ public class TopicPublisher {
      * @param dto message
      */
     private void publishChanges(ResourceUpdateEvent dto) {
-        log.debug("publishing message");
+        log.info("publishing ResourceUpdateEvent: {}", dto);
         client.publishEvent(
                 PUBSUB_NAME,
                 RESOURCE_UPDATE_TOPIC,
@@ -56,7 +54,8 @@ public class TopicPublisher {
      * @param userProgressLogEvent event to publish
      */
     public void notifyFlashcardSetLearned(UserProgressLogEvent userProgressLogEvent) {
-        client.publishEvent(PUBSUB_NAME, USER_PROGRESS_LOG_TOPIC, userProgressLogEvent).block();
+        log.info("Publish UserProgressLogEvent: {}", userProgressLogEvent);
+        client.publishEvent(PUBSUB_NAME, USER_PROGRESS_LOG_TOPIC, userProgressLogEvent).subscribe();
     }
 
 }

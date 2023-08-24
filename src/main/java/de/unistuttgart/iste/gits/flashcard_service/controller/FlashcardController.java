@@ -26,7 +26,7 @@ public class FlashcardController {
 
     @QueryMapping
     public List<Flashcard> flashcardsByIds(@Argument(name = "ids") List<UUID> ids) {
-        return flashcardService.getFlashcardsById(ids);
+        return flashcardService.getFlashcardsByIds(ids);
     }
 
     @QueryMapping
@@ -40,23 +40,29 @@ public class FlashcardController {
     }
 
     @MutationMapping
-    public Flashcard createFlashcard(@Argument(name = "input") CreateFlashcardInput input) {
-        return flashcardService.createFlashcard(input);
+    public FlashcardSetMutation mutateFlashcardSet(@Argument UUID assessmentId) {
+        // this is basically an empty object, only serving as a parent for the nested mutations
+        return new FlashcardSetMutation(assessmentId);
     }
 
-    @MutationMapping
+    @SchemaMapping(typeName = "FlashcardSetMutation")
+    public Flashcard createFlashcard(@Argument(name = "input") CreateFlashcardInput input, FlashcardSetMutation mutation) {
+        return flashcardService.createFlashcard(mutation.getAssessmentId(), input);
+    }
+
+    @SchemaMapping(typeName = "FlashcardSetMutation")
     public Flashcard updateFlashcard(@Argument(name = "input") UpdateFlashcardInput input) {
         return flashcardService.updateFlashcard(input);
     }
 
-    @MutationMapping
-    public UUID deleteFlashcard(@Argument(name = "input") UUID id) {
-        return flashcardService.deleteFlashcard(id);
+    @SchemaMapping(typeName = "FlashcardSetMutation")
+    public UUID deleteFlashcard(@Argument UUID id, FlashcardSetMutation mutation) {
+        return flashcardService.deleteFlashcard(mutation.getAssessmentId(), id);
     }
 
     @MutationMapping
-    public FlashcardSet createFlashcardSet(@Argument(name = "input") CreateFlashcardSetInput input) {
-        return flashcardService.createFlashcardSet(input);
+    public FlashcardSet createFlashcardSet(@Argument UUID assessmentId, @Argument CreateFlashcardSetInput input) {
+        return flashcardService.createFlashcardSet(assessmentId, input);
     }
 
     @MutationMapping
@@ -69,7 +75,7 @@ public class FlashcardController {
         UUID flashcardId = input.getFlashcardId();
         UUID userId = input.getUserId();
         boolean successful = input.getSuccessful();
-        return progressDataService.logFlashCardLearned(flashcardId, userId, successful);
+        return progressDataService.logFlashcardLearned(flashcardId, userId, successful);
     }
 
 

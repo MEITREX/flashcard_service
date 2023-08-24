@@ -1,10 +1,7 @@
 package de.unistuttgart.iste.gits.flashcard_service.persistence.dao;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,8 +20,10 @@ public class FlashcardEntity {
     @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlashcardSideEntity> sides;
 
-    @Column(name = "set_id", nullable = false)
-    private UUID setId;
+    @ManyToOne
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    private FlashcardSetEntity parentSet;
 
 }
 

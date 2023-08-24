@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.gits.flashcard_service.persistence.dao;
 
+import de.unistuttgart.iste.gits.common.resource_markdown.ResourceMarkdownEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.UUID;
@@ -14,14 +15,17 @@ public class FlashcardSideEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Column(nullable = false, length = 3000)
-    private String text;
+    @Embedded
+    private ResourceMarkdownEntity text;
 
     @Column(nullable = false, length = 255)
     private String label;
 
     @Column(nullable = false)
     private boolean isQuestion;
+
+    @Column(nullable = false)
+    private boolean isAnswer;
 
     @ManyToOne
     @ToString.Exclude

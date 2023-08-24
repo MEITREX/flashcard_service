@@ -58,9 +58,9 @@ type FlashcardProgressDataLog {
 
 type FlashcardSide {
     """
-    Text of this flashcard side. This can be markdown.
+    Text of this flashcard side as ResourceMarkdown.
     """
-    text: String!
+    text: ResourceMarkdown!
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
     """
@@ -69,25 +69,25 @@ type FlashcardSide {
     Whether this side is a question, i.e. should be shown to the user to guess the other sides or not.
     """
     isQuestion: Boolean!
+    """
+    Whether this side is also an answer. Some Flashcards can have their sides be used as both questions or answers for the other sides
+    """
+    isAnswer: Boolean!
 }
 
 
 input CreateFlashcardInput {
     """
-    Id of the flashcard set this flashcard belongs to.
-    """
-    setId: UUID!
-    """
     List of sides of this flashcard. Must be at least two sides.
     """
-    sides: [CreateFlashcardSideInput!]! @ContainerSize(min: 2)
+    sides: [FlashcardSideInput!]! @ContainerSize(min: 2)
 }
 
-input CreateFlashcardSideInput {
+input FlashcardSideInput {
     """
     Text of this flashcard side. This can be markdown. Max length is 3000 characters.
     """
-    text: String! @Size(max: 3000)
+    text: ResourceMarkdownInput!
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
     """
@@ -96,6 +96,10 @@ input CreateFlashcardSideInput {
     Whether this side is a question, i.e. should be shown to the user to guess the other sides or not.
     """
     isQuestion: Boolean!
+    """
+    Whether this side is also an answer. Some Flashcards can have their sides be used as both questions or answers for the other sides
+    """
+    isAnswer: Boolean!
 }
 
 input UpdateFlashcardInput {
@@ -106,22 +110,7 @@ input UpdateFlashcardInput {
     """
     List of sides of this flashcard. Must be at least two sides.
     """
-    sides: [UpdateFlashcardSideInput!]! @ContainerSize(min: 2)
-}
-
-input UpdateFlashcardSideInput {
-    """
-    Text of this flashcard side. This can be markdown. Max length is 3000 characters.
-    """
-    text: String! @Size(max: 3000)
-    """
-    Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
-    """
-    label: String! @NotBlank @Size(max: 255)
-    """
-    Whether this side is a question, i.e. should be shown to the user to guess the other sides or not.
-    """
-    isQuestion: Boolean!
+    sides: [FlashcardSideInput!]! @ContainerSize(min: 2)
 }
 
 """
@@ -142,20 +131,9 @@ type FlashcardSet {
 
 input CreateFlashcardSetInput {
     """
-    The uuid of the assessment this flashcard set belongs to.
-    """
-    assessmentId: UUID!
-    """
     List of flashcards in this set.
     """
-    flashcards: [CreateFlashcardInSetInput!]!
-}
-
-input CreateFlashcardInSetInput {
-    """
-    List of sides of this flashcard. Must be at least two sides.
-    """
-    sides: [CreateFlashcardSideInput!]! @ContainerSize(min: 2)
+    flashcards: [CreateFlashcardInput!]!
 }
 
 
