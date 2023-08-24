@@ -1,5 +1,7 @@
 package de.unistuttgart.iste.gits.flashcard_service.service;
 
+import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
+import de.unistuttgart.iste.gits.common.event.CrudOperation;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
@@ -115,5 +117,41 @@ public class FlashcardService {
                 .map(flashcardMapper::flashcardSetEntityToDto)
                 .toList();
     }
+    /**
+     * removes all flashcards when linked Content gets deleted
+     *
+     * @param dto event object containing changes to content
+     */
+    public void removeContentIds(ContentChangeEvent dto) {
 
+        // validate event message
+        try {
+            checkCompletenessOfDto(dto);
+        } catch (NullPointerException e) {
+            log.error(e.getMessage());
+            return;
+        }
+        // only consider DELETE Operations
+        if (!dto.getOperation().equals(CrudOperation.DELETE) || dto.getContentIds().isEmpty()) {
+            return;
+        }
+
+        // find all flashcard
+        List<FlashcardSetEntity> flashcardSetEntity = flashcardSetRepository.findAllById(dto.getContentIds());
+
+        // delete all found flashcard
+        flashcardSetRepository.deleteAllInBatch(flashcardSetEntity);
+
+    }
+    /**
+     * helper function to make sure received event message is complete
+     *
+     * @param dto event message under evaluation
+     * @throws NullPointerException if any of the fields are null
+     */
+    private void checkCompletenessOfDto(ContentChangeEvent dto) throws NullPointerException {
+        if (dto.getOperation() == null || dto.getContentIds() == null) {
+            throw new NullPointerException("incomplete message received: all fields of a message must be non-null");
+        }
+    }
 }
