@@ -6,6 +6,7 @@ type Query {
     """
     Get flashcard sets by their assessment ids.
     Returns a list of flashcard sets in the same order as the provided ids.
+    Each element is null if the corresponding id is not found.
     """
-    flashcardSetsByAssessmentIds(assessmentIds: [UUID!]!): [FlashcardSet!]!
+    findFlashcardSetsByAssessmentIds(assessmentIds: [UUID!]!): [FlashcardSet]!
 }

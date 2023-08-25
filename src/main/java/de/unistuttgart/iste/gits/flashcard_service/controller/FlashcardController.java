@@ -1,12 +1,13 @@
 package de.unistuttgart.iste.gits.flashcard_service.controller;
 
+import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.flashcard_service.service.FlashcardService;
 import de.unistuttgart.iste.gits.flashcard_service.service.FlashcardUserProgressDataService;
 import de.unistuttgart.iste.gits.generated.dto.*;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.*;
 import org.springframework.stereotype.Controller;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -30,8 +31,8 @@ public class FlashcardController {
     }
 
     @QueryMapping
-    public List<FlashcardSet> flashcardSetsByAssessmentIds(@Argument(name = "assessmentIds") List<UUID> ids) {
-        return flashcardService.getFlashcardSetsByAssessmentId(ids);
+    public List<FlashcardSet> findFlashcardSetsByAssessmentIds(@Argument(name = "assessmentIds") List<UUID> ids) {
+        return flashcardService.findFlashcardSetsByAssessmentId(ids);
     }
 
     @SchemaMapping(typeName = "Flashcard", field = "userProgressData")
