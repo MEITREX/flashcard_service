@@ -64,7 +64,7 @@ public class FlashcardService {
 
     public UUID deleteFlashcard(UUID assessmentId, UUID flashcardId) {
         FlashcardSetEntity set = flashcardSetRepository.getReferenceById(assessmentId);
-        if(!set.getFlashcards().removeIf(x -> x.getId().equals(flashcardId))) {
+        if (!set.getFlashcards().removeIf(x -> x.getId().equals(flashcardId))) {
             throw new EntityNotFoundException("Flashcard with id " + flashcardId + " not found.");
         }
         flashcardSetRepository.save(set);
@@ -111,10 +111,17 @@ public class FlashcardService {
                 .toList();
     }
 
-    public List<FlashcardSet> getFlashcardSetsByAssessmentId(List<UUID> ids) {
-        return flashcardSetRepository.findByAssessmentIdIn(ids)
-                .stream()
-                .map(flashcardMapper::flashcardSetEntityToDto)
+    /**
+     * Returns all flashcard sets that are linked to the given assessment ids
+     *
+     * @param ids list of assessment ids
+     * @return list of flashcard sets, an element is null if the corresponding assessment id was not found
+     */
+    public List<FlashcardSet> findFlashcardSetsByAssessmentId(List<UUID> ids) {
+        return ids.stream()
+                .map(flashcardSetRepository::findById)
+                .map(optional -> optional.map(flashcardMapper::flashcardSetEntityToDto))
+                .map(optional -> optional.orElse(null))
                 .toList();
     }
     /**
