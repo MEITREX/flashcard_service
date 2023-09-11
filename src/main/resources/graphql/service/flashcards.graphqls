@@ -142,10 +142,7 @@ input LogFlashcardLearnedInput {
     The id of the flashcard that was learned.
     """
     flashcardId: UUID!
-    """
-    The id of the user that learned the flashcard.
-    """
-    userId: UUID!
+
     """
     If the user knew the flashcard or not.
     """

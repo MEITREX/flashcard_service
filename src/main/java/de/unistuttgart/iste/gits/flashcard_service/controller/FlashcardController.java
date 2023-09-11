@@ -72,11 +72,12 @@ public class FlashcardController {
     }
 
    @MutationMapping
-    public Flashcard logFlashcardLearned(@Argument("input") LogFlashcardLearnedInput input) {
+    public Flashcard logFlashcardLearned(@Argument("input") LogFlashcardLearnedInput input, @ContextValue LoggedInUser currentUser) {
         UUID flashcardId = input.getFlashcardId();
-        UUID userId = input.getUserId();
         boolean successful = input.getSuccessful();
-        return progressDataService.logFlashcardLearned(flashcardId, userId, successful);
+        UUID authenticatedUserId = currentUser.getId(); // Use the authenticated user's ID
+        return progressDataService.logFlashcardLearned(flashcardId, authenticatedUserId,successful);
     }
+
 
 }

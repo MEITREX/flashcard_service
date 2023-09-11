@@ -152,13 +152,12 @@ public class FlashcardUserProgressDataService {
         flashcardSetEntity.setLastLearned(OffsetDateTime.now());
         flashcardSetRepository.save(flashcardSetEntity);
 
-        publishUserProgressEvent(userId, flashcardSetId, correctness);
+        publishUserProgressEvent( flashcardSetId, correctness);
     }
 
-    private void publishUserProgressEvent(UUID userId, UUID assessmentId, float correctness) {
+    private void publishUserProgressEvent(UUID assessmentId, float correctness) {
         topicPublisher.notifyFlashcardSetLearned(
                 UserProgressLogEvent.builder()
-                        .userId(userId)
                         .contentId(assessmentId)
                         .hintsUsed(0)
                         .success(true)
