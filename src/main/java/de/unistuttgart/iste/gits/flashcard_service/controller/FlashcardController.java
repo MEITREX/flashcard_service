@@ -79,5 +79,4 @@ public class FlashcardController {
         return progressDataService.logFlashcardLearned(flashcardId, userId, successful);
     }
 
-
 }

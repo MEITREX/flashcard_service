@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.gits.flashcard_service.dapr;
 
 import de.unistuttgart.iste.gits.common.event.*;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardEntity;
 import io.dapr.client.DaprClient;
 import lombok.extern.slf4j.Slf4j;
 

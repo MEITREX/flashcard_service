@@ -2,8 +2,8 @@ package de.unistuttgart.iste.gits.flashcard_service.service;
 
 import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.gits.common.event.CrudOperation;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -52,7 +52,7 @@ public class FlashcardService {
         flashcardValidator.validateUpdateFlashcardInput(input);
 
         FlashcardEntity oldFlashcard = flashcardRepository.findById(input.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Flashcard with id " + input.getId() + " not found."));
+                .orElseThrow(() -> new EntityNotFoundException("Flashcard with id %s not found.".formatted(input.getId())));
 
         FlashcardEntity updatedFlashcard = flashcardMapper.dtoToEntity(input);
         updatedFlashcard.setParentSet(oldFlashcard.getParentSet());
@@ -65,7 +65,7 @@ public class FlashcardService {
     public UUID deleteFlashcard(UUID assessmentId, UUID flashcardId) {
         FlashcardSetEntity set = flashcardSetRepository.getReferenceById(assessmentId);
         if (!set.getFlashcards().removeIf(x -> x.getId().equals(flashcardId))) {
-            throw new EntityNotFoundException("Flashcard with id " + flashcardId + " not found.");
+            throw new EntityNotFoundException("Flashcard with id %s not found.".formatted(flashcardId));
         }
         flashcardSetRepository.save(set);
         return flashcardId;
@@ -88,7 +88,7 @@ public class FlashcardService {
 
     private void requireFlashcardSetExisting(UUID uuid) {
         if (!flashcardSetRepository.existsById(uuid)) {
-            throw new EntityNotFoundException("Flashcard set with id " + uuid + " not found");
+            throw new EntityNotFoundException("Flashcard set with id %s not found".formatted(uuid));
         }
     }
 
@@ -129,7 +129,7 @@ public class FlashcardService {
      *
      * @param dto event object containing changes to content
      */
-    public void removeContentIds(ContentChangeEvent dto) {
+    public void deleteFlashcardSetIfContentIsDeleted(ContentChangeEvent dto) {
 
         // validate event message
         try {
@@ -143,12 +143,7 @@ public class FlashcardService {
             return;
         }
 
-        // find all flashcard
-        List<FlashcardSetEntity> flashcardSetEntity = flashcardSetRepository.findAllById(dto.getContentIds());
-
-        // delete all found flashcard
-        flashcardSetRepository.deleteAllInBatch(flashcardSetEntity);
-
+        flashcardSetRepository.deleteAllByIdInBatch(dto.getContentIds());
     }
     /**
      * helper function to make sure received event message is complete

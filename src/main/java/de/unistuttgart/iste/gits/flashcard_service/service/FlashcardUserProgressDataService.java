@@ -2,7 +2,7 @@ package de.unistuttgart.iste.gits.flashcard_service.service;
 
 import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
 import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.*;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.*;
 import de.unistuttgart.iste.gits.generated.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +24,25 @@ public class FlashcardUserProgressDataService {
     private final FlashcardService flashcardService;
     private final TopicPublisher topicPublisher;
 
+    /**
+     * Get the progress data for a flashcard
+     *
+     * @param flashcardId the id of the flashcard
+     * @param userId      the id of the user
+     * @return the progress data
+     */
     public FlashcardProgressData getProgressData(UUID flashcardId, UUID userId) {
         var entity = getProgressDataEntity(flashcardId, userId);
         return mapProgressDataEntityToDto(entity);
     }
 
+    /**
+     * Get the progress data for a flashcard set or initialize it if it does not exist yet.
+     *
+     * @param flashcardId the id of the flashcard
+     * @param userId      the id of the user
+     * @return the progress data
+     */
     private FlashcardProgressDataEntity getProgressDataEntity(UUID flashcardId, UUID userId) {
         var primaryKey = new FlashcardProgressDataEntity.PrimaryKey(flashcardId, userId);
         return flashcardProgressDataRepository.findById(primaryKey)
@@ -46,6 +60,17 @@ public class FlashcardUserProgressDataService {
         return flashcardProgressDataRepository.save(progressData);
     }
 
+    /**
+     * Logs that a flashcard has been learned.
+     * If this was the last flashcard of a set, the set is marked as learned
+     * and a UserProgressLogEvent is published.
+     * This will also update the learning interval of the flashcard, depending on whether it was learned successfully.
+     *
+     * @param flashcardId the id of the flashcard
+     * @param userId the id of the user
+     * @param successful whether the flashcard was learned successfully
+     * @return the flashcard
+     */
     public Flashcard logFlashcardLearned(UUID flashcardId, UUID userId, boolean successful) {
         var flashcard = flashcardService.getFlashcardById(flashcardId);
         var progressData = getProgressDataEntity(flashcardId, userId);
@@ -61,7 +86,7 @@ public class FlashcardUserProgressDataService {
         updateProgressDataEntity(progressData, successful);
         flashcardProgressDataRepository.save(progressData);
 
-        publishFlashcardSetLearned(userId, getFlashCardSetAssessmentId(flashcardId));
+        publishFlashcardSetLearned(userId, getFlashcardSetIdForFlashcard(flashcardId));
 
         return flashcard;
     }
@@ -93,7 +118,7 @@ public class FlashcardUserProgressDataService {
         return modelMapper.map(entity, FlashcardProgressDataLog.class);
     }
 
-    private UUID getFlashCardSetAssessmentId(UUID flashcardId) {
+    private UUID getFlashcardSetIdForFlashcard(UUID flashcardId) {
         FlashcardEntity flashcardEntity = this.flashcardRepository.getReferenceById(flashcardId);
         FlashcardSetEntity flashcardSetEntity = this.flashcardSetRepository.getReferenceById(flashcardEntity.getParentSet().getAssessmentId());
         return flashcardSetEntity.getAssessmentId();

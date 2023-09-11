@@ -3,11 +3,9 @@ package de.unistuttgart.iste.gits.flashcard_service.config;
 import de.unistuttgart.iste.gits.common.event.CrudOperation;
 import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
 import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardEntity;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.context.annotation.*;
 
 /**
  * This is a dev-config for the TopicPublisher. It is intended to be used for development only.

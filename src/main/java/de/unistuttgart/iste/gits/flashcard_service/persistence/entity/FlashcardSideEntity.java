@@ -1,8 +1,9 @@
-package de.unistuttgart.iste.gits.flashcard_service.persistence.dao;
+package de.unistuttgart.iste.gits.flashcard_service.persistence.entity;
 
 import de.unistuttgart.iste.gits.common.resource_markdown.ResourceMarkdownEntity;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.util.UUID;
 
 @Entity(name = "FlashcardSide")

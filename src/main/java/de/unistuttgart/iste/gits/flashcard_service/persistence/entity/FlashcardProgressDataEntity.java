@@ -1,10 +1,7 @@
-package de.unistuttgart.iste.gits.flashcard_service.persistence.dao;
+package de.unistuttgart.iste.gits.flashcard_service.persistence.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.OffsetDateTime;

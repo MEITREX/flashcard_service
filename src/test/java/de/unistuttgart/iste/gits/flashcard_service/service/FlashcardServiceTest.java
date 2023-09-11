@@ -2,9 +2,7 @@ package de.unistuttgart.iste.gits.flashcard_service.service;
 
 import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.gits.common.event.CrudOperation;
-import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardEntity;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -14,9 +12,8 @@ import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -46,9 +43,8 @@ class FlashcardServiceTest {
         when(flashcardSetRepository.findAllById(contentChangeEvent.getContentIds())).thenReturn(List.of(flashcardSetEntity));
 
         // invoke method under test
-        flashcardService.removeContentIds(contentChangeEvent);
-        verify(flashcardSetRepository, times(1)).findAllById(any());
-        verify(flashcardSetRepository, times(1)).deleteAllInBatch(any());
+        flashcardService.deleteFlashcardSetIfContentIsDeleted(contentChangeEvent);
+        verify(flashcardSetRepository, times(1)).deleteAllByIdInBatch(any());
     }
     @Test
     void removeContentIdsWithNoIdsToBeRemovedTest() {
@@ -64,10 +60,9 @@ class FlashcardServiceTest {
         when(flashcardSetRepository.findAllById(contentChangeEvent.getContentIds())).thenReturn(new ArrayList<FlashcardSetEntity>());
 
         // invoke method under test
-        flashcardService.removeContentIds(contentChangeEvent);
+        flashcardService.deleteFlashcardSetIfContentIsDeleted(contentChangeEvent);
 
-        verify(flashcardSetRepository, times(1)).findAllById(any());
-        verify(flashcardSetRepository, times(1)).deleteAllInBatch(any());
+        verify(flashcardSetRepository, times(1)).deleteAllByIdInBatch(any());
     }
 
     @Test
@@ -104,7 +99,7 @@ class FlashcardServiceTest {
 
         for (ContentChangeEvent event : events) {
             //invoke method under test
-            flashcardService.removeContentIds(event);
+            flashcardService.deleteFlashcardSetIfContentIsDeleted(event);
             verify(flashcardSetRepository, never()).findAllById(any());
             verify(flashcardSetRepository, never()).deleteAllInBatch(any());
         }

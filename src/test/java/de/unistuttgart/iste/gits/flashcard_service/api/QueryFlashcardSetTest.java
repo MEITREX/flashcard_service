@@ -2,7 +2,7 @@ package de.unistuttgart.iste.gits.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
 import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;

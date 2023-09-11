@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.gits.flashcard_service.persistence.repository;
 
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardProgressDataLogEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardProgressDataLogEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

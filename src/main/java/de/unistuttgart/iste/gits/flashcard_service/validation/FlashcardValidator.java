@@ -14,12 +14,7 @@ public class FlashcardValidator {
      * @param flashcardInput new flashcard input
      */
     public void validateCreateFlashcardInput(CreateFlashcardInput flashcardInput) {
-        boolean isValid = validateSides(flashcardInput.getSides());
-
-        if (!isValid){
-            throw new ValidationException("Flashcards must have at least one Question Side and one Answer Side");
-        }
-
+        validateSides(flashcardInput.getSides());
     }
 
     /**
@@ -38,19 +33,15 @@ public class FlashcardValidator {
      * @param input an updated flashcard input
      */
     public void validateUpdateFlashcardInput(UpdateFlashcardInput input) {
-        boolean isValid = validateSides(input.getSides());
-
-        if (!isValid){
-            throw new ValidationException("Flashcards must have at least one Question and one Answer Side");
-        }
+        validateSides(input.getSides());
     }
 
     /**
      * validates if flashcard has at least one side labeled as question and at least one side labeled as answer
      * @param flashcardSideInputs list of flashcard sides
-     * @return true if both a question side and answer side were found
+     * @throws ValidationException if flashcard has no question or no answer or a side that is neither a question nor an answer
      */
-    private boolean validateSides(List<FlashcardSideInput> flashcardSideInputs){
+    private void validateSides(List<FlashcardSideInput> flashcardSideInputs) {
         boolean hasQuestion = false;
         boolean hasAnswer = false;
         for (FlashcardSideInput flashcardInputSide: flashcardSideInputs) {
@@ -66,9 +57,11 @@ public class FlashcardValidator {
             if ((!flashcardInputSide.getIsQuestion()) && (!flashcardInputSide.getIsAnswer())){
                 throw new ValidationException("Flashcard side must must be at least a question or an answer");
             }
-
         }
-        return hasQuestion && hasAnswer;
+
+        if (!hasQuestion || !hasAnswer) {
+            throw new ValidationException("Flashcards must have at least one Question Side and one Answer Side");
+        }
     }
 
 }

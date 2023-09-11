@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.gits.flashcard_service.persistence.dao;
+package de.unistuttgart.iste.gits.flashcard_service.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

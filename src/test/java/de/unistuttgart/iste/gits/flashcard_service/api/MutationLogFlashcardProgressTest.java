@@ -4,7 +4,7 @@ import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.dao.FlashcardSetEntity;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
 import de.unistuttgart.iste.gits.flashcard_service.test_config.MockTopicPublisherConfiguration;
 import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;
