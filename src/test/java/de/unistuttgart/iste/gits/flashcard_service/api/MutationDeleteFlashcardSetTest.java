@@ -63,7 +63,7 @@ class MutationDeleteFlashcardSetTest {
     @Transactional
     void testDeleteFlashcardSetNotExisting(GraphQlTester tester) {
         // put some data into the database
-        List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository);
+        testUtils.populateFlashcardSetRepository(flashcardSetRepository);
 
         UUID setToDelete = UUID.randomUUID();
 

@@ -58,9 +58,9 @@ type FlashcardProgressDataLog {
 
 type FlashcardSide {
     """
-    Text of this flashcard side as ResourceMarkdown.
+    Text of this flashcard side as rich text in SlateJS json.
     """
-    text: ResourceMarkdown!
+    text: JSON!
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
     """
@@ -85,9 +85,9 @@ input CreateFlashcardInput {
 
 input FlashcardSideInput {
     """
-    Text of this flashcard side. This can be markdown. Max length is 3000 characters.
+    Text of this flashcard side.
     """
-    text: ResourceMarkdownInput!
+    text: JSON!
     """
     Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
     """

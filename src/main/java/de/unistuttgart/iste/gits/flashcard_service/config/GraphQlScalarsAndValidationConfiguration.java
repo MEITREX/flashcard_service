@@ -30,6 +30,7 @@ public class GraphQlScalarsAndValidationConfiguration {
                 .scalar(ExtendedScalars.Time)
                 .scalar(ExtendedScalars.LocalTime)
                 .scalar(ExtendedScalars.UUID)
-                .scalar(ExtendedScalars.Url);
+                .scalar(ExtendedScalars.Url)
+                .scalar(ExtendedScalars.Json);
     }
 }

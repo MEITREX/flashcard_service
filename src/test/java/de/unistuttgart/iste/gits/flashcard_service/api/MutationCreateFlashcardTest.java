@@ -3,18 +3,19 @@ package de.unistuttgart.iste.gits.flashcard_service.api;
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
 import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;
-import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.gits.generated.dto.Flashcard;
+import de.unistuttgart.iste.gits.generated.dto.FlashcardSide;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.annotation.Commit;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,9 +28,6 @@ class MutationCreateFlashcardTest {
 
     @Autowired
     private FlashcardRepository flashcardRepository;
-
-    @Autowired
-    private FlashcardMapper flashcardMapper;
 
     @Autowired
     private TestUtils testUtils;
@@ -49,13 +47,13 @@ class MutationCreateFlashcardTest {
                   label: "Side 11",
                   isQuestion: true,
                   isAnswer: false,
-                  text: {text: "Question 1"}
+                  text: "Question 1"
                 },
                 {
                   label: "Side 21",
                   isQuestion: false,
                   isAnswer: true,
-                  text: {text: "Answer 1"}
+                  text: "Answer 1"
                 }
                 ]
               }) {
@@ -64,10 +62,7 @@ class MutationCreateFlashcardTest {
                   label
                   isQuestion
                   isAnswer
-                  text {
-                    text,
-                    referencedMediaRecordIds
-                  }
+                  text
                 }
               }
             }
@@ -87,8 +82,8 @@ class MutationCreateFlashcardTest {
         // Assert the values of the data returned by the createFlashcard mutation
         assertThat(createdFlashcard.getId()).isNotNull();
         assertThat(createdFlashcard.getSides()).containsExactlyInAnyOrder(
-                new FlashcardSide(new ResourceMarkdown("Question 1", Collections.emptyList()), "Side 11", true, false),
-                new FlashcardSide(new ResourceMarkdown("Answer 1", Collections.emptyList()), "Side 21", false, true)
+                new FlashcardSide("Question 1", "Side 11", true, false),
+                new FlashcardSide("Answer 1", "Side 21", false, true)
         );
 
         // Assert that the flashcard was added to the set in the repository
@@ -105,11 +100,11 @@ class MutationCreateFlashcardTest {
         assertThat(flashcardFromRepo.getSides().get(0))
                 .returns("Side 11", FlashcardSideEntity::getLabel)
                 .returns(true, FlashcardSideEntity::isQuestion)
-                .returns("Question 1", side -> side.getText().getText());
+                .returns("Question 1", FlashcardSideEntity::getText);
         assertThat(flashcardFromRepo.getSides().get(1))
                 .returns("Side 21", FlashcardSideEntity::getLabel)
                 .returns(false, FlashcardSideEntity::isQuestion)
-                .returns("Answer 1", side -> side.getText().getText());
+                .returns("Answer 1", FlashcardSideEntity::getText);
     }
 
     @Test
@@ -125,13 +120,13 @@ class MutationCreateFlashcardTest {
                   label: "Side 11",
                   isQuestion: false,
                   isAnswer: true,
-                  text: {text: "Question 1"}
+                  text: "Question 1"
                 },
                 {
                   label: "Side 21",
                   isQuestion: false,
                   isAnswer: true,
-                  text: {text: "Answer 1"}
+                  text: "Answer 1"
                 }
                 ]
               }) {
@@ -140,10 +135,7 @@ class MutationCreateFlashcardTest {
                   label
                   isQuestion
                   isAnswer
-                  text {
-                    text,
-                    referencedMediaRecordIds
-                  }
+                  text
                 }
               }
             }
@@ -175,13 +167,13 @@ class MutationCreateFlashcardTest {
                   label: "Side 11",
                   isQuestion: true,
                   isAnswer: false,
-                  text: {text: "Question 1"}
+                  text: "Question 1"
                 },
                 {
                   label: "Side 21",
                   isQuestion: false,
                   isAnswer: false,
-                  text: {text: "Answer 1"}
+                  text: "Answer 1"
                 }
                 ]
               }) {
@@ -190,10 +182,7 @@ class MutationCreateFlashcardTest {
                   label
                   isQuestion
                   isAnswer
-                  text {
-                    text,
-                    referencedMediaRecordIds
-                  }
+                  text
                 }
               }
             }

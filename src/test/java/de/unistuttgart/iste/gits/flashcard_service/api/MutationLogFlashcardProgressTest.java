@@ -3,7 +3,6 @@ package de.unistuttgart.iste.gits.flashcard_service.api;
 import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -12,7 +11,6 @@ import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.HttpGraphQlTester;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ContextConfiguration;
@@ -67,7 +65,8 @@ class MutationLogFlashcardProgressTest {
                     "id": "%s",
                     "userName": "MyUserName",
                     "firstName": "John",
-                    "lastName": "Doe"
+                    "lastName": "Doe",
+                    "courseMemberships": []
                 }
                 """.formatted(userId1.toString());
 

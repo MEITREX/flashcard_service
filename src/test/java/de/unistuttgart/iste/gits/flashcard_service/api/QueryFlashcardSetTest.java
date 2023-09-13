@@ -44,10 +44,7 @@ class QueryFlashcardSetTest {
                               label,
                               isQuestion,
                               isAnswer,
-                              text {
-                                 text,
-                                 referencedMediaRecordIds
-                              }
+                              text
                             }
                         }
                     }

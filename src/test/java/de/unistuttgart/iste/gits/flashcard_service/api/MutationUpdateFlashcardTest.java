@@ -6,14 +6,16 @@ import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardS
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
 import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;
-import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.gits.generated.dto.Flashcard;
+import de.unistuttgart.iste.gits.generated.dto.FlashcardSide;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.annotation.Commit;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,13 +52,13 @@ class MutationUpdateFlashcardTest {
                     label: "New_Side 1",
                     isQuestion: true,
                     isAnswer: false,
-                    text: {text: "New_Question 1"}
+                    text: "{text: \\"New_Question 1\\"}"
                   },
                   {
                     label: "New_Side 2",
                     isQuestion: false,
                     isAnswer: true,
-                    text: {text: "New_Answer 1 [[media/b4f2e8d1-a1e6-4834-8f5d-ac793f18e854]]"}
+                    text: "{text: \\"New_Answer 1\\"}"
                   }
                 ]
               }) {
@@ -65,7 +67,7 @@ class MutationUpdateFlashcardTest {
                   label
                   isQuestion
                   isAnswer
-                  text {text, referencedMediaRecordIds}
+                  text
                 }
               }
             }
@@ -84,11 +86,10 @@ class MutationUpdateFlashcardTest {
         // Assert the values of the data returned by the updateFlashcard mutation
         assertThat(updatedFlashcard.getId()).isEqualTo(flashcardToUpdate);
         assertThat(updatedFlashcard.getSides()).containsExactlyInAnyOrder(
-                new FlashcardSide(new ResourceMarkdown("New_Question 1", Collections.emptyList()),
+                new FlashcardSide("{text: \"New_Question 1\"}",
                         "New_Side 1",
                         true, false),
-                new FlashcardSide(new ResourceMarkdown("New_Answer 1 [[media/b4f2e8d1-a1e6-4834-8f5d-ac793f18e854]]",
-                                                       List.of(UUID.fromString("b4f2e8d1-a1e6-4834-8f5d-ac793f18e854"))),
+                new FlashcardSide("{text: \"New_Answer 1\"}",
                         "New_Side 2",
                         false, true)
         );

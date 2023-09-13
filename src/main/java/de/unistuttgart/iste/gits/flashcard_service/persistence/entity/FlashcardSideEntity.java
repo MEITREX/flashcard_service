@@ -1,6 +1,5 @@
 package de.unistuttgart.iste.gits.flashcard_service.persistence.entity;
 
-import de.unistuttgart.iste.gits.common.resource_markdown.ResourceMarkdownEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,8 +15,8 @@ public class FlashcardSideEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    @Embedded
-    private ResourceMarkdownEntity text;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String text;
 
     @Column(nullable = false, length = 255)
     private String label;

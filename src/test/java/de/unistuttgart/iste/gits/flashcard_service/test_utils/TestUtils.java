@@ -1,6 +1,5 @@
 package de.unistuttgart.iste.gits.flashcard_service.test_utils;
 
-import de.unistuttgart.iste.gits.common.resource_markdown.ResourceMarkdownEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
 import jakarta.transaction.Transactional;
@@ -27,13 +26,13 @@ public class TestUtils {
         flashcard1.setParentSet(set1);
         flashcard1.setSides(List.of(
                 new FlashcardSideEntity(UUID.randomUUID(),
-                        new ResourceMarkdownEntity("Question 1"),
+                        "Question 1",
                         "Question Label",
                         true,
                         false,
                         flashcard1),
                 new FlashcardSideEntity(UUID.randomUUID(),
-                        new ResourceMarkdownEntity("Answer 1"),
+                        "Answer 1",
                         "Answer Label",
                         false,
                         true,
@@ -45,13 +44,13 @@ public class TestUtils {
         flashcard2.setParentSet(set1);
         flashcard2.setSides(List.of(
                 new FlashcardSideEntity(UUID.randomUUID(),
-                        new ResourceMarkdownEntity("Question 2"),
+                        "Question 2",
                         "Question Label",
                         true,
                         false,
                         flashcard2),
                 new FlashcardSideEntity(UUID.randomUUID(),
-                        new ResourceMarkdownEntity("Answer 2"),
+                        "Answer 2",
                         "Answer Label",
                         false,
                         true,
@@ -68,13 +67,13 @@ public class TestUtils {
         flashcard3.setParentSet(set2);
         flashcard3.setSides(List.of(
                 new FlashcardSideEntity(UUID.randomUUID(),
-                        new ResourceMarkdownEntity("Question 3"),
+                        "Question 3",
                         "Question Label",
                         true,
                         false,
                         flashcard3),
                 new FlashcardSideEntity(UUID.randomUUID(),
-                        new ResourceMarkdownEntity("Answer 3"),
+                        "Answer 3",
                         "Answer Label",
                         false,
                         true,
@@ -86,13 +85,13 @@ public class TestUtils {
         flashcard4.setParentSet(set2);
         flashcard4.setSides(List.of(
                 new FlashcardSideEntity(UUID.randomUUID(),
-                        new ResourceMarkdownEntity("Question 4"),
+                        "Question 4",
                         "Question Label",
                         true,
                         false,
                         flashcard4),
                 new FlashcardSideEntity(UUID.randomUUID(),
-                        new ResourceMarkdownEntity("Answer 4"),
+                        "Answer 4",
                         "Answer Label",
                         false,
                         true,
