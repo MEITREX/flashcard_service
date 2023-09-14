@@ -1,14 +1,19 @@
 # Flashcard Service
 
-The Flashcard Service within the platform serves as an indispensable tool for facilitating and reinforcing repetitive learning, ensuring that students effectively retain the knowledge acquired throughout their course journey. 
-These digital flashcards emulate the concept of traditional physical flashcards, but with an added layer of interactivity.
+The Flashcard Service is a central component of our learning platform, specifically designed for interactive flashcards. These flashcards consist of multiple sides, each containing text, images, and customizable labels. Functionalities are follows: 
 
-Each flashcard embodies a two-sided structure, resembling the classic format. On one side, it presents educational content in various forms, such as text, images, or even videos, along with a thought-provoking question pertaining to the material that students have previously engaged with. 
-Lecturers manually create these questions to tailor the learning experience.
+1. **Interactive Flashcards:** Users can create and interact with flashcards, customizing the content on each side.
 
-Flipping to the other side of the virtual flashcard reveals the answer to the posed question. Here, students can gauge their understanding and knowledge retention by assessing whether they knew the answer beforehand or not. 
-This two-step interaction is designed to actively engage students in self-assessment and reflection.
+2. **Question and Answer Designation:** Users can designate sides as 'Questions,' determining which side they need to guess first.
 
-One of the key features of this service is its adaptability. 
-After reading the answer and assessing their knowledge, students can intuitively swipe the flashcard to indicate whether they answered correctly. If they correctly knew the answer, the flashcard will be intelligently spaced out in the repetition cycle, ensuring that it doesn't reappear immediately. Conversely, if the student didn't know the answer, the flashcard will be scheduled for more frequent review, effectively reinforcing the learning process.
+3. **Spaced Repetition:** The service utilizes spaced repetition to optimize the presentation of flashcards, ensuring effective learning.
 
+4. **Learning Progress Tracking:** The service tracks user progress with flashcards,success rates, and suggesting future study intervals.
+
+## Purpose
+
+The Flashcard Service is designed to:
+
+1. **Enhance Learning:** By offering interactive flashcards, it significantly improves the learning experience for users.
+
+2. **Optimize Learning:** Through spaced repetition techniques, the service ensures that flashcards are presented at the most effective times, enhancing retention and understanding while tracking user progress.
