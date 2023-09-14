@@ -10,7 +10,8 @@ set title=Flashcard Service API
 
 REM install graphql-markdown if not installed
 if not exist node_modules\graphql-markdown (
-  npm install graphql-markdown
+   echo Installing graphql-markdown, run this script again after installation
+   npm install graphql-markdown
 )
 
 npx graphql-markdown "http://localhost:%port%/graphql" --title "%title%" > api.md
