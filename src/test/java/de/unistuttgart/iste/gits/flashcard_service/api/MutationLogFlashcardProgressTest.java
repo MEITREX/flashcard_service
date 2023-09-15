@@ -39,13 +39,11 @@ class MutationLogFlashcardProgressTest {
     void testLogFlashcardProgress(HttpGraphQlTester graphQlTester) {
         List<FlashcardSetEntity> flashcardSet = new TestUtils().populateFlashcardSetRepository(flashcardSetRepository);
 
-
         UUID userId1 = UUID.randomUUID();
         FlashcardSetEntity flashcardSetEntity = flashcardSet.get(0);
         UUID flashcardSetId = flashcardSetEntity.getAssessmentId();
         UUID flashcardId1 = flashcardSetEntity.getFlashcards().get(0).getId();
         UUID flashcardId2 = flashcardSetEntity.getFlashcards().get(1).getId();
-
 
         String mutation = """
                 mutation logFlashcardProgress($id: UUID!, $successful: Boolean!) {
@@ -93,7 +91,7 @@ class MutationLogFlashcardProgressTest {
                 .path("logFlashcardLearned.id").entity(UUID.class).isEqualTo(flashcardId2);
 
         UserProgressLogEvent expectedEvent = UserProgressLogEvent.builder()
-
+                .userId(userId1)
                 .contentId(flashcardSetId)
                 .correctness(0.5)
                 .success(true)
