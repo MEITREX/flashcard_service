@@ -2,6 +2,7 @@ package de.unistuttgart.iste.gits.flashcard_service.service;
 
 import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.gits.common.event.CrudOperation;
+import de.unistuttgart.iste.gits.common.exception.IncompleteEventMessageException;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
@@ -129,15 +130,11 @@ public class FlashcardService {
      *
      * @param dto event object containing changes to content
      */
-    public void deleteFlashcardSetIfContentIsDeleted(ContentChangeEvent dto) {
+    public void deleteFlashcardSetIfContentIsDeleted(ContentChangeEvent dto) throws IncompleteEventMessageException {
 
         // validate event message
-        try {
-            checkCompletenessOfDto(dto);
-        } catch (NullPointerException e) {
-            log.error(e.getMessage());
-            return;
-        }
+        checkCompletenessOfDto(dto);
+
         // only consider DELETE Operations
         if (!dto.getOperation().equals(CrudOperation.DELETE) || dto.getContentIds().isEmpty()) {
             return;
@@ -149,11 +146,11 @@ public class FlashcardService {
      * helper function to make sure received event message is complete
      *
      * @param dto event message under evaluation
-     * @throws NullPointerException if any of the fields are null
+     * @throws IncompleteEventMessageException if any of the fields are null
      */
-    private void checkCompletenessOfDto(ContentChangeEvent dto) throws NullPointerException {
+    private void checkCompletenessOfDto(ContentChangeEvent dto) throws IncompleteEventMessageException {
         if (dto.getOperation() == null || dto.getContentIds() == null) {
-            throw new NullPointerException("incomplete message received: all fields of a message must be non-null");
+            throw new IncompleteEventMessageException(IncompleteEventMessageException.ERROR_INCOMPLETE_MESSAGE);
         }
     }
 }

@@ -28,7 +28,7 @@ public class SubscriptionController {
             try {
                 flashcardService.deleteFlashcardSetIfContentIsDeleted(cloudEvent.getData());
             } catch (Exception e) {
-                log.error("Error while processing content change event", e);
+                log.error("Error while processing content-changes event. {}", e.getMessage());
             }
         });
     }
