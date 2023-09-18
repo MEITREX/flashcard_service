@@ -22,48 +22,50 @@ class MutationCreateFlashcardSetTest {
     @Commit
     void testCreateFlashcardSet(GraphQlTester tester) {
         UUID assessmentId = UUID.randomUUID();
-        String query = """
-                
-            mutation ($assessmentId: UUID!){
-              createFlashcardSet(assessmentId: $assessmentId, input: {
-                 flashcards: [
-                    {
-                      sides: [
+        UUID courseId = UUID.randomUUID();
+        String query =
+            """    
+            mutation ($courseId: UUID!, $assessmentId: UUID!){
+                _internal_createFlashcardSet(courseId: $courseId, assessmentId: $assessmentId, input: {
+                    flashcards: [
                         {
-                          label: "Side 1",
-                          isQuestion: true,
-                          isAnswer: false,
-                          text: "Question 1"
+                            sides: [
+                                {
+                                    label: "Side 1",
+                                    isQuestion: true,
+                                    isAnswer: false,
+                                    text: "Question 1"
+                                },
+                                {
+                                    label: "Side 2",
+                                    isQuestion: false,
+                                    isAnswer: true,
+                                    text: "Answer 1"
+                                }
+                            ]
                         },
                         {
-                          label: "Side 2",
-                          isQuestion: false,
-                          isAnswer: true,
-                          text: "Answer 1"
+                            sides: [
+                                {
+                                    label: "Side 1",
+                                    isQuestion: true,
+                                    isAnswer: false,
+                                    text: "Question 2"
+                                },
+                                {
+                                    label: "Side 2",
+                                    isQuestion: false,
+                                    isAnswer: true,
+                                    text: "Answer 2"
+                                }
+                            ]
                         }
-                      ]
-                    },
-                    {
-                      sides: [
-                        {
-                          label: "Side 1",
-                          isQuestion: true,
-                          isAnswer: false,
-                          text: "Question 2"
-                        },
-                        {
-                          label: "Side 2",
-                          isQuestion: false,
-                          isAnswer: true,
-                          text: "Answer 2"
-                        }
-                      ]
-                    }
-                 
-              ]
-            })
+                    ]
+                }
+            )
             {
                assessmentId
+               courseId
                  flashcards {
                      sides {
                      label
@@ -78,11 +80,13 @@ class MutationCreateFlashcardSetTest {
 
         FlashcardSet createdFlashcardSet = tester.document(query)
                 .variable("assessmentId", assessmentId)
+                .variable("courseId", courseId)
                 .execute()
-                .path("createFlashcardSet").entity(FlashcardSet.class).get();
+                .path("_internal_createFlashcardSet").entity(FlashcardSet.class).get();
 
         // check that returned Flashcard is correct
-        assertThat(createdFlashcardSet.getAssessmentId(), is(notNullValue()));
+        assertThat(createdFlashcardSet.getAssessmentId(), is(assessmentId));
+        assertThat(createdFlashcardSet.getCourseId(), is(courseId));
 
 
         List<Flashcard> flashcards = createdFlashcardSet.getFlashcards();

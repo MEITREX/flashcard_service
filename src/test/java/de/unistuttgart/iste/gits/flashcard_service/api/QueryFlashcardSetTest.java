@@ -38,6 +38,7 @@ class QueryFlashcardSetTest {
                 query($ids: [UUID!]!) {
                     findFlashcardSetsByAssessmentIds(assessmentIds: $ids) {
                         assessmentId,
+                        courseId,
                         flashcards {
                             id,
                             sides {

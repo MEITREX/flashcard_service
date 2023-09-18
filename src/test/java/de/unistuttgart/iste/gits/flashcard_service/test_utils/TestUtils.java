@@ -20,6 +20,7 @@ public class TestUtils {
     public List<FlashcardSetEntity> populateFlashcardSetRepository(FlashcardSetRepository repo) {
         FlashcardSetEntity set1 = new FlashcardSetEntity();
         set1.setAssessmentId(UUID.randomUUID());
+        set1.setCourseId(UUID.randomUUID());
 
         FlashcardEntity flashcard1 = new FlashcardEntity();
         flashcard1.setId(UUID.randomUUID());
@@ -61,6 +62,7 @@ public class TestUtils {
 
         FlashcardSetEntity set2 = new FlashcardSetEntity();
         set2.setAssessmentId(UUID.randomUUID());
+        set2.setCourseId(UUID.randomUUID());
 
         FlashcardEntity flashcard3 = new FlashcardEntity();
         flashcard3.setId(UUID.randomUUID());

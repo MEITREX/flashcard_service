@@ -7,6 +7,9 @@ import java.time.OffsetDateTime;
 import java.util.*;
 
 @Entity(name = "FlashcardSet")
+@Table(indexes = {
+        @Index(name = "idx_flashcard_set_course_id", columnList = "course_id")
+})
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,6 +17,9 @@ import java.util.*;
 public class FlashcardSetEntity {
     @Id
     private UUID assessmentId;
+
+    @Column(name = "course_id", nullable = false)
+    private UUID courseId;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "parentSet")
     private List<FlashcardEntity> flashcards;

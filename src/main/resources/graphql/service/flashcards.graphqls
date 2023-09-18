@@ -124,6 +124,10 @@ type FlashcardSet {
     """
     assessmentId: UUID!
     """
+    Id of the course this flashcard set belongs to.
+    """
+    courseId: UUID!
+    """
     List of flashcards in this set.
     """
     flashcards: [Flashcard!]!
