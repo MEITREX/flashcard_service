@@ -7,10 +7,12 @@
   * [Mutation](#mutation)
   * [Objects](#objects)
     * [Flashcard](#flashcard)
+    * [FlashcardLearnedFeedback](#flashcardlearnedfeedback)
     * [FlashcardProgressData](#flashcardprogressdata)
     * [FlashcardProgressDataLog](#flashcardprogressdatalog)
     * [FlashcardSet](#flashcardset)
     * [FlashcardSetMutation](#flashcardsetmutation)
+    * [FlashcardSetProgress](#flashcardsetprogress)
     * [FlashcardSide](#flashcardside)
     * [PaginationInfo](#paginationinfo)
   * [Inputs](#inputs)
@@ -161,7 +163,7 @@ Modify a flashcard set.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>logFlashcardLearned</strong></td>
-<td valign="top"><a href="#flashcard">Flashcard</a>!</td>
+<td valign="top"><a href="#flashcardlearnedfeedback">FlashcardLearnedFeedback</a>!</td>
 <td>
 
 
@@ -224,6 +226,54 @@ List of sides of this flashcard.
 
 Progress data of the flashcard, specific to given users.
 If userId is not provided, the progress data of the current user is returned.
+
+</td>
+</tr>
+</tbody>
+</table>
+
+### FlashcardLearnedFeedback
+
+
+Feedback for the logFlashcardLearned mutation.
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>success</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td>
+
+
+Whether the flashcard was learned correctly.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>nextLearnDate</strong></td>
+<td valign="top"><a href="#datetime">DateTime</a>!</td>
+<td>
+
+
+Next date when the flashcard should be learned again.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>flashcardSetProgress</strong></td>
+<td valign="top"><a href="#flashcardsetprogress">FlashcardSetProgress</a>!</td>
+<td>
+
+
+Progress of the whole flashcard set.
 
 </td>
 </tr>
@@ -429,6 +479,41 @@ Deletes the flashcard with the specified ID. Throws an error if the flashcard do
 <td colspan="2" align="right" valign="top">id</td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td></td>
+</tr>
+</tbody>
+</table>
+
+### FlashcardSetProgress
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>percentageLearned</strong></td>
+<td valign="top"><a href="#float">Float</a>!</td>
+<td>
+
+
+Percentage of how many flashcards in the set have been learned.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>correctness</strong></td>
+<td valign="top"><a href="#float">Float</a>!</td>
+<td>
+
+
+Percentage of how many flashcards have been learned correctly of the ones that have been learned.
+
+</td>
 </tr>
 </tbody>
 </table>

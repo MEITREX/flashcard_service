@@ -19,7 +19,7 @@ public class FlashcardProgressDataLogEntity {
     @Column(nullable = false)
     private boolean success;
 
-    @Column(nullable = false)
+    @OrderColumn(nullable = false)
     private OffsetDateTime learnedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

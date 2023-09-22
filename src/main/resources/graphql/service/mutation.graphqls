@@ -23,7 +23,7 @@ type Mutation {
     """
     Logs that a user has learned a flashcard.
     """
-    logFlashcardLearned(input: LogFlashcardLearnedInput!): Flashcard!
+    logFlashcardLearned(input: LogFlashcardLearnedInput!): FlashcardLearnedFeedback!
 }
 
 type FlashcardSetMutation {
@@ -46,4 +46,33 @@ type FlashcardSetMutation {
     Deletes the flashcard with the specified ID. Throws an error if the flashcard does not exist.
     """
     deleteFlashcard(id: UUID!): UUID!
+}
+
+"""
+Feedback for the logFlashcardLearned mutation.
+"""
+type FlashcardLearnedFeedback {
+    """
+    Whether the flashcard was learned correctly.
+    """
+    success: Boolean!
+    """
+    Next date when the flashcard should be learned again.
+    """
+    nextLearnDate: DateTime!
+    """
+    Progress of the whole flashcard set.
+    """
+    flashcardSetProgress: FlashcardSetProgress!
+}
+
+type FlashcardSetProgress {
+    """
+    Percentage of how many flashcards in the set have been learned.
+    """
+    percentageLearned: Float!
+    """
+    Percentage of how many flashcards have been learned correctly of the ones that have been learned.
+    """
+    correctness: Float!
 }

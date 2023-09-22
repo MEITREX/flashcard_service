@@ -67,12 +67,11 @@ public class FlashcardUserProgressDataService {
      * This will also update the learning interval of the flashcard, depending on whether it was learned successfully.
      *
      * @param flashcardId the id of the flashcard
-     * @param userId the id of the user
-     * @param successful whether the flashcard was learned successfully
-     * @return the flashcard
+     * @param userId      the id of the user
+     * @param successful  whether the flashcard was learned successfully
+     * @return the feedback for the flashcard
      */
-    public Flashcard logFlashcardLearned(UUID flashcardId, UUID userId, boolean successful) {
-        var flashcard = flashcardService.getFlashcardById(flashcardId);
+    public FlashcardLearnedFeedback logFlashcardLearned(UUID flashcardId, UUID userId, boolean successful) {
         var progressData = getProgressDataEntity(flashcardId, userId);
         var logData = new FlashcardProgressDataLogEntity();
         logData.setSuccess(successful);
@@ -86,9 +85,56 @@ public class FlashcardUserProgressDataService {
         updateProgressDataEntity(progressData, successful);
         flashcardProgressDataRepository.save(progressData);
 
-        publishFlashcardSetLearned(userId, getFlashcardSetIdForFlashcard(flashcardId));
+        FlashcardSetEntity flashcardSetEntity = getFlashcardSetForFlashcard(flashcardId);
+        publishFlashcardSetLearned(userId, flashcardSetEntity.getAssessmentId());
 
-        return flashcard;
+        return createFeedback(progressData, successful, flashcardSetEntity, userId);
+    }
+
+    private FlashcardLearnedFeedback createFeedback(
+                                                    FlashcardProgressDataEntity progressData,
+                                                    boolean successful,
+                                                    FlashcardSetEntity flashcardSetEntity,
+                                                    UUID userId) {
+        var result = new FlashcardLearnedFeedback();
+        result.setSuccess(successful);
+        result.setNextLearnDate(progressData.getNextLearn());
+
+        // calculate progress for the whole set and correctness
+        var flashcards = flashcardSetEntity.getFlashcards();
+        int numberOfFlashcardsNotLearnedInSet = 0;
+        int correctlyLearnedFlashcards = 0;
+
+        for (FlashcardEntity flashcardEntity : flashcards) {
+            FlashcardProgressDataEntity progressDataOfCurrentCard = getProgressDataEntity(flashcardEntity.getId(), userId);
+            if (wasNotLearnedInCurrentIteration(flashcardSetEntity, progressDataOfCurrentCard)) {
+                numberOfFlashcardsNotLearnedInSet++;
+            } else if (wasLearnedSuccessful(progressDataOfCurrentCard)) {
+                correctlyLearnedFlashcards++;
+            }
+        }
+
+        int flashcardsLearnedInSet = flashcards.size() - numberOfFlashcardsNotLearnedInSet;
+
+        FlashcardSetProgress flashcardSetProgress = FlashcardSetProgress.builder()
+                .setPercentageLearned((double) flashcardsLearnedInSet / flashcards.size())
+                .setCorrectness((double) correctlyLearnedFlashcards / flashcardsLearnedInSet)
+                .build();
+        result.setFlashcardSetProgress(flashcardSetProgress);
+        return result;
+    }
+
+    private static boolean wasLearnedSuccessful(FlashcardProgressDataEntity progressData) {
+        return progressData.getFlashcardProgressDataLogs().stream()
+                .findFirst()
+                .map(FlashcardProgressDataLogEntity::isSuccess)
+                .orElse(false);
+    }
+
+    private static boolean wasNotLearnedInCurrentIteration(FlashcardSetEntity flashcardSetEntity, FlashcardProgressDataEntity progressData) {
+        return progressData.getLastLearned() == null
+               // if the flashcard was learned before the last time the set was learned, it was not learned in the current iteration
+               || progressData.getNextLearn().isBefore(flashcardSetEntity.getLastLearned().orElse(OffsetDateTime.MIN));
     }
 
     private void updateProgressDataEntity(FlashcardProgressDataEntity progressData, boolean success) {
@@ -118,10 +164,9 @@ public class FlashcardUserProgressDataService {
         return modelMapper.map(entity, FlashcardProgressDataLog.class);
     }
 
-    private UUID getFlashcardSetIdForFlashcard(UUID flashcardId) {
+    private FlashcardSetEntity getFlashcardSetForFlashcard(UUID flashcardId) {
         FlashcardEntity flashcardEntity = this.flashcardRepository.getReferenceById(flashcardId);
-        FlashcardSetEntity flashcardSetEntity = this.flashcardSetRepository.getReferenceById(flashcardEntity.getParentSet().getAssessmentId());
-        return flashcardSetEntity.getAssessmentId();
+        return this.flashcardSetRepository.getReferenceById(flashcardEntity.getParentSet().getAssessmentId());
     }
 
     private void publishFlashcardSetLearned(UUID userId, UUID flashcardSetId) {

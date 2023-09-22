@@ -9,8 +9,10 @@ import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.Flashc
 import de.unistuttgart.iste.gits.flashcard_service.test_config.MockTopicPublisherConfiguration;
 import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;
 import jakarta.transaction.Transactional;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.HttpGraphQlTester;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,6 +35,28 @@ class MutationLogFlashcardProgressTest {
     @Autowired
     private TopicPublisher topicPublisher;
 
+    private static final String mutation = """
+                mutation logFlashcardProgress($id: UUID!, $successful: Boolean!) {
+                    logFlashcardLearned(
+                       input: {
+                        flashcardId: $id,
+                        successful: $successful
+                       }
+                    ) {
+                        success
+                        nextLearnDate
+                        flashcardSetProgress {
+                            correctness
+                            percentageLearned
+                        }
+                    }
+                    
+                }
+                """;
+
+    /**
+     * Tests that the mutation "logFlashcardProgress" works as expected
+     */
     @Test
     @Transactional
     @Commit
@@ -45,19 +69,6 @@ class MutationLogFlashcardProgressTest {
         UUID flashcardId1 = flashcardSetEntity.getFlashcards().get(0).getId();
         UUID flashcardId2 = flashcardSetEntity.getFlashcards().get(1).getId();
 
-        String mutation = """
-                mutation logFlashcardProgress($id: UUID!, $successful: Boolean!) {
-                    logFlashcardLearned(
-                       input: {
-                        flashcardId: $id,
-                        successful: $successful
-                       }
-                    ) {
-                        id
-                    }
-                    
-                }
-                """;
         String currentUser = """
                 {
                     "id": "%s",
@@ -68,27 +79,20 @@ class MutationLogFlashcardProgressTest {
                 }
                 """.formatted(userId1.toString());
 
-        graphQlTester.mutate()
-                .header("CurrentUser", currentUser)
-                .build()
-                .document(mutation)
-                .variable("id", flashcardId1)
-                .variable("successful", true)
-                .execute()
-                .path("logFlashcardLearned.id").entity(UUID.class).isEqualTo(flashcardId1);
+        runMutationLogFlashcardLearned(graphQlTester, currentUser, flashcardId1, true)
+                .path("logFlashcardLearned.success").entity(Boolean.class).isEqualTo(true)
+                .path("logFlashcardLearned.flashcardSetProgress.correctness").entity(Float.class).isEqualTo(1.0f)
+                .path("logFlashcardLearned.flashcardSetProgress.percentageLearned").entity(Float.class).isEqualTo(0.5f);
 
         verify(topicPublisher, never()).notifyFlashcardSetLearned(any());
+
         flashcardSetEntity = flashcardSetRepository.findById(flashcardSetId).orElseThrow();
         assertThat(flashcardSetEntity.getLastLearned().isPresent(), is(false));
 
-        graphQlTester.mutate()
-                .header("CurrentUser", currentUser)
-                .build()
-                .document(mutation)
-                .variable("id", flashcardId2)
-                .variable("successful", false)
-                .execute()
-                .path("logFlashcardLearned.id").entity(UUID.class).isEqualTo(flashcardId2);
+        runMutationLogFlashcardLearned(graphQlTester, currentUser, flashcardId2, false)
+                .path("logFlashcardLearned.success").entity(Boolean.class).isEqualTo(false)
+                .path("logFlashcardLearned.flashcardSetProgress.correctness").entity(Float.class).isEqualTo(0.5f)
+                .path("logFlashcardLearned.flashcardSetProgress.percentageLearned").entity(Float.class).isEqualTo(1.0f);
 
         UserProgressLogEvent expectedEvent = UserProgressLogEvent.builder()
                 .userId(userId1)
@@ -107,26 +111,28 @@ class MutationLogFlashcardProgressTest {
         reset(topicPublisher);
         expectedEvent.setCorrectness(1.0);
 
-        graphQlTester.mutate()
-                .header("CurrentUser", currentUser)
-                .build()
-                .document(mutation)
-                .variable("id", flashcardId1)
-                .variable("successful", true)
-                .execute()
-                .path("logFlashcardLearned.id").entity(UUID.class).isEqualTo(flashcardId1);
+        runMutationLogFlashcardLearned(graphQlTester, currentUser, flashcardId1, true)
+                .errors().verify();
 
         verify(topicPublisher, never()).notifyFlashcardSetLearned(any());
 
-        graphQlTester.mutate()
+        runMutationLogFlashcardLearned(graphQlTester, currentUser, flashcardId2, true)
+                .errors().verify();
+
+        verify(topicPublisher).notifyFlashcardSetLearned(expectedEvent);
+    }
+
+    @NotNull
+    private static GraphQlTester.Response runMutationLogFlashcardLearned(HttpGraphQlTester graphQlTester,
+                                                                         String currentUser,
+                                                                         UUID flashcardId,
+                                                                         boolean success) {
+        return graphQlTester.mutate()
                 .header("CurrentUser", currentUser)
                 .build()
                 .document(mutation)
-                .variable("id", flashcardId2)
-                .variable("successful", true)
-                .execute()
-                .path("logFlashcardLearned.id").entity(UUID.class).isEqualTo(flashcardId2);
-
-        verify(topicPublisher).notifyFlashcardSetLearned(expectedEvent);
+                .variable("id", flashcardId)
+                .variable("successful", success)
+                .execute();
     }
 }
