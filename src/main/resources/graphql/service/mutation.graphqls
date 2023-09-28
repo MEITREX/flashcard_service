@@ -6,8 +6,10 @@ type Mutation {
     """
     Creates a new flashcard set. Mutation is only accessible internally within the system by other
     services and the gateway.
+    ⚠️ This mutation is only accessible internally in the system and allows the caller to create FlashcardSets without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
     """
-    _internal_createFlashcardSet(courseId: UUID!, assessmentId: UUID!, input: CreateFlashcardSetInput!): FlashcardSet!
+    _internal_noauth_createFlashcardSet(courseId: UUID!, assessmentId: UUID!, input: CreateFlashcardSetInput!): FlashcardSet!
 
     """
     Deletes a flashcard set. Throws an error if the flashcard set does not exist.
@@ -18,11 +20,13 @@ type Mutation {
 
     """
     Modify a flashcard set.
+    🔒 The user must be an admin the course the flashcard set is in to perform this action.
     """
     mutateFlashcardSet(assessmentId: UUID!): FlashcardSetMutation!
 
     """
     Logs that a user has learned a flashcard.
+    🔒 The user must be enrolled in the course the flashcard set is in to perform this action.
     """
     logFlashcardLearned(input: LogFlashcardLearnedInput!): FlashcardLearnedFeedback!
 }

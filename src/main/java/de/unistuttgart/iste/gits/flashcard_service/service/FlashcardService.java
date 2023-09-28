@@ -114,6 +114,19 @@ public class FlashcardService {
     }
 
     /**
+     * Returns the id of the course that the flashcards with the given ids belong to.
+     *
+     * @param flashcardIds list of flashcard ids
+     * @return list of course ids, in the same order as the flashcard ids.
+     */
+    public List<UUID> getCourseIdsForFlashcardIds(List<UUID> flashcardIds) {
+        return flashcardRepository.findAllById(flashcardIds).stream()
+                .map(FlashcardEntity::getParentSet)
+                .map(FlashcardSetEntity::getCourseId)
+                .toList();
+    }
+
+    /**
      * Returns all flashcard sets that are linked to the given assessment ids
      *
      * @param ids list of assessment ids
