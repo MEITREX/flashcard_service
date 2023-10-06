@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.gits.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
@@ -14,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
 
 import java.util.List;
+import java.util.UUID;
 
+import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @GraphQlApiTest
@@ -23,6 +27,10 @@ class QueryFlashcardTest {
 
     @Autowired
     private FlashcardSetRepository flashcardSetRepository;
+    private final UUID courseId = UUID.randomUUID();
+
+    @InjectCurrentUserHeader
+    private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, LoggedInUser.UserRoleInCourse.ADMINISTRATOR);
 
     @Autowired
     private TestUtils testUtils;
@@ -32,15 +40,15 @@ class QueryFlashcardTest {
 
     @Test
     @Transactional
-    void testQueryFlashcardsByIds(GraphQlTester tester) {
-        List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository);
+    void testQueryFlashcardsByIds(final GraphQlTester tester) {
+        final List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        List<FlashcardEntity> flashcardsToQuery = List.of(
+        final List<FlashcardEntity> flashcardsToQuery = List.of(
                 expectedSets.get(0).getFlashcards().get(0),
                 expectedSets.get(1).getFlashcards().get(1)
         );
 
-        String query = """
+        final String query = """
                 query($ids: [UUID!]!) {
                   flashcardsByIds(ids: $ids) {
                     id
@@ -54,7 +62,7 @@ class QueryFlashcardTest {
                 }
                 """;
 
-        List<Flashcard> actualFlashcards = tester.document(query)
+        final List<Flashcard> actualFlashcards = tester.document(query)
                 .variable("ids", flashcardsToQuery.stream().map(FlashcardEntity::getId))
                 .execute()
                 .path("flashcardsByIds")

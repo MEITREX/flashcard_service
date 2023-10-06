@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.gits.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -17,6 +19,7 @@ import org.springframework.test.annotation.Commit;
 import java.util.List;
 import java.util.UUID;
 
+import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @GraphQlApiTest
@@ -28,6 +31,10 @@ class MutationUpdateFlashcardTest {
 
     @Autowired
     FlashcardRepository flashcardRepository;
+    private final UUID courseId = UUID.randomUUID();
+
+    @InjectCurrentUserHeader
+    private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, LoggedInUser.UserRoleInCourse.ADMINISTRATOR);
 
     @Autowired
     private TestUtils testUtils;
@@ -35,14 +42,14 @@ class MutationUpdateFlashcardTest {
     @Test
     @Transactional
     @Commit
-    void testUpdateFlashcard(GraphQlTester tester) {
-        List<FlashcardSetEntity> set = testUtils.populateFlashcardSetRepository(flashcardSetRepository);
+    void testUpdateFlashcard(final GraphQlTester tester) {
+        final List<FlashcardSetEntity> set = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        UUID setOfFlashcard = set.get(0).getAssessmentId();
+        final UUID setOfFlashcard = set.get(0).getAssessmentId();
         // Perform the update operation
-        UUID flashcardToUpdate = set.get(0).getFlashcards().stream().findAny().orElseThrow().getId();
+        final UUID flashcardToUpdate = set.get(0).getFlashcards().stream().findAny().orElseThrow().getId();
 
-        String query = """
+        final String query = """
           mutation ($assessmentId: UUID!, $flashcardId: UUID!) {
             mutateFlashcardSet(assessmentId: $assessmentId) {
               updateFlashcard(input: {
@@ -75,7 +82,7 @@ class MutationUpdateFlashcardTest {
         """;
 
         // Execute the update mutation query
-        Flashcard updatedFlashcard = tester.document(query)
+        final Flashcard updatedFlashcard = tester.document(query)
                 .variable("assessmentId", setOfFlashcard)
                 .variable("flashcardId", flashcardToUpdate)
                 .execute()

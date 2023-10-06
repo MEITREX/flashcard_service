@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.gits.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -15,6 +17,7 @@ import org.springframework.test.annotation.Commit;
 import java.util.List;
 import java.util.UUID;
 
+import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
@@ -28,17 +31,22 @@ class MutationDeleteFlashcardTest {
     @Autowired
     private FlashcardRepository flashcardRepository;
 
+    private final UUID courseId = UUID.randomUUID();
+
+    @InjectCurrentUserHeader
+    private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, LoggedInUser.UserRoleInCourse.ADMINISTRATOR);
+
     @Autowired
     private TestUtils testUtils;
 
     @Test
     @Transactional
     @Commit
-    void testDeleteFlashcard(GraphQlTester tester) {
+    void testDeleteFlashcard(final GraphQlTester tester) {
         // Create and save the flashcards to be deleted
-        List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository);
+        final List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        String query = """
+        final String query = """
                 mutation($assessmentId: UUID!, $flashcardId: UUID!) {
                     mutateFlashcardSet(assessmentId: $assessmentId) {
                         deleteFlashcard(id: $flashcardId)
@@ -46,8 +54,8 @@ class MutationDeleteFlashcardTest {
                 }
                 """;
 
-        UUID setToDeleteFrom = expectedSets.get(0).getAssessmentId();
-        UUID flashcardToDelete = expectedSets.get(0).getFlashcards().stream().findAny().orElseThrow().getId();
+        final UUID setToDeleteFrom = expectedSets.get(0).getAssessmentId();
+        final UUID flashcardToDelete = expectedSets.get(0).getFlashcards().stream().findAny().orElseThrow().getId();
 
         tester.document(query)
                 .variable("assessmentId", setToDeleteFrom)
@@ -75,14 +83,14 @@ class MutationDeleteFlashcardTest {
 
     @Test
     @Transactional
-    void testDeleteFlashcardNotExisting(GraphQlTester tester) {
+    void testDeleteFlashcardNotExisting(final GraphQlTester tester) {
         // fill the repo with some data
-        List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository);
+        final List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        UUID setToDeleteFrom = expectedSets.get(0).getAssessmentId();
-        UUID nonexistantUUID = UUID.randomUUID();
+        final UUID setToDeleteFrom = expectedSets.get(0).getAssessmentId();
+        final UUID nonexistantUUID = UUID.randomUUID();
 
-        String query = """
+        final String query = """
                 mutation($assessmentId: UUID!, $flashcardId: UUID!) {
                     mutateFlashcardSet(assessmentId: $assessmentId) {
                         deleteFlashcard(id: $flashcardId)

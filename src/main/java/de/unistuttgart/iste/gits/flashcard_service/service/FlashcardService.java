@@ -31,10 +31,10 @@ public class FlashcardService {
     private final FlashcardMapper flashcardMapper;
     private final FlashcardValidator flashcardValidator;
 
-    public Flashcard createFlashcard(UUID assessmentId, CreateFlashcardInput flashcardInput) {
+    public Flashcard createFlashcard(final UUID assessmentId, final CreateFlashcardInput flashcardInput) {
         flashcardValidator.validateCreateFlashcardInput(flashcardInput);
 
-        FlashcardSetEntity set = flashcardSetRepository.findById(assessmentId)
+        final FlashcardSetEntity set = flashcardSetRepository.findById(assessmentId)
                 .orElseThrow(() -> new EntityNotFoundException("FlashcardSet with id " + assessmentId
                         + " not found while trying to create a new flashcard for it."));
 
@@ -49,10 +49,10 @@ public class FlashcardService {
     }
 
 
-    public Flashcard updateFlashcard(UpdateFlashcardInput input) {
+    public Flashcard updateFlashcard(final UpdateFlashcardInput input) {
         flashcardValidator.validateUpdateFlashcardInput(input);
 
-        FlashcardEntity oldFlashcard = flashcardRepository.findById(input.getId())
+        final FlashcardEntity oldFlashcard = flashcardRepository.findById(input.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Flashcard with id %s not found.".formatted(input.getId())));
 
         FlashcardEntity updatedFlashcard = flashcardMapper.dtoToEntity(input);
@@ -63,8 +63,8 @@ public class FlashcardService {
         return flashcardMapper.entityToDto(updatedFlashcard);
     }
 
-    public UUID deleteFlashcard(UUID assessmentId, UUID flashcardId) {
-        FlashcardSetEntity set = flashcardSetRepository.getReferenceById(assessmentId);
+    public UUID deleteFlashcard(final UUID assessmentId, final UUID flashcardId) {
+        final FlashcardSetEntity set = flashcardSetRepository.getReferenceById(assessmentId);
         if (!set.getFlashcards().removeIf(x -> x.getId().equals(flashcardId))) {
             throw new EntityNotFoundException("Flashcard with id %s not found.".formatted(flashcardId));
         }
@@ -72,34 +72,34 @@ public class FlashcardService {
         return flashcardId;
     }
 
-    public FlashcardSet createFlashcardSet(UUID courseId, UUID assessmentId, CreateFlashcardSetInput flashcardSetInput) {
+    public FlashcardSet createFlashcardSet(final UUID courseId, final UUID assessmentId, final CreateFlashcardSetInput flashcardSetInput) {
         flashcardValidator.validateCreateFlashcardSetInput(flashcardSetInput);
 
-        FlashcardSetEntity mappedEntity = flashcardMapper.flashcardSetDtoToEntity(flashcardSetInput);
+        final FlashcardSetEntity mappedEntity = flashcardMapper.flashcardSetDtoToEntity(flashcardSetInput);
         mappedEntity.setAssessmentId(assessmentId);
         mappedEntity.setCourseId(courseId);
-        FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.save(mappedEntity);
+        final FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.save(mappedEntity);
         return flashcardMapper.flashcardSetEntityToDto(flashcardSetEntity);
     }
 
-    public UUID deleteFlashcardSet(UUID uuid) {
+    public UUID deleteFlashcardSet(final UUID uuid) {
         requireFlashcardSetExisting(uuid);
         flashcardSetRepository.deleteById(uuid);
         return uuid;
     }
 
-    private void requireFlashcardSetExisting(UUID uuid) {
+    private void requireFlashcardSetExisting(final UUID uuid) {
         if (!flashcardSetRepository.existsById(uuid)) {
             throw new EntityNotFoundException("Flashcard set with id %s not found".formatted(uuid));
         }
     }
 
-    public Flashcard getFlashcardById(UUID flashcardId) {
+    public Flashcard getFlashcardById(final UUID flashcardId) {
         return flashcardMapper.entityToDto(flashcardRepository.getReferenceById(flashcardId));
     }
 
-    public List<Flashcard> getFlashcardsByIds(List<UUID> ids) {
-        List<FlashcardEntity> entities = flashcardRepository.findByIdIn(ids);
+    public List<Flashcard> getFlashcardsByIds(final List<UUID> ids) {
+        final List<FlashcardEntity> entities = flashcardRepository.findByIdIn(ids);
 
         ids.removeAll(entities.stream().map(FlashcardEntity::getId).toList());
         if(!ids.isEmpty()) {
@@ -119,7 +119,7 @@ public class FlashcardService {
      * @param flashcardIds list of flashcard ids
      * @return list of course ids, in the same order as the flashcard ids.
      */
-    public List<UUID> getCourseIdsForFlashcardIds(List<UUID> flashcardIds) {
+    public List<UUID> getCourseIdsForFlashcardIds(final List<UUID> flashcardIds) {
         return flashcardRepository.findAllById(flashcardIds).stream()
                 .map(FlashcardEntity::getParentSet)
                 .map(FlashcardSetEntity::getCourseId)
@@ -132,7 +132,7 @@ public class FlashcardService {
      * @param ids list of assessment ids
      * @return list of flashcard sets, an element is null if the corresponding assessment id was not found
      */
-    public List<FlashcardSet> findFlashcardSetsByAssessmentId(List<UUID> ids) {
+    public List<FlashcardSet> findFlashcardSetsByAssessmentId(final List<UUID> ids) {
         return ids.stream()
                 .map(flashcardSetRepository::findById)
                 .map(optional -> optional.map(flashcardMapper::flashcardSetEntityToDto))
@@ -144,7 +144,7 @@ public class FlashcardService {
      *
      * @param dto event object containing changes to content
      */
-    public void deleteFlashcardSetIfContentIsDeleted(ContentChangeEvent dto) throws IncompleteEventMessageException {
+    public void deleteFlashcardSetIfContentIsDeleted(final ContentChangeEvent dto) throws IncompleteEventMessageException {
 
         // validate event message
         checkCompletenessOfDto(dto);
@@ -162,7 +162,7 @@ public class FlashcardService {
      * @param dto event message under evaluation
      * @throws IncompleteEventMessageException if any of the fields are null
      */
-    private void checkCompletenessOfDto(ContentChangeEvent dto) throws IncompleteEventMessageException {
+    private void checkCompletenessOfDto(final ContentChangeEvent dto) throws IncompleteEventMessageException {
         if (dto.getOperation() == null || dto.getContentIds() == null) {
             throw new IncompleteEventMessageException(IncompleteEventMessageException.ERROR_INCOMPLETE_MESSAGE);
         }

@@ -3,7 +3,6 @@ package de.unistuttgart.iste.gits.flashcard_service.controller;
 import de.unistuttgart.iste.gits.common.exception.NoAccessToCourseException;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.common.user_handling.UserCourseAccessValidator;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.gits.flashcard_service.service.FlashcardService;
 import de.unistuttgart.iste.gits.flashcard_service.service.FlashcardUserProgressDataService;
 import de.unistuttgart.iste.gits.generated.dto.*;
@@ -14,6 +13,8 @@ import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.UUID;
+
+import static de.unistuttgart.iste.gits.common.user_handling.UserCourseAccessValidator.validateUserHasAccessToCourses;
 
 
 @Slf4j
@@ -35,11 +36,7 @@ public class FlashcardController {
                                            @ContextValue final LoggedInUser currentUser) {
         final List<UUID> courseIds = flashcardService.getCourseIdsForFlashcardIds(ids);
 
-        for (final UUID courseId : courseIds) {
-            UserCourseAccessValidator.validateUserHasAccessToCourse(currentUser,
-                    LoggedInUser.UserRoleInCourse.STUDENT,
-                    courseId);
-        }
+        validateUserHasAccessToCourses(currentUser, LoggedInUser.UserRoleInCourse.STUDENT, courseIds);
 
         return flashcardService.getFlashcardsByIds(ids);
     }
@@ -50,6 +47,9 @@ public class FlashcardController {
 
         return flashcardService.findFlashcardSetsByAssessmentId(ids).stream()
                 .map(set -> {
+                    if (set == null) {
+                        return null;
+                    }
                     try {
                         // check if the user has access to the course, otherwise return null
                         UserCourseAccessValidator.validateUserHasAccessToCourse(currentUser,

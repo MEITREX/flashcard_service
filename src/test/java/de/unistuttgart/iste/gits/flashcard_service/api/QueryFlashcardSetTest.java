@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.gits.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -14,6 +16,7 @@ import org.springframework.graphql.test.tester.GraphQlTester;
 import java.util.List;
 import java.util.UUID;
 
+import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @GraphQlApiTest
@@ -24,6 +27,11 @@ class QueryFlashcardSetTest {
     @Autowired
     private FlashcardSetRepository flashcardSetRepository;
 
+    private final UUID courseId = UUID.randomUUID();
+
+    @InjectCurrentUserHeader
+    private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, LoggedInUser.UserRoleInCourse.ADMINISTRATOR);
+
     @Autowired
     private TestUtils testUtils;
 
@@ -31,10 +39,10 @@ class QueryFlashcardSetTest {
     private FlashcardMapper mapper;
 
     @Test
-    void testFlashcardSetsByAssessmentIds(GraphQlTester tester) {
-        List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository);
+    void testFlashcardSetsByAssessmentIds(final GraphQlTester tester) {
+        final List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        String query = """
+        final String query = """
                 query($ids: [UUID!]!) {
                     findFlashcardSetsByAssessmentIds(assessmentIds: $ids) {
                         assessmentId,
@@ -52,7 +60,7 @@ class QueryFlashcardSetTest {
                 }
                 """;
 
-        List<FlashcardSet> actualSets = tester.document(query)
+        final List<FlashcardSet> actualSets = tester.document(query)
                 .variable("ids", expectedSets.stream().map(FlashcardSetEntity::getAssessmentId))
                 .execute()
                 .path("findFlashcardSetsByAssessmentIds")
@@ -68,8 +76,8 @@ class QueryFlashcardSetTest {
     }
 
     @Test
-    void testQueryFlashcardSetsNonExisting(GraphQlTester graphQlTester) {
-        String query = """
+    void testQueryFlashcardSetsNonExisting(final GraphQlTester graphQlTester) {
+        final String query = """
                 query($ids: [UUID!]!) {
                     findFlashcardSetsByAssessmentIds(assessmentIds: $ids) {
                         assessmentId

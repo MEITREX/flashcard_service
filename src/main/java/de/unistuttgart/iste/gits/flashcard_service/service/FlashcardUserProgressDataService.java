@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.gits.flashcard_service.service;
 
-import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
-import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
+import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.gits.common.event.ContentProgressedEvent;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.*;
 import de.unistuttgart.iste.gits.generated.dto.*;
@@ -21,7 +21,6 @@ public class FlashcardUserProgressDataService {
     private final FlashcardRepository flashcardRepository;
     private final FlashcardSetRepository flashcardSetRepository;
     private final ModelMapper modelMapper;
-    private final FlashcardService flashcardService;
     private final TopicPublisher topicPublisher;
 
     /**
@@ -31,8 +30,8 @@ public class FlashcardUserProgressDataService {
      * @param userId      the id of the user
      * @return the progress data
      */
-    public FlashcardProgressData getProgressData(UUID flashcardId, UUID userId) {
-        var entity = getProgressDataEntity(flashcardId, userId);
+    public FlashcardProgressData getProgressData(final UUID flashcardId, final UUID userId) {
+        final var entity = getProgressDataEntity(flashcardId, userId);
         return mapProgressDataEntityToDto(entity);
     }
 
@@ -43,15 +42,15 @@ public class FlashcardUserProgressDataService {
      * @param userId      the id of the user
      * @return the progress data
      */
-    private FlashcardProgressDataEntity getProgressDataEntity(UUID flashcardId, UUID userId) {
-        var primaryKey = new FlashcardProgressDataEntity.PrimaryKey(flashcardId, userId);
+    private FlashcardProgressDataEntity getProgressDataEntity(final UUID flashcardId, final UUID userId) {
+        final var primaryKey = new FlashcardProgressDataEntity.PrimaryKey(flashcardId, userId);
         return flashcardProgressDataRepository.findById(primaryKey)
                 .orElseGet(() -> initializeProgressData(flashcardId, userId));
     }
 
-    private FlashcardProgressDataEntity initializeProgressData(UUID flashcardId, UUID userId) {
-        var primaryKey = new FlashcardProgressDataEntity.PrimaryKey(flashcardId, userId);
-        var progressData = FlashcardProgressDataEntity.builder()
+    private FlashcardProgressDataEntity initializeProgressData(final UUID flashcardId, final UUID userId) {
+        final var primaryKey = new FlashcardProgressDataEntity.PrimaryKey(flashcardId, userId);
+        final var progressData = FlashcardProgressDataEntity.builder()
                 .primaryKey(primaryKey)
                 .learningInterval(1)
                 .lastLearned(null)
@@ -71,9 +70,9 @@ public class FlashcardUserProgressDataService {
      * @param successful  whether the flashcard was learned successfully
      * @return the feedback for the flashcard
      */
-    public FlashcardLearnedFeedback logFlashcardLearned(UUID flashcardId, UUID userId, boolean successful) {
-        var progressData = getProgressDataEntity(flashcardId, userId);
-        var logData = new FlashcardProgressDataLogEntity();
+    public FlashcardLearnedFeedback logFlashcardLearned(final UUID flashcardId, final UUID userId, final boolean successful) {
+        final var progressData = getProgressDataEntity(flashcardId, userId);
+        final var logData = new FlashcardProgressDataLogEntity();
         logData.setSuccess(successful);
         logData.setFlashcardProgressData(progressData);
         logData.setLearnedAt(OffsetDateTime.now());
@@ -85,28 +84,28 @@ public class FlashcardUserProgressDataService {
         updateProgressDataEntity(progressData, successful);
         flashcardProgressDataRepository.save(progressData);
 
-        FlashcardSetEntity flashcardSetEntity = getFlashcardSetForFlashcard(flashcardId);
+        final FlashcardSetEntity flashcardSetEntity = getFlashcardSetForFlashcard(flashcardId);
         publishFlashcardSetLearned(userId, flashcardSetEntity.getAssessmentId());
 
         return createFeedback(progressData, successful, flashcardSetEntity, userId);
     }
 
     private FlashcardLearnedFeedback createFeedback(
-                                                    FlashcardProgressDataEntity progressData,
-                                                    boolean successful,
-                                                    FlashcardSetEntity flashcardSetEntity,
-                                                    UUID userId) {
-        var result = new FlashcardLearnedFeedback();
+            final FlashcardProgressDataEntity progressData,
+            final boolean successful,
+            final FlashcardSetEntity flashcardSetEntity,
+            final UUID userId) {
+        final var result = new FlashcardLearnedFeedback();
         result.setSuccess(successful);
         result.setNextLearnDate(progressData.getNextLearn());
 
         // calculate progress for the whole set and correctness
-        var flashcards = flashcardSetEntity.getFlashcards();
+        final var flashcards = flashcardSetEntity.getFlashcards();
         int numberOfFlashcardsNotLearnedInSet = 0;
         int correctlyLearnedFlashcards = 0;
 
-        for (FlashcardEntity flashcardEntity : flashcards) {
-            FlashcardProgressDataEntity progressDataOfCurrentCard = getProgressDataEntity(flashcardEntity.getId(), userId);
+        for (final FlashcardEntity flashcardEntity : flashcards) {
+            final FlashcardProgressDataEntity progressDataOfCurrentCard = getProgressDataEntity(flashcardEntity.getId(), userId);
             if (wasNotLearnedInCurrentIteration(flashcardSetEntity, progressDataOfCurrentCard)) {
                 numberOfFlashcardsNotLearnedInSet++;
             } else if (wasLearnedSuccessful(progressDataOfCurrentCard)) {
@@ -114,9 +113,9 @@ public class FlashcardUserProgressDataService {
             }
         }
 
-        int flashcardsLearnedInSet = flashcards.size() - numberOfFlashcardsNotLearnedInSet;
+        final int flashcardsLearnedInSet = flashcards.size() - numberOfFlashcardsNotLearnedInSet;
 
-        FlashcardSetProgress flashcardSetProgress = FlashcardSetProgress.builder()
+        final FlashcardSetProgress flashcardSetProgress = FlashcardSetProgress.builder()
                 .setPercentageLearned((double) flashcardsLearnedInSet / flashcards.size())
                 .setCorrectness((double) correctlyLearnedFlashcards / flashcardsLearnedInSet)
                 .build();
@@ -124,21 +123,21 @@ public class FlashcardUserProgressDataService {
         return result;
     }
 
-    private static boolean wasLearnedSuccessful(FlashcardProgressDataEntity progressData) {
+    private static boolean wasLearnedSuccessful(final FlashcardProgressDataEntity progressData) {
         return progressData.getFlashcardProgressDataLogs().stream()
                 .findFirst()
                 .map(FlashcardProgressDataLogEntity::isSuccess)
                 .orElse(false);
     }
 
-    private static boolean wasNotLearnedInCurrentIteration(FlashcardSetEntity flashcardSetEntity, FlashcardProgressDataEntity progressData) {
+    private static boolean wasNotLearnedInCurrentIteration(final FlashcardSetEntity flashcardSetEntity, final FlashcardProgressDataEntity progressData) {
         return progressData.getLastLearned() == null
                // if the flashcard was learned before the last time the set was learned, it was not learned in the current iteration
                || progressData.getNextLearn().isBefore(flashcardSetEntity.getLastLearned().orElse(OffsetDateTime.MIN));
     }
 
-    private void updateProgressDataEntity(FlashcardProgressDataEntity progressData, boolean success) {
-        var lastLearn = OffsetDateTime.now();
+    private void updateProgressDataEntity(final FlashcardProgressDataEntity progressData, final boolean success) {
+        final var lastLearn = OffsetDateTime.now();
         progressData.setLastLearned(lastLearn);
         var learningInterval = progressData.getLearningInterval();
         if (success) {
@@ -156,22 +155,22 @@ public class FlashcardUserProgressDataService {
     }
 
 
-    private FlashcardProgressData mapProgressDataEntityToDto(FlashcardProgressDataEntity entity) {
+    private FlashcardProgressData mapProgressDataEntityToDto(final FlashcardProgressDataEntity entity) {
         return modelMapper.map(entity, FlashcardProgressData.class);
     }
 
-    private FlashcardProgressDataLog mapLogEntityToDto(FlashcardProgressDataLogEntity entity) {
+    private FlashcardProgressDataLog mapLogEntityToDto(final FlashcardProgressDataLogEntity entity) {
         return modelMapper.map(entity, FlashcardProgressDataLog.class);
     }
 
-    private FlashcardSetEntity getFlashcardSetForFlashcard(UUID flashcardId) {
-        FlashcardEntity flashcardEntity = this.flashcardRepository.getReferenceById(flashcardId);
+    private FlashcardSetEntity getFlashcardSetForFlashcard(final UUID flashcardId) {
+        final FlashcardEntity flashcardEntity = this.flashcardRepository.getReferenceById(flashcardId);
         return this.flashcardSetRepository.getReferenceById(flashcardEntity.getParentSet().getAssessmentId());
     }
 
-    private void publishFlashcardSetLearned(UUID userId, UUID flashcardSetId) {
-        FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.getReferenceById(flashcardSetId);
-        List<FlashcardProgressDataLogEntity> dataLogEntities = flashCardProgressDataLogRepository
+    private void publishFlashcardSetLearned(final UUID userId, final UUID flashcardSetId) {
+        final FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.getReferenceById(flashcardSetId);
+        final List<FlashcardProgressDataLogEntity> dataLogEntities = flashCardProgressDataLogRepository
                 .findLatestLogsPerFlashcardProgressData(userId);
 
         if (flashcardSetEntity.getLastLearned().isPresent()) {
@@ -184,15 +183,15 @@ public class FlashcardUserProgressDataService {
             return;
         }
 
-        List<FlashcardProgressDataLog> dataLogs = dataLogEntities
+        final List<FlashcardProgressDataLog> dataLogs = dataLogEntities
                 .stream()
                 .map(this::mapLogEntityToDto)
                 .toList();
 
-        int total = dataLogs.size();
-        int correct = dataLogs.stream().mapToInt(log -> log.getSuccess() ? 1 : 0).sum();
+        final int total = dataLogs.size();
+        final int correct = dataLogs.stream().mapToInt(log -> log.getSuccess() ? 1 : 0).sum();
 
-        float correctness = (float) correct / total;
+        final float correctness = (float) correct / total;
 
         flashcardSetEntity.setLastLearned(OffsetDateTime.now());
         flashcardSetRepository.save(flashcardSetEntity);
@@ -200,9 +199,9 @@ public class FlashcardUserProgressDataService {
         publishUserProgressEvent(userId, flashcardSetId, correctness);
     }
 
-    private void publishUserProgressEvent(UUID userId, UUID assessmentId, float correctness) {
-        topicPublisher.notifyFlashcardSetLearned(
-                UserProgressLogEvent.builder()
+    private void publishUserProgressEvent(final UUID userId, final UUID assessmentId, final float correctness) {
+        topicPublisher.notifyUserWorkedOnContent(
+                ContentProgressedEvent.builder()
                         .contentId(assessmentId)
                         .userId(userId)
                         .hintsUsed(0)

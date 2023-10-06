@@ -20,13 +20,13 @@ class MutationCreateFlashcardSetTest {
     @Test
     @Transactional
     @Commit
-    void testCreateFlashcardSet(GraphQlTester tester) {
-        UUID assessmentId = UUID.randomUUID();
-        UUID courseId = UUID.randomUUID();
-        String query =
+    void testCreateFlashcardSet(final GraphQlTester tester) {
+        final UUID assessmentId = UUID.randomUUID();
+        final UUID courseId = UUID.randomUUID();
+        final String query =
             """    
             mutation ($courseId: UUID!, $assessmentId: UUID!){
-                _internal_createFlashcardSet(courseId: $courseId, assessmentId: $assessmentId, input: {
+                _internal_noauth_createFlashcardSet(courseId: $courseId, assessmentId: $assessmentId, input: {
                     flashcards: [
                         {
                             sides: [
@@ -78,45 +78,45 @@ class MutationCreateFlashcardSetTest {
         }
         """;
 
-        FlashcardSet createdFlashcardSet = tester.document(query)
+        final FlashcardSet createdFlashcardSet = tester.document(query)
                 .variable("assessmentId", assessmentId)
                 .variable("courseId", courseId)
                 .execute()
-                .path("_internal_createFlashcardSet").entity(FlashcardSet.class).get();
+                .path("_internal_noauth_createFlashcardSet").entity(FlashcardSet.class).get();
 
         // check that returned Flashcard is correct
         assertThat(createdFlashcardSet.getAssessmentId(), is(assessmentId));
         assertThat(createdFlashcardSet.getCourseId(), is(courseId));
 
 
-        List<Flashcard> flashcards = createdFlashcardSet.getFlashcards();
+        final List<Flashcard> flashcards = createdFlashcardSet.getFlashcards();
         assertThat(flashcards, hasSize(2));
 
-        Flashcard flashcard1 = flashcards.get(0);
+        final Flashcard flashcard1 = flashcards.get(0);
         assertThat(flashcard1.getSides(), hasSize(2));
 
-        FlashcardSide flashcard1Side1 = flashcard1.getSides().get(0);
+        final FlashcardSide flashcard1Side1 = flashcard1.getSides().get(0);
         assertThat(flashcard1Side1.getLabel(), is("Side 1"));
         assertThat(flashcard1Side1.getIsQuestion(), is(true));
         assertThat(flashcard1Side1.getIsAnswer(), is(false));
         assertThat(flashcard1Side1.getText(), is("Question 1"));
 
-        FlashcardSide flashcard1Side2 = flashcard1.getSides().get(1);
+        final FlashcardSide flashcard1Side2 = flashcard1.getSides().get(1);
         assertThat(flashcard1Side2.getLabel(), is("Side 2"));
         assertThat(flashcard1Side2.getIsQuestion(), is(false));
         assertThat(flashcard1Side2.getIsAnswer(), is(true));
         assertThat(flashcard1Side2.getText(), is("Answer 1"));
 
-        Flashcard flashcard2 = flashcards.get(1);
+        final Flashcard flashcard2 = flashcards.get(1);
         assertThat(flashcard2.getSides(), hasSize(2));
 
-        FlashcardSide flashcard2Side1 = flashcard2.getSides().get(0);
+        final FlashcardSide flashcard2Side1 = flashcard2.getSides().get(0);
         assertThat(flashcard2Side1.getLabel(), is("Side 1"));
         assertThat(flashcard2Side1.getIsQuestion(), is(true));
         assertThat(flashcard2Side1.getIsAnswer(), is(false));
         assertThat(flashcard2Side1.getText(), is("Question 2"));
 
-        FlashcardSide flashcard2Side2 = flashcard2.getSides().get(1);
+        final FlashcardSide flashcard2Side2 = flashcard2.getSides().get(1);
         assertThat(flashcard2Side2.getLabel(), is("Side 2"));
         assertThat(flashcard2Side2.getIsQuestion(), is(false));
         assertThat(flashcard2Side2.getIsAnswer(), is(true));

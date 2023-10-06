@@ -1,12 +1,14 @@
 package de.unistuttgart.iste.gits.flashcard_service.api;
 
-import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
+import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.gits.common.event.ContentProgressedEvent;
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.gits.common.testutil.MockTestPublisherConfiguration;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
+import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
-import de.unistuttgart.iste.gits.flashcard_service.test_config.MockTopicPublisherConfiguration;
 import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;
 import jakarta.transaction.Transactional;
 import org.jetbrains.annotations.NotNull;
@@ -20,13 +22,14 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.List;
 import java.util.UUID;
 
+import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @GraphQlApiTest
-@ContextConfiguration(classes = MockTopicPublisherConfiguration.class)
+@ContextConfiguration(classes = MockTestPublisherConfiguration.class)
 @TablesToDelete({"flashcard_progress_data_log", "flashcard_progress_data", "flashcard_side", "flashcard", "flashcard_set"})
 class MutationLogFlashcardProgressTest {
 
@@ -34,6 +37,11 @@ class MutationLogFlashcardProgressTest {
     private FlashcardSetRepository flashcardSetRepository;
     @Autowired
     private TopicPublisher topicPublisher;
+
+    private final UUID courseId = UUID.randomUUID();
+
+    @InjectCurrentUserHeader
+    private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, LoggedInUser.UserRoleInCourse.ADMINISTRATOR);
 
     private static final String mutation = """
                 mutation logFlashcardProgress($id: UUID!, $successful: Boolean!) {
@@ -60,16 +68,16 @@ class MutationLogFlashcardProgressTest {
     @Test
     @Transactional
     @Commit
-    void testLogFlashcardProgress(HttpGraphQlTester graphQlTester) {
-        List<FlashcardSetEntity> flashcardSet = new TestUtils().populateFlashcardSetRepository(flashcardSetRepository);
+    void testLogFlashcardProgress(final HttpGraphQlTester graphQlTester) {
+        final List<FlashcardSetEntity> flashcardSet = new TestUtils().populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        UUID userId1 = UUID.randomUUID();
+        final UUID userId1 = UUID.randomUUID();
         FlashcardSetEntity flashcardSetEntity = flashcardSet.get(0);
-        UUID flashcardSetId = flashcardSetEntity.getAssessmentId();
-        UUID flashcardId1 = flashcardSetEntity.getFlashcards().get(0).getId();
-        UUID flashcardId2 = flashcardSetEntity.getFlashcards().get(1).getId();
+        final UUID flashcardSetId = flashcardSetEntity.getAssessmentId();
+        final UUID flashcardId1 = flashcardSetEntity.getFlashcards().get(0).getId();
+        final UUID flashcardId2 = flashcardSetEntity.getFlashcards().get(1).getId();
 
-        String currentUser = """
+        final String currentUser = """
                 {
                     "id": "%s",
                     "userName": "MyUserName",
@@ -79,23 +87,23 @@ class MutationLogFlashcardProgressTest {
                 }
                 """.formatted(userId1.toString());
 
-        runMutationLogFlashcardLearned(graphQlTester, currentUser, flashcardId1, true)
+        runMutationLogFlashcardLearned(graphQlTester, flashcardId1, true)
                 .path("logFlashcardLearned.success").entity(Boolean.class).isEqualTo(true)
                 .path("logFlashcardLearned.flashcardSetProgress.correctness").entity(Float.class).isEqualTo(1.0f)
                 .path("logFlashcardLearned.flashcardSetProgress.percentageLearned").entity(Float.class).isEqualTo(0.5f);
 
-        verify(topicPublisher, never()).notifyFlashcardSetLearned(any());
+        verify(topicPublisher, never()).notifyUserWorkedOnContent(any());
 
         flashcardSetEntity = flashcardSetRepository.findById(flashcardSetId).orElseThrow();
         assertThat(flashcardSetEntity.getLastLearned().isPresent(), is(false));
 
-        runMutationLogFlashcardLearned(graphQlTester, currentUser, flashcardId2, false)
+        runMutationLogFlashcardLearned(graphQlTester, flashcardId2, false)
                 .path("logFlashcardLearned.success").entity(Boolean.class).isEqualTo(false)
                 .path("logFlashcardLearned.flashcardSetProgress.correctness").entity(Float.class).isEqualTo(0.5f)
                 .path("logFlashcardLearned.flashcardSetProgress.percentageLearned").entity(Float.class).isEqualTo(1.0f);
 
-        UserProgressLogEvent expectedEvent = UserProgressLogEvent.builder()
-                .userId(userId1)
+        final ContentProgressedEvent expectedEvent = ContentProgressedEvent.builder()
+                .userId(loggedInUser.getId())
                 .contentId(flashcardSetId)
                 .correctness(0.5)
                 .success(true)
@@ -103,7 +111,7 @@ class MutationLogFlashcardProgressTest {
                 .hintsUsed(0)
                 .build();
 
-        verify(topicPublisher).notifyFlashcardSetLearned(expectedEvent);
+        verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent);
         flashcardSetEntity = flashcardSetRepository.findById(flashcardSetId).orElseThrow();
         assertThat(flashcardSetEntity.getLastLearned().isPresent(), is(true));
 
@@ -111,25 +119,22 @@ class MutationLogFlashcardProgressTest {
         reset(topicPublisher);
         expectedEvent.setCorrectness(1.0);
 
-        runMutationLogFlashcardLearned(graphQlTester, currentUser, flashcardId1, true)
+        runMutationLogFlashcardLearned(graphQlTester, flashcardId1, true)
                 .errors().verify();
 
-        verify(topicPublisher, never()).notifyFlashcardSetLearned(any());
+        verify(topicPublisher, never()).notifyUserWorkedOnContent(any());
 
-        runMutationLogFlashcardLearned(graphQlTester, currentUser, flashcardId2, true)
+        runMutationLogFlashcardLearned(graphQlTester, flashcardId2, true)
                 .errors().verify();
 
-        verify(topicPublisher).notifyFlashcardSetLearned(expectedEvent);
+        verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent);
     }
 
     @NotNull
-    private static GraphQlTester.Response runMutationLogFlashcardLearned(HttpGraphQlTester graphQlTester,
-                                                                         String currentUser,
-                                                                         UUID flashcardId,
-                                                                         boolean success) {
-        return graphQlTester.mutate()
-                .header("CurrentUser", currentUser)
-                .build()
+    private static GraphQlTester.Response runMutationLogFlashcardLearned(final HttpGraphQlTester graphQlTester,
+                                                                         final UUID flashcardId,
+                                                                         final boolean success) {
+        return graphQlTester
                 .document(mutation)
                 .variable("id", flashcardId)
                 .variable("successful", success)

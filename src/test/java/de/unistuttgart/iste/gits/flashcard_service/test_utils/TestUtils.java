@@ -17,10 +17,10 @@ public class TestUtils {
      */
     @Transactional(Transactional.TxType.REQUIRES_NEW) // Required so the data is committed to the repo before the
     // rest of the test method which calls this method is executed.
-    public List<FlashcardSetEntity> populateFlashcardSetRepository(FlashcardSetRepository repo) {
+    public List<FlashcardSetEntity> populateFlashcardSetRepository(FlashcardSetRepository repo, UUID courseId) {
         FlashcardSetEntity set1 = new FlashcardSetEntity();
         set1.setAssessmentId(UUID.randomUUID());
-        set1.setCourseId(UUID.randomUUID());
+        set1.setCourseId(courseId);
 
         FlashcardEntity flashcard1 = new FlashcardEntity();
         flashcard1.setId(UUID.randomUUID());
@@ -62,7 +62,7 @@ public class TestUtils {
 
         FlashcardSetEntity set2 = new FlashcardSetEntity();
         set2.setAssessmentId(UUID.randomUUID());
-        set2.setCourseId(UUID.randomUUID());
+        set2.setCourseId(courseId);
 
         FlashcardEntity flashcard3 = new FlashcardEntity();
         flashcard3.setId(UUID.randomUUID());

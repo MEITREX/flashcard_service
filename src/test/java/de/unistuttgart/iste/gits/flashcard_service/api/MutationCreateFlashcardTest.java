@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.gits.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 
 @GraphQlApiTest
 @TablesToDelete({"flashcard_side", "flashcard", "flashcard_set"})
@@ -28,6 +31,10 @@ class MutationCreateFlashcardTest {
 
     @Autowired
     private FlashcardRepository flashcardRepository;
+    private final UUID courseId = UUID.randomUUID();
+
+    @InjectCurrentUserHeader
+    private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, LoggedInUser.UserRoleInCourse.ADMINISTRATOR);
 
     @Autowired
     private TestUtils testUtils;
@@ -35,10 +42,10 @@ class MutationCreateFlashcardTest {
     @Test
     @Transactional
     @Commit
-    void testCreateFlashcard(GraphQlTester graphQlTester) {
-        List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository);
+    void testCreateFlashcard(final GraphQlTester graphQlTester) {
+        final List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        String query = """
+        final String query = """
           mutation ($setId: UUID!) {
             mutateFlashcardSet(assessmentId: $setId) {
               createFlashcard(input: {
@@ -69,10 +76,10 @@ class MutationCreateFlashcardTest {
           }
           """;
 
-        UUID setId = sets.get(0).getAssessmentId();
+        final UUID setId = sets.get(0).getAssessmentId();
 
         // Execute the mutation and extract the created flashcard
-        Flashcard createdFlashcard = graphQlTester.document(query)
+        final Flashcard createdFlashcard = graphQlTester.document(query)
                 .variable("setId", setId)
                 .execute()
                 .path("mutateFlashcardSet.createFlashcard")
@@ -94,7 +101,7 @@ class MutationCreateFlashcardTest {
                 .map(FlashcardEntity::getId))
                 .contains(createdFlashcard.getId());
 
-        FlashcardEntity flashcardFromRepo = flashcardRepository.getReferenceById(createdFlashcard.getId());
+        final FlashcardEntity flashcardFromRepo = flashcardRepository.getReferenceById(createdFlashcard.getId());
 
         assertThat(flashcardFromRepo.getParentSet().getAssessmentId()).isEqualTo(setId);
         assertThat(flashcardFromRepo.getSides().get(0))
@@ -108,10 +115,10 @@ class MutationCreateFlashcardTest {
     }
 
     @Test
-    void testCreateInvalidFlashcard(GraphQlTester graphQlTester) {
-        List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository);
+    void testCreateInvalidFlashcard(final GraphQlTester graphQlTester) {
+        final List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        String query = """
+        final String query = """
           mutation ($setId: UUID!) {
             mutateFlashcardSet(assessmentId: $setId) {
               createFlashcard(input: {
@@ -142,7 +149,7 @@ class MutationCreateFlashcardTest {
           }
           """;
 
-        UUID setId = sets.get(0).getAssessmentId();
+        final UUID setId = sets.get(0).getAssessmentId();
 
         // Execute the mutation and check for expected errors
         graphQlTester.document(query)
@@ -155,10 +162,10 @@ class MutationCreateFlashcardTest {
     }
 
     @Test
-    void testCreateInvalidFlashcardSide(GraphQlTester graphQlTester) {
-        List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository);
+    void testCreateInvalidFlashcardSide(final GraphQlTester graphQlTester) {
+        final List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        String query = """
+        final String query = """
           mutation ($setId: UUID!) {
             mutateFlashcardSet(assessmentId: $setId) {
               createFlashcard(input: {
@@ -189,7 +196,7 @@ class MutationCreateFlashcardTest {
           }
           """;
 
-        UUID setId = sets.get(0).getAssessmentId();
+        final UUID setId = sets.get(0).getAssessmentId();
 
         // Execute the mutation and check for expected errors
         graphQlTester.document(query)

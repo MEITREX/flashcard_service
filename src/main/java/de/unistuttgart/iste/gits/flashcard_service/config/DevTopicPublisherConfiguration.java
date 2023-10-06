@@ -1,9 +1,8 @@
 package de.unistuttgart.iste.gits.flashcard_service.config;
 
-import de.unistuttgart.iste.gits.common.event.CrudOperation;
-import de.unistuttgart.iste.gits.common.event.UserProgressLogEvent;
-import de.unistuttgart.iste.gits.flashcard_service.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardEntity;
+
+import de.unistuttgart.iste.gits.common.dapr.MockTopicPublisher;
+import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.*;
 
@@ -24,22 +23,5 @@ public class DevTopicPublisherConfiguration {
     public TopicPublisher getTopicPublisher() {
         log.warn("TopicPublisher is mocked. This is intended for development use only.");
         return new MockTopicPublisher();
-    }
-
-    private static class MockTopicPublisher extends TopicPublisher {
-
-        public MockTopicPublisher() {
-            super(null);
-        }
-
-        @Override
-        public void notifyResourceChange(FlashcardEntity flashcardEntity, CrudOperation operation) {
-            log.info("notifyChange called with {} and {}", flashcardEntity, operation);
-        }
-
-        @Override
-        public void notifyFlashcardSetLearned(UserProgressLogEvent userProgressLogEvent) {
-            log.info("notifyFlashcardSetLearned called with {}", userProgressLogEvent);
-        }
     }
 }
