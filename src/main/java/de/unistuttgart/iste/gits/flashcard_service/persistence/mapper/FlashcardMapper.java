@@ -60,6 +60,9 @@ public class FlashcardMapper {
     }
 
     public FlashcardSet flashcardSetEntityToDto(FlashcardSetEntity flashcardSetEntity) {
+        if (flashcardSetEntity == null) {
+            return null;
+        }
         var result = modelMapper.map(flashcardSetEntity, FlashcardSet.class);
         result.setFlashcards(flashcardSetEntity.getFlashcards().stream().map(this::entityToDto).toList());
         return result;

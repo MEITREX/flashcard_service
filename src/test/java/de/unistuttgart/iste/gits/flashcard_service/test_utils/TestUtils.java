@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Component
 public class TestUtils {
+
     /**
      * Helper method which creates some flashcard sets and saves them to the repository.
      * @param repo The repository to save the flashcard sets to.

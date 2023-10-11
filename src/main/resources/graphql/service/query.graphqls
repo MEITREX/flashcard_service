@@ -11,4 +11,10 @@ type Query {
     🔒 The user must be enrolled in the course the flashcard sets belong to. Otherwise for that element null is returned.
     """
     findFlashcardSetsByAssessmentIds(assessmentIds: [UUID!]!): [FlashcardSet]!
+
+    """
+    Get flashcards of a course that are due to be reviewed.
+    🔒 The user must be enrolled in the course the flashcards belong to. Otherwise an error is thrown.
+    """
+    dueFlashcardsByCourseId(courseId: UUID!): [Flashcard!]!
 }

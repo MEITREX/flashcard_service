@@ -3,6 +3,7 @@ package de.unistuttgart.iste.gits.flashcard_service.service;
 import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.gits.common.event.ContentProgressedEvent;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.*;
 import de.unistuttgart.iste.gits.generated.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +23,7 @@ public class FlashcardUserProgressDataService {
     private final FlashcardRepository flashcardRepository;
     private final FlashcardSetRepository flashcardSetRepository;
     private final ModelMapper modelMapper;
+    private final FlashcardMapper flashcardMapper;
     private final TopicPublisher topicPublisher;
 
     /**
@@ -88,6 +91,37 @@ public class FlashcardUserProgressDataService {
         publishFlashcardSetLearned(userId, flashcardSetEntity.getAssessmentId());
 
         return createFeedback(progressData, successful, flashcardSetEntity, userId);
+    }
+
+    /**
+     * Get all flashcards of a course that are due to be learned for the given user.
+     *
+     * @param courseId the id of the course
+     * @param userId   the id of the user
+     * @return the flashcards
+     */
+    public List<Flashcard> getAllDueFlashcardsOfCourse(UUID courseId, UUID userId) {
+        List<FlashcardSetEntity> flashcardSets = flashcardSetRepository.findAllByCourseId(courseId);
+
+        return flashcardSets.stream()
+                .flatMap(flashcardSetEntity -> getDueFlashcardsOfFlashcardSet(flashcardSetEntity, userId))
+                .map(flashcardMapper::entityToDto)
+                .toList();
+    }
+
+    private Stream<FlashcardEntity> getDueFlashcardsOfFlashcardSet(final FlashcardSetEntity flashcardSetEntity,
+                                                                   final UUID userId) {
+        final var flashcards = flashcardSetEntity.getFlashcards();
+        final OffsetDateTime now = OffsetDateTime.now();
+        return flashcards.stream()
+                .filter(flashcardEntity -> {
+                    final var progressData = getProgressDataEntity(flashcardEntity.getId(), userId);
+                    if (progressData.getNextLearn() == null) {
+                        // if the flashcard has never been learned, it is due
+                        return true;
+                    }
+                    return progressData.getNextLearn().isBefore(now);
+                });
     }
 
     private FlashcardLearnedFeedback createFeedback(

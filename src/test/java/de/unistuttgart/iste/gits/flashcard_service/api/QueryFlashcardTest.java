@@ -1,9 +1,8 @@
 package de.unistuttgart.iste.gits.flashcard_service.api;
 
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.gits.common.testutil.*;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser.UserRoleInCourse;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
@@ -30,7 +29,7 @@ class QueryFlashcardTest {
     private final UUID courseId = UUID.randomUUID();
 
     @InjectCurrentUserHeader
-    private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, LoggedInUser.UserRoleInCourse.ADMINISTRATOR);
+    private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, UserRoleInCourse.STUDENT);
 
     @Autowired
     private TestUtils testUtils;

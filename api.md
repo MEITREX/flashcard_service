@@ -60,7 +60,8 @@
 <td>
 
 
-Get flashcards by their ids
+Get flashcards by their ids.
+🔒 The user must be enrolled in the course the flashcards belong to. Otherwise an error is thrown.
 
 </td>
 </tr>
@@ -78,12 +79,29 @@ Get flashcards by their ids
 Get flashcard sets by their assessment ids.
 Returns a list of flashcard sets in the same order as the provided ids.
 Each element is null if the corresponding id is not found.
+🔒 The user must be enrolled in the course the flashcard sets belong to. Otherwise for that element null is returned.
 
 </td>
 </tr>
 <tr>
 <td colspan="2" align="right" valign="top">assessmentIds</td>
 <td valign="top">[<a href="#uuid">UUID</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>dueFlashcardsByCourseId</strong></td>
+<td valign="top">[<a href="#flashcard">Flashcard</a>!]!</td>
+<td>
+
+
+Get flashcards of a course that are due to be reviewed.
+🔒 The user must be enrolled in the course the flashcards belong to. Otherwise an error is thrown.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">courseId</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -105,14 +123,22 @@ creating and deleting flashcard sets. To update a flashcard set, update, delete,
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>createFlashcardSet</strong></td>
+<td colspan="2" valign="top"><strong>_internal_noauth_createFlashcardSet</strong></td>
 <td valign="top"><a href="#flashcardset">FlashcardSet</a>!</td>
 <td>
 
 
-Creates a new flashcard set.
+Creates a new flashcard set. Mutation is only accessible internally within the system by other
+services and the gateway.
+⚠️ This mutation is only accessible internally in the system and allows the caller to create FlashcardSets without
+any permissions check and should not be called without any validation of the caller's permissions. ⚠️
 
 </td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">courseId</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
 </tr>
 <tr>
 <td colspan="2" align="right" valign="top">assessmentId</td>
@@ -153,6 +179,7 @@ Only for development, will be removed in production. Use deleteAssessment in con
 
 
 Modify a flashcard set.
+🔒 The user must be an admin the course the flashcard set is in to perform this action.
 
 </td>
 </tr>
@@ -168,6 +195,7 @@ Modify a flashcard set.
 
 
 Logs that a user has learned a flashcard.
+🔒 The user must be enrolled in the course the flashcard set is in to perform this action.
 
 </td>
 </tr>
@@ -397,6 +425,16 @@ also serves as the identifier of a flashcard set.
 
 The uuid of the assessment this flashcard set belongs to.
 This also serves as the identifier of this flashcard set.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>courseId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td>
+
+
+Id of the course this flashcard set belongs to.
 
 </td>
 </tr>

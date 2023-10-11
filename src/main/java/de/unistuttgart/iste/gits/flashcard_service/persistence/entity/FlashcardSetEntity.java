@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.gits.flashcard_service.persistence.entity;
 
+import de.unistuttgart.iste.gits.common.persistence.IWithId;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import java.util.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FlashcardSetEntity {
+public class FlashcardSetEntity implements IWithId<UUID> {
     @Id
     private UUID assessmentId;
 
@@ -29,5 +30,10 @@ public class FlashcardSetEntity {
 
     public Optional<OffsetDateTime> getLastLearned() {
         return Optional.ofNullable(lastLearned);
+    }
+
+    @Override
+    public UUID getId() {
+        return assessmentId;
     }
 }

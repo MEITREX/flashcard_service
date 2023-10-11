@@ -2,11 +2,12 @@ package de.unistuttgart.iste.gits.flashcard_service.controller;
 
 import de.unistuttgart.iste.gits.common.exception.NoAccessToCourseException;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.common.user_handling.UserCourseAccessValidator;
+import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser.UserRoleInCourse;
+import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.service.FlashcardService;
 import de.unistuttgart.iste.gits.flashcard_service.service.FlashcardUserProgressDataService;
 import de.unistuttgart.iste.gits.generated.dto.*;
-import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -14,29 +15,24 @@ import org.springframework.stereotype.Controller;
 import java.util.List;
 import java.util.UUID;
 
+import static de.unistuttgart.iste.gits.common.user_handling.UserCourseAccessValidator.validateUserHasAccessToCourse;
 import static de.unistuttgart.iste.gits.common.user_handling.UserCourseAccessValidator.validateUserHasAccessToCourses;
 
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 public class FlashcardController {
 
     private final FlashcardService flashcardService;
     private final FlashcardUserProgressDataService progressDataService;
-
-
-    public FlashcardController(final FlashcardService flashcardService,
-                               final FlashcardUserProgressDataService progressDataService) {
-        this.flashcardService = flashcardService;
-        this.progressDataService = progressDataService;
-    }
 
     @QueryMapping
     public List<Flashcard> flashcardsByIds(@Argument(name = "ids") final List<UUID> ids,
                                            @ContextValue final LoggedInUser currentUser) {
         final List<UUID> courseIds = flashcardService.getCourseIdsForFlashcardIds(ids);
 
-        validateUserHasAccessToCourses(currentUser, LoggedInUser.UserRoleInCourse.STUDENT, courseIds);
+        validateUserHasAccessToCourses(currentUser, UserRoleInCourse.STUDENT, courseIds);
 
         return flashcardService.getFlashcardsByIds(ids);
     }
@@ -45,22 +41,27 @@ public class FlashcardController {
     public List<FlashcardSet> findFlashcardSetsByAssessmentIds(@Argument(name = "assessmentIds") final List<UUID> ids,
                                                                @ContextValue final LoggedInUser currentUser) {
 
-        return flashcardService.findFlashcardSetsByAssessmentId(ids).stream()
+        return flashcardService.findFlashcardSetsByAssessmentIds(ids).stream()
                 .map(set -> {
                     if (set == null) {
                         return null;
                     }
                     try {
                         // check if the user has access to the course, otherwise return null
-                        UserCourseAccessValidator.validateUserHasAccessToCourse(currentUser,
-                                LoggedInUser.UserRoleInCourse.STUDENT,
-                                set.getCourseId());
+                        validateUserHasAccessToCourse(currentUser, UserRoleInCourse.STUDENT, set.getCourseId());
                         return set;
                     } catch (NoAccessToCourseException ex) {
                         return null;
                     }
                 })
                 .toList();
+    }
+
+    @QueryMapping
+    public List<Flashcard> dueFlashcardsByCourseId(@Argument final UUID courseId,
+                                                   @ContextValue final LoggedInUser currentUser) {
+        validateUserHasAccessToCourse(currentUser, UserRoleInCourse.STUDENT, courseId);
+        return progressDataService.getAllDueFlashcardsOfCourse(courseId, currentUser.getId());
     }
 
     @SchemaMapping(typeName = "Flashcard", field = "userProgressData")
@@ -72,13 +73,9 @@ public class FlashcardController {
     @MutationMapping
     public FlashcardSetMutation mutateFlashcardSet(@Argument final UUID assessmentId,
                                                    @ContextValue final LoggedInUser currentUser) {
-        final FlashcardSet flashcardSet = flashcardService.findFlashcardSetsByAssessmentId(List.of(assessmentId)).stream()
-                .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("No flashcard set found for assessment id " + assessmentId));
+        final FlashcardSetEntity flashcardSet = flashcardService.requireFlashcardSetExisting(assessmentId);
 
-        UserCourseAccessValidator.validateUserHasAccessToCourse(currentUser,
-                LoggedInUser.UserRoleInCourse.ADMINISTRATOR,
-                flashcardSet.getCourseId());
+        validateUserHasAccessToCourse(currentUser, UserRoleInCourse.ADMINISTRATOR, flashcardSet.getCourseId());
 
         // this is basically an empty object, only serving as a parent for the nested mutations
         return new FlashcardSetMutation(assessmentId);
@@ -117,9 +114,7 @@ public class FlashcardController {
                                                         @ContextValue final LoggedInUser currentUser) {
         final UUID courseId = flashcardService.getCourseIdsForFlashcardIds(List.of(input.getFlashcardId())).get(0);
 
-        UserCourseAccessValidator.validateUserHasAccessToCourse(currentUser,
-                LoggedInUser.UserRoleInCourse.STUDENT,
-                courseId);
+        validateUserHasAccessToCourse(currentUser, UserRoleInCourse.STUDENT, courseId);
 
         return progressDataService.logFlashcardLearned(input.getFlashcardId(),
                 currentUser.getId(),
