@@ -2,10 +2,7 @@ package de.unistuttgart.iste.gits.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.gits.common.event.ContentProgressedEvent;
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.gits.common.testutil.MockTestPublisherConfiguration;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.gits.common.testutil.*;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -71,21 +68,10 @@ class MutationLogFlashcardProgressTest {
     void testLogFlashcardProgress(final HttpGraphQlTester graphQlTester) {
         final List<FlashcardSetEntity> flashcardSet = new TestUtils().populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
-        final UUID userId1 = UUID.randomUUID();
         FlashcardSetEntity flashcardSetEntity = flashcardSet.get(0);
         final UUID flashcardSetId = flashcardSetEntity.getAssessmentId();
         final UUID flashcardId1 = flashcardSetEntity.getFlashcards().get(0).getId();
         final UUID flashcardId2 = flashcardSetEntity.getFlashcards().get(1).getId();
-
-        final String currentUser = """
-                {
-                    "id": "%s",
-                    "userName": "MyUserName",
-                    "firstName": "John",
-                    "lastName": "Doe",
-                    "courseMemberships": []
-                }
-                """.formatted(userId1.toString());
 
         runMutationLogFlashcardLearned(graphQlTester, flashcardId1, true)
                 .path("logFlashcardLearned.success").entity(Boolean.class).isEqualTo(true)

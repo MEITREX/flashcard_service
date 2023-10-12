@@ -117,8 +117,8 @@ public class FlashcardUserProgressDataService {
                 .filter(flashcardEntity -> {
                     final var progressData = getProgressDataEntity(flashcardEntity.getId(), userId);
                     if (progressData.getNextLearn() == null) {
-                        // if the flashcard has never been learned, it is due
-                        return true;
+                        // if the flashcard has never been learned, it's not due for review
+                        return false;
                     }
                     return progressData.getNextLearn().isBefore(now);
                 });

@@ -51,12 +51,12 @@ class QueryDueFlashcardsByCourseIdTest {
                 // due
                 FlashcardProgressDataEntity.builder()
                         .primaryKey(new PrimaryKey(flashCardsSet1.get(0).getId(), loggedInUser.getId()))
-                        .nextLearn(null)
+                        .nextLearn(OffsetDateTime.now().minusDays(2))
                         .build(),
                 // not due
                 FlashcardProgressDataEntity.builder()
                         .primaryKey(new PrimaryKey(flashCardsSet1.get(1).getId(), loggedInUser.getId()))
-                        .nextLearn(OffsetDateTime.now().plusDays(2))
+                        .nextLearn(null)
                         .build(),
                 // due
                 FlashcardProgressDataEntity.builder()
