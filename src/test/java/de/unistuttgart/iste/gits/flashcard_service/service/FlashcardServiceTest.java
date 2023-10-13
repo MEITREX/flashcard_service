@@ -47,7 +47,7 @@ class FlashcardServiceTest {
 
         // invoke method under test
         assertDoesNotThrow(() -> flashcardService.deleteFlashcardSetIfContentIsDeleted(contentChangeEvent));
-        verify(flashcardSetRepository, times(1)).deleteAllByIdInBatch(any());
+        verify(flashcardSetRepository, times(1)).deleteAllById(any());
     }
     @Test
     void removeContentIdsWithNoIdsToBeRemovedTest() {
@@ -65,7 +65,7 @@ class FlashcardServiceTest {
         // invoke method under test
         assertDoesNotThrow(() -> flashcardService.deleteFlashcardSetIfContentIsDeleted(contentChangeEvent));
 
-        verify(flashcardSetRepository, times(1)).deleteAllByIdInBatch(any());
+        verify(flashcardSetRepository, times(1)).deleteAllById(any());
     }
 
     @Test
@@ -105,14 +105,14 @@ class FlashcardServiceTest {
             //invoke method under test
             assertDoesNotThrow(() -> flashcardService.deleteFlashcardSetIfContentIsDeleted(event));
             verify(flashcardSetRepository, never()).findAllById(any());
-            verify(flashcardSetRepository, never()).deleteAllInBatch(any());
+            verify(flashcardSetRepository, never()).deleteAllById(any());
         }
 
         for (ContentChangeEvent errorEvent : errorEvents) {
             //invoke method under test
             assertThrows(IncompleteEventMessageException.class, () -> flashcardService.deleteFlashcardSetIfContentIsDeleted(errorEvent));
             verify(flashcardSetRepository, never()).findAllById(any());
-            verify(flashcardSetRepository, never()).deleteAllInBatch(any());
+            verify(flashcardSetRepository, never()).deleteAllById(any());
         }
 
     }

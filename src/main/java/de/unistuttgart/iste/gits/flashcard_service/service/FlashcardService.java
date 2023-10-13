@@ -146,7 +146,7 @@ public class FlashcardService {
             return;
         }
 
-        flashcardSetRepository.deleteAllByIdInBatch(dto.getContentIds());
+        flashcardSetRepository.deleteAllById(dto.getContentIds());
     }
     /**
      * helper function to make sure received event message is complete
