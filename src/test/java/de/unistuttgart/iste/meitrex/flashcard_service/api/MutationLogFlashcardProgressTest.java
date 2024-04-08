@@ -96,7 +96,7 @@ class MutationLogFlashcardProgressTest {
                 .success(true)
                 .timeToComplete(null)
                 .hintsUsed(0)
-                .responses(List.of(Response.builder().itemId(flashcardId2).response(1).build()))
+                .responses(List.of(Response.builder().itemId(flashcardId2).response(0).build()))
                 .build();
 
         verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent);
@@ -114,8 +114,17 @@ class MutationLogFlashcardProgressTest {
 
         runMutationLogFlashcardLearned(graphQlTester, flashcardId2, true)
                 .errors().verify();
+        final ContentProgressedEvent expectedEvent2 = ContentProgressedEvent.builder()
+                .userId(loggedInUser.getId())
+                .contentId(flashcardSetId)
+                .correctness(1.0)
+                .success(true)
+                .timeToComplete(null)
+                .hintsUsed(0)
+                .responses(List.of(Response.builder().itemId(flashcardId2).response(1).build()))
+                .build();
 
-        verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent);
+        verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent2);
     }
 
     @NotNull

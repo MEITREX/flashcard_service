@@ -78,6 +78,10 @@ type FlashcardSide {
 
 input CreateFlashcardInput {
     """
+    id of the item the flashcard belongs to
+    """
+    itemId:UUID
+    """
     List of sides of this flashcard. Must be at least two sides.
     """
     sides: [FlashcardSideInput!]! @ContainerSize(min: 2)

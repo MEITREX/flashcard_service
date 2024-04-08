@@ -46,7 +46,7 @@ class MutationCreateFlashcardTest {
         final List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
         final UUID itemId=UUID.randomUUID();
         final String query = """
-          mutation ($setId: UUID!) {
+          mutation ($setId: UUID!,$itemId:UUID!) {
             mutateFlashcardSet(assessmentId: $setId) {
               _internal_noauth_createFlashcard(input: {
                 itemId:$itemId,
@@ -121,10 +121,10 @@ class MutationCreateFlashcardTest {
         final List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
         final UUID itemId=UUID.randomUUID();
         final String query = """
-          mutation ($setId: UUID!) {
+          mutation ($setId: UUID!,$itemId:UUID!) {
             mutateFlashcardSet(assessmentId: $setId) {
                _internal_noauth_createFlashcard(input: {
-                itemId:$itemId,
+                itemId:$itemId
                 sides: [
                 {
                   label: "Side 11",

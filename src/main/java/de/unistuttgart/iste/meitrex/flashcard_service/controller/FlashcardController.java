@@ -30,7 +30,7 @@ public class FlashcardController {
     private final FlashcardUserProgressDataService progressDataService;
 
     @QueryMapping
-    public List<Flashcard> flashcardsByIds(@Argument(name = "ids") final List<UUID> ids,
+    public List<Flashcard> flashcardsByIds(@Argument(name = "itemIds") final List<UUID> ids,
                                            @ContextValue final LoggedInUser currentUser) {
         final List<UUID> courseIds = flashcardService.getCourseIdsForFlashcardIds(ids);
 
@@ -91,6 +91,11 @@ public class FlashcardController {
 
     @SchemaMapping(typeName = "FlashcardSetMutation")
     public Flashcard _internal_noauth_updateFlashcard(@Argument(name = "input") final UpdateFlashcardInput input) {
+        return flashcardService.updateFlashcard(input);
+    }
+
+    @SchemaMapping(typeName = "FlashcardSetMutation")
+    public Flashcard updateFlashcard(@Argument(name = "input") final UpdateFlashcardInput input) {
         return flashcardService.updateFlashcard(input);
     }
 

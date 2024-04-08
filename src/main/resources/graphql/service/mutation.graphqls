@@ -52,6 +52,13 @@ type FlashcardSetMutation {
     _internal_noauth_updateFlashcard(input: UpdateFlashcardInput!): Flashcard!
 
     """
+    Updates a flashcard. Throws an error if the flashcard does not exist.
+    ⚠️ This mutation is only accessible internally in the system and allows the caller to update Flashcards without
+    any permissions check and should not be called without any validation of the caller's permissions. ⚠️
+    """
+    updateFlashcard(input: UpdateFlashcardInput!): Flashcard!
+
+    """
     Deletes the flashcard with the specified ID. Throws an error if the flashcard does not exist.
     """
     deleteFlashcard(id: UUID!): UUID!

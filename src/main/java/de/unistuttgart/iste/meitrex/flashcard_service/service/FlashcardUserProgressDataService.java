@@ -89,7 +89,7 @@ public class FlashcardUserProgressDataService {
         flashcardProgressDataRepository.save(progressData);
 
         final FlashcardSetEntity flashcardSetEntity = getFlashcardSetForFlashcard(flashcardId);
-        publishFlashcardSetLearned(userId, flashcardSetEntity.getAssessmentId());
+        publishFlashcardSetLearned(userId, flashcardSetEntity.getAssessmentId(),flashcardId,successful);
 
         return createFeedback(progressData, successful, flashcardSetEntity, userId);
     }
@@ -202,7 +202,7 @@ public class FlashcardUserProgressDataService {
         return this.flashcardSetRepository.getReferenceById(flashcardEntity.getParentSet().getAssessmentId());
     }
 
-    private void publishFlashcardSetLearned(final UUID userId, final UUID flashcardSetId) {
+    private void publishFlashcardSetLearned(final UUID userId, final UUID flashcardSetId, final UUID itemId,final boolean successful) {
         final FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.getReferenceById(flashcardSetId);
         final List<FlashcardProgressDataLogEntity> dataLogEntities = flashCardProgressDataLogRepository
                 .findLatestLogsPerFlashcardProgressData(userId);
@@ -226,25 +226,22 @@ public class FlashcardUserProgressDataService {
         final int correct = dataLogs.stream().mapToInt(log -> log.getSuccess() ? 1 : 0).sum();
 
         final float correctness = (float) correct / total;
-        List<Response> responses= new ArrayList<Response>();
-        for(FlashcardProgressDataLogEntity log:dataLogEntities){
-            float correctnes=0;
-            if(log.getSuccess()){
-                correctnes=1;
-            }
-            Response response =Response.builder()
-                    .itemId(log.getFlashcardProgressData().getPrimaryKey().getFlashcardID())
-                    .response(correctnes)
-                    .build();
-            responses.add(response);
-        }
+
         flashcardSetEntity.setLastLearned(OffsetDateTime.now());
         flashcardSetRepository.save(flashcardSetEntity);
+        float answer=0;
+        if(successful){
+            answer=1F;
+        }
+        Response response=Response.builder()
+                        .response(answer)
+                        .itemId(itemId)
+                        .build();
 
-        publishUserProgressEvent(userId, flashcardSetId, correctness,responses);
+        publishUserProgressEvent(userId, flashcardSetId, correctness,response);
     }
 
-    private void publishUserProgressEvent(final UUID userId, final UUID assessmentId, final float correctness, final List<Response> responses) {
+    private void publishUserProgressEvent(final UUID userId, final UUID assessmentId, final float correctness, Response response) {
         topicPublisher.notifyUserWorkedOnContent(
                 ContentProgressedEvent.builder()
                         .contentId(assessmentId)
@@ -253,7 +250,7 @@ public class FlashcardUserProgressDataService {
                         .success(true)
                         .timeToComplete(null)
                         .correctness(correctness)
-                        .responses(responses)
+                        .responses(List.of(response))
                         .build()
         );
     }

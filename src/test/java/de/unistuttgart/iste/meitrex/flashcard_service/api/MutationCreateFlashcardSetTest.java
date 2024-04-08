@@ -29,7 +29,7 @@ class MutationCreateFlashcardSetTest {
         final UUID itemId2=UUID.randomUUID();
         final String query =
             """    
-            mutation ($courseId: UUID!, $assessmentId: UUID!){
+            mutation ($courseId: UUID!, $assessmentId: UUID!,$itemId1:UUID!,$itemId2:UUID!){
                 _internal_noauth_createFlashcardSet(courseId: $courseId, assessmentId: $assessmentId, input: {
                     flashcards: [
                         {

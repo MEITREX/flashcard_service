@@ -73,7 +73,7 @@ class QueryDueFlashcardsByCourseIdTest {
         final String query = """
                 query($courseId: UUID!) {
                   dueFlashcardsByCourseId(courseId: $courseId) {
-                    id
+                    itemId
                   }
                 }
                 """;
@@ -81,7 +81,7 @@ class QueryDueFlashcardsByCourseIdTest {
         tester.document(query)
                 .variable("courseId", courseId)
                 .execute()
-                .path("dueFlashcardsByCourseId[*].id")
+                .path("dueFlashcardsByCourseId[*].itemId")
                 .entityList(UUID.class)
                 .hasSize(2)
                 .contains(flashCardsSet1.get(0).getItemId(), flashCardsSet2.get(0).getItemId());
