@@ -118,7 +118,6 @@ public class FlashcardService {
      * @return list of course ids, in the same order as the flashcard ids.
      */
     public List<UUID> getCourseIdsForFlashcardIds(final List<UUID> flashcardIds) {
-        System.out.println("Recieved"+flashcardIds);
         return flashcardRepository.findAllById(flashcardIds).stream()
                 .map(FlashcardEntity::getParentSet)
                 .map(FlashcardSetEntity::getCourseId)

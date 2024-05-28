@@ -11,6 +11,7 @@ import java.util.UUID;
 @Entity(name = "FlashcardProgressData")
 @Data
 @Builder
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class FlashcardProgressDataEntity {

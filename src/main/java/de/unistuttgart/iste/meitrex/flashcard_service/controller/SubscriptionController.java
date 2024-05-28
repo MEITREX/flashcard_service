@@ -19,7 +19,7 @@ public class SubscriptionController {
 
     private final FlashcardService flashcardService;
 
-    @Topic(name = "content-changed", pubsubName = "gits")
+    @Topic(name = "content-changed", pubsubName = "meitrex")
     @PostMapping(path = "/flashcard-service/content-changed-pubsub")
     public Mono<Void> updateAssociation(@RequestBody CloudEvent<ContentChangeEvent> cloudEvent) {
 

@@ -214,14 +214,20 @@ public class FlashcardUserProgressDataService {
 
         if (dataLogEntities.size() < flashcardSetEntity.getFlashcards().size()) {
             // not all flashcards have been learned yet
+
             return;
         }
-
+        List<Response>responses=new ArrayList<>();
+        for(FlashcardProgressDataLogEntity log:dataLogEntities){
+            FlashcardProgressDataEntity progressDataEntity = log.getFlashcardProgressData();
+            UUID flashcardID = progressDataEntity.getPrimaryKey().getFlashcardID();
+            Response response=new Response(flashcardID,log.getSuccess()?1:0);
+            responses.add(response);
+        }
         final List<FlashcardProgressDataLog> dataLogs = dataLogEntities
                 .stream()
                 .map(this::mapLogEntityToDto)
                 .toList();
-
         final int total = dataLogs.size();
         final int correct = dataLogs.stream().mapToInt(log -> log.getSuccess() ? 1 : 0).sum();
 
@@ -229,19 +235,10 @@ public class FlashcardUserProgressDataService {
 
         flashcardSetEntity.setLastLearned(OffsetDateTime.now());
         flashcardSetRepository.save(flashcardSetEntity);
-        float answer=0;
-        if(successful){
-            answer=1F;
-        }
-        Response response=Response.builder()
-                        .response(answer)
-                        .itemId(itemId)
-                        .build();
-
-        publishUserProgressEvent(userId, flashcardSetId, correctness,response);
+        publishUserProgressEvent(userId, flashcardSetId, correctness,responses);
     }
 
-    private void publishUserProgressEvent(final UUID userId, final UUID assessmentId, final float correctness, Response response) {
+    private void publishUserProgressEvent(final UUID userId, final UUID assessmentId, final float correctness, List<Response> responses) {
         topicPublisher.notifyUserWorkedOnContent(
                 ContentProgressedEvent.builder()
                         .contentId(assessmentId)
@@ -250,7 +247,7 @@ public class FlashcardUserProgressDataService {
                         .success(true)
                         .timeToComplete(null)
                         .correctness(correctness)
-                        .responses(List.of(response))
+                        .responses(responses)
                         .build()
         );
     }
