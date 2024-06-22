@@ -1,4 +1,5 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.service;
+
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.meitrex.common.event.CrudOperation;
@@ -27,7 +28,8 @@ class FlashcardServiceTest {
     private final FlashcardValidator flashcardValidator = new FlashcardValidator();
 
     private final TopicPublisher topicPublisher = Mockito.mock(TopicPublisher.class);
-    private final FlashcardService flashcardService = new FlashcardService(flashcardRepository, flashcardSetRepository, flashcardMapper, flashcardValidator,topicPublisher);
+    private final FlashcardService flashcardService = new FlashcardService(flashcardRepository, flashcardSetRepository, flashcardMapper, flashcardValidator, topicPublisher);
+
     @Test
     void removeContentIds() {
         //init
@@ -51,6 +53,7 @@ class FlashcardServiceTest {
         assertDoesNotThrow(() -> flashcardService.deleteFlashcardSetIfContentIsDeleted(contentChangeEvent));
         verify(flashcardSetRepository, times(1)).deleteAllById(any());
     }
+
     @Test
     void removeContentIdsWithNoIdsToBeRemovedTest() {
         //init

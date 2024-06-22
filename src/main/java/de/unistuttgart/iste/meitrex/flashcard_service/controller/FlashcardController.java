@@ -85,7 +85,7 @@ public class FlashcardController {
 
     @SchemaMapping(typeName = "FlashcardSetMutation")
     public Flashcard _internal_noauth_createFlashcard(@Argument(name = "input") final CreateFlashcardInput input,
-                                     final FlashcardSetMutation mutation) {
+                                                      final FlashcardSetMutation mutation) {
         return flashcardService.createFlashcard(mutation.getAssessmentId(), input);
     }
 

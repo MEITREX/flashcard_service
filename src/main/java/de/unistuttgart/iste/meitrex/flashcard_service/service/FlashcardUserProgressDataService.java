@@ -89,7 +89,7 @@ public class FlashcardUserProgressDataService {
         flashcardProgressDataRepository.save(progressData);
 
         final FlashcardSetEntity flashcardSetEntity = getFlashcardSetForFlashcard(flashcardId);
-        publishFlashcardSetLearned(userId, flashcardSetEntity.getAssessmentId(),flashcardId,successful);
+        publishFlashcardSetLearned(userId, flashcardSetEntity.getAssessmentId(), flashcardId, successful);
 
         return createFeedback(progressData, successful, flashcardSetEntity, userId);
     }
@@ -159,15 +159,15 @@ public class FlashcardUserProgressDataService {
     }
 
     private static boolean wasLearnedSuccessful(final FlashcardProgressDataEntity progressData) {
-      List<FlashcardProgressDataLogEntity> progress=  progressData.getFlashcardProgressDataLogs();
-      boolean success=progress.get(0).getSuccess();
-      return success;
+        List<FlashcardProgressDataLogEntity> progress = progressData.getFlashcardProgressDataLogs();
+        boolean success = progress.get(0).getSuccess();
+        return success;
     }
 
     private static boolean wasNotLearnedInCurrentIteration(final FlashcardSetEntity flashcardSetEntity, final FlashcardProgressDataEntity progressData) {
         return progressData.getLastLearned() == null
-               // if the flashcard was learned before the last time the set was learned, it was not learned in the current iteration
-               || progressData.getNextLearn().isBefore(flashcardSetEntity.getLastLearned().orElse(OffsetDateTime.MIN));
+                // if the flashcard was learned before the last time the set was learned, it was not learned in the current iteration
+                || progressData.getNextLearn().isBefore(flashcardSetEntity.getLastLearned().orElse(OffsetDateTime.MIN));
     }
 
     private void updateProgressDataEntity(final FlashcardProgressDataEntity progressData, final boolean success) {
@@ -202,7 +202,7 @@ public class FlashcardUserProgressDataService {
         return this.flashcardSetRepository.getReferenceById(flashcardEntity.getParentSet().getAssessmentId());
     }
 
-    private void publishFlashcardSetLearned(final UUID userId, final UUID flashcardSetId, final UUID itemId,final boolean successful) {
+    private void publishFlashcardSetLearned(final UUID userId, final UUID flashcardSetId, final UUID itemId, final boolean successful) {
         final FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.getReferenceById(flashcardSetId);
         final List<FlashcardProgressDataLogEntity> dataLogEntities = flashCardProgressDataLogRepository
                 .findLatestLogsPerFlashcardProgressData(userId);
@@ -217,11 +217,11 @@ public class FlashcardUserProgressDataService {
 
             return;
         }
-        List<Response>responses=new ArrayList<>();
-        for(FlashcardProgressDataLogEntity log:dataLogEntities){
+        List<Response> responses = new ArrayList<>();
+        for (FlashcardProgressDataLogEntity log : dataLogEntities) {
             FlashcardProgressDataEntity progressDataEntity = log.getFlashcardProgressData();
             UUID flashcardID = progressDataEntity.getPrimaryKey().getFlashcardID();
-            Response response=new Response(flashcardID,log.getSuccess()?1:0);
+            Response response = new Response(flashcardID, log.getSuccess() ? 1 : 0);
             responses.add(response);
         }
         final List<FlashcardProgressDataLog> dataLogs = dataLogEntities
@@ -235,7 +235,7 @@ public class FlashcardUserProgressDataService {
 
         flashcardSetEntity.setLastLearned(OffsetDateTime.now());
         flashcardSetRepository.save(flashcardSetEntity);
-        publishUserProgressEvent(userId, flashcardSetId, correctness,responses);
+        publishUserProgressEvent(userId, flashcardSetId, correctness, responses);
     }
 
     private void publishUserProgressEvent(final UUID userId, final UUID assessmentId, final float correctness, List<Response> responses) {

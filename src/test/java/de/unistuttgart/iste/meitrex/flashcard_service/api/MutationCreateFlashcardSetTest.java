@@ -25,65 +25,65 @@ class MutationCreateFlashcardSetTest {
     void testCreateFlashcardSet(final GraphQlTester tester) {
         final UUID assessmentId = UUID.randomUUID();
         final UUID courseId = UUID.randomUUID();
-        final UUID itemId1= UUID.randomUUID();
-        final UUID itemId2=UUID.randomUUID();
+        final UUID itemId1 = UUID.randomUUID();
+        final UUID itemId2 = UUID.randomUUID();
         final String query =
-            """    
-            mutation ($courseId: UUID!, $assessmentId: UUID!,$itemId1:UUID!,$itemId2:UUID!){
-                _internal_noauth_createFlashcardSet(courseId: $courseId, assessmentId: $assessmentId, input: {
-                    flashcards: [
-                        {
-                            itemId:$itemId1,
-                            sides: [
-                                {
-                                    label: "Side 1",
-                                    isQuestion: true,
-                                    isAnswer: false,
-                                    text: "Question 1"
-                                },
-                                {
-                                    label: "Side 2",
-                                    isQuestion: false,
-                                    isAnswer: true,
-                                    text: "Answer 1"
+                """    
+                            mutation ($courseId: UUID!, $assessmentId: UUID!,$itemId1:UUID!,$itemId2:UUID!){
+                                _internal_noauth_createFlashcardSet(courseId: $courseId, assessmentId: $assessmentId, input: {
+                                    flashcards: [
+                                        {
+                                            itemId:$itemId1,
+                                            sides: [
+                                                {
+                                                    label: "Side 1",
+                                                    isQuestion: true,
+                                                    isAnswer: false,
+                                                    text: "Question 1"
+                                                },
+                                                {
+                                                    label: "Side 2",
+                                                    isQuestion: false,
+                                                    isAnswer: true,
+                                                    text: "Answer 1"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            itemId:$itemId2,
+                                            sides: [
+                                                {
+                                                    label: "Side 1",
+                                                    isQuestion: true,
+                                                    isAnswer: false,
+                                                    text: "Question 2"
+                                                },
+                                                {
+                                                    label: "Side 2",
+                                                    isQuestion: false,
+                                                    isAnswer: true,
+                                                    text: "Answer 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
-                            ]
-                        },
-                        {
-                            itemId:$itemId2,
-                            sides: [
-                                {
-                                    label: "Side 1",
-                                    isQuestion: true,
-                                    isAnswer: false,
-                                    text: "Question 2"
-                                },
-                                {
-                                    label: "Side 2",
-                                    isQuestion: false,
-                                    isAnswer: true,
-                                    text: "Answer 2"
-                                }
-                            ]
+                            )
+                            {
+                               assessmentId
+                               courseId
+                                 flashcards {
+                                    itemId
+                                     sides {
+                                     label
+                                     isQuestion
+                                     isAnswer
+                                     text
+                                 }
+                               }
+                            }
                         }
-                    ]
-                }
-            )
-            {
-               assessmentId
-               courseId
-                 flashcards {
-                    itemId
-                     sides {
-                     label
-                     isQuestion
-                     isAnswer
-                     text
-                 }
-               }
-            }
-        }
-        """;
+                        """;
 
         final FlashcardSet createdFlashcardSet = tester.document(query)
                 .variable("assessmentId", assessmentId)

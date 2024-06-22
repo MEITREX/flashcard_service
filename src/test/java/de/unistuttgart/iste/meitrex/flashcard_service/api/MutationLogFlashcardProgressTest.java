@@ -42,23 +42,23 @@ class MutationLogFlashcardProgressTest {
     private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, LoggedInUser.UserRoleInCourse.ADMINISTRATOR);
 
     private static final String mutation = """
-                mutation logFlashcardProgress($id: UUID!, $successful: Boolean!) {
-                    logFlashcardLearned(
-                       input: {
-                        flashcardId: $id,
-                        successful: $successful
-                       }
-                    ) {
-                        success
-                        nextLearnDate
-                        flashcardSetProgress {
-                            correctness
-                            percentageLearned
-                        }
+            mutation logFlashcardProgress($id: UUID!, $successful: Boolean!) {
+                logFlashcardLearned(
+                   input: {
+                    flashcardId: $id,
+                    successful: $successful
+                   }
+                ) {
+                    success
+                    nextLearnDate
+                    flashcardSetProgress {
+                        correctness
+                        percentageLearned
                     }
-                    
                 }
-                """;
+                
+            }
+            """;
 
     /**
      * Tests that the mutation "logFlashcardProgress" works as expected
@@ -96,7 +96,7 @@ class MutationLogFlashcardProgressTest {
                 .success(true)
                 .timeToComplete(null)
                 .hintsUsed(0)
-                .responses(List.of(Response.builder().itemId(flashcardId1).response(1).build(),Response.builder().itemId(flashcardId2).response(0).build()))
+                .responses(List.of(Response.builder().itemId(flashcardId1).response(1).build(), Response.builder().itemId(flashcardId2).response(0).build()))
                 .build();
 
         verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent);
@@ -121,7 +121,7 @@ class MutationLogFlashcardProgressTest {
                 .success(true)
                 .timeToComplete(null)
                 .hintsUsed(0)
-                .responses(List.of(Response.builder().itemId(flashcardId1).response(1).build(),Response.builder().itemId(flashcardId2).response(1).build()))
+                .responses(List.of(Response.builder().itemId(flashcardId1).response(1).build(), Response.builder().itemId(flashcardId2).response(1).build()))
                 .build();
 
         verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent2);

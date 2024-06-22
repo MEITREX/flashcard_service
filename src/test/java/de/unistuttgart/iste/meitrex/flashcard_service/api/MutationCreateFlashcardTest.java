@@ -44,38 +44,38 @@ class MutationCreateFlashcardTest {
     @Commit
     void testCreateFlashcard(final GraphQlTester graphQlTester) {
         final List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
-        final UUID itemId=UUID.randomUUID();
+        final UUID itemId = UUID.randomUUID();
         final String query = """
-          mutation ($setId: UUID!,$itemId:UUID!) {
-            mutateFlashcardSet(assessmentId: $setId) {
-              _internal_noauth_createFlashcard(input: {
-                itemId:$itemId,
-                sides: [
-                {
-                  label: "Side 11",
-                  isQuestion: true,
-                  isAnswer: false,
-                  text: "Question 1"
-                },
-                {
-                  label: "Side 21",
-                  isQuestion: false,
-                  isAnswer: true,
-                  text: "Answer 1"
+                mutation ($setId: UUID!,$itemId:UUID!) {
+                  mutateFlashcardSet(assessmentId: $setId) {
+                    _internal_noauth_createFlashcard(input: {
+                      itemId:$itemId,
+                      sides: [
+                      {
+                        label: "Side 11",
+                        isQuestion: true,
+                        isAnswer: false,
+                        text: "Question 1"
+                      },
+                      {
+                        label: "Side 21",
+                        isQuestion: false,
+                        isAnswer: true,
+                        text: "Answer 1"
+                      }
+                      ]
+                    }) {
+                      itemId
+                      sides {
+                        label
+                        isQuestion
+                        isAnswer
+                        text
+                      }
+                    }
+                  }
                 }
-                ]
-              }) {
-                itemId
-                sides {
-                  label
-                  isQuestion
-                  isAnswer
-                  text
-                }
-              }
-            }
-          }
-          """;
+                """;
 
         final UUID setId = sets.get(0).getAssessmentId();
 
@@ -119,38 +119,38 @@ class MutationCreateFlashcardTest {
     @Test
     void testCreateInvalidFlashcard(final GraphQlTester graphQlTester) {
         final List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
-        final UUID itemId=UUID.randomUUID();
+        final UUID itemId = UUID.randomUUID();
         final String query = """
-          mutation ($setId: UUID!,$itemId:UUID!) {
-            mutateFlashcardSet(assessmentId: $setId) {
-               _internal_noauth_createFlashcard(input: {
-                itemId:$itemId
-                sides: [
-                {
-                  label: "Side 11",
-                  isQuestion: false,
-                  isAnswer: true,
-                  text: "Question 1"
-                },
-                {
-                  label: "Side 21",
-                  isQuestion: false,
-                  isAnswer: true,
-                  text: "Answer 1"
+                mutation ($setId: UUID!,$itemId:UUID!) {
+                  mutateFlashcardSet(assessmentId: $setId) {
+                     _internal_noauth_createFlashcard(input: {
+                      itemId:$itemId
+                      sides: [
+                      {
+                        label: "Side 11",
+                        isQuestion: false,
+                        isAnswer: true,
+                        text: "Question 1"
+                      },
+                      {
+                        label: "Side 21",
+                        isQuestion: false,
+                        isAnswer: true,
+                        text: "Answer 1"
+                      }
+                      ]
+                    }) {
+                      itemId
+                      sides {
+                        label
+                        isQuestion
+                        isAnswer
+                        text
+                      }
+                    }
+                  }
                 }
-                ]
-              }) {
-                itemId
-                sides {
-                  label
-                  isQuestion
-                  isAnswer
-                  text
-                }
-              }
-            }
-          }
-          """;
+                """;
 
         final UUID setId = sets.get(0).getAssessmentId();
 
@@ -160,7 +160,7 @@ class MutationCreateFlashcardTest {
                 .variable("itemId", itemId)
                 .execute()
                 .errors()
-                .expect(responseError ->  responseError.getMessage() != null && responseError.getMessage().toLowerCase().contains("flashcards must have at least one question side and one answer side"));
+                .expect(responseError -> responseError.getMessage() != null && responseError.getMessage().toLowerCase().contains("flashcards must have at least one question side and one answer side"));
 
 
     }
@@ -168,37 +168,37 @@ class MutationCreateFlashcardTest {
     @Test
     void testCreateInvalidFlashcardSide(final GraphQlTester graphQlTester) {
         final List<FlashcardSetEntity> sets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
-        final UUID itemId=UUID.randomUUID();
+        final UUID itemId = UUID.randomUUID();
         final String query = """
-          mutation ($setId: UUID!) {
-            mutateFlashcardSet(assessmentId: $setId) {
-               _internal_noauth_createFlashcard(input: {
-                sides: [
-                {
-                  label: "Side 11",
-                  isQuestion: true,
-                  isAnswer: false,
-                  text: "Question 1"
-                },
-                {
-                  label: "Side 21",
-                  isQuestion: false,
-                  isAnswer: false,
-                  text: "Answer 1"
+                mutation ($setId: UUID!) {
+                  mutateFlashcardSet(assessmentId: $setId) {
+                     _internal_noauth_createFlashcard(input: {
+                      sides: [
+                      {
+                        label: "Side 11",
+                        isQuestion: true,
+                        isAnswer: false,
+                        text: "Question 1"
+                      },
+                      {
+                        label: "Side 21",
+                        isQuestion: false,
+                        isAnswer: false,
+                        text: "Answer 1"
+                      }
+                      ]
+                    }) {
+                      itemId
+                      sides {
+                        label
+                        isQuestion
+                        isAnswer
+                        text
+                      }
+                    }
+                  }
                 }
-                ]
-              }) {
-                itemId
-                sides {
-                  label
-                  isQuestion
-                  isAnswer
-                  text
-                }
-              }
-            }
-          }
-          """;
+                """;
 
         final UUID setId = sets.get(0).getAssessmentId();
 
@@ -208,7 +208,7 @@ class MutationCreateFlashcardTest {
                 .variable("itemId", itemId)
                 .execute()
                 .errors()
-                .expect(responseError ->  responseError.getMessage() != null && responseError.getMessage().toLowerCase().contains("flashcard side must must be at least a question or an answer"));
+                .expect(responseError -> responseError.getMessage() != null && responseError.getMessage().toLowerCase().contains("flashcard side must must be at least a question or an answer"));
 
 
     }

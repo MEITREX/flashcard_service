@@ -38,7 +38,7 @@ public class TestAuthorization {
     @Transactional
     @Commit
     void testDeleteFlashcardOnlyForAdmins(final GraphQlTester tester) {
-       final List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
+        final List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
         final String query = """
                 mutation($assessmentId: UUID!, $flashcardId: UUID!) {

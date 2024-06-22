@@ -50,36 +50,36 @@ class MutationUpdateFlashcardTest {
         final UUID flashcardToUpdate = set.get(0).getFlashcards().stream().findAny().orElseThrow().getItemId();
 
         final String query = """
-          mutation ($assessmentId: UUID!, $flashcardId: UUID!) {
-            mutateFlashcardSet(assessmentId: $assessmentId) {
-              _internal_noauth_updateFlashcard(input: {
-                itemId: $flashcardId,
-                sides: [
-                  {
-                    label: "New_Side 1",
-                    isQuestion: true,
-                    isAnswer: false,
-                    text: "{text: \\"New_Question 1\\"}"
-                  },
-                  {
-                    label: "New_Side 2",
-                    isQuestion: false,
-                    isAnswer: true,
-                    text: "{text: \\"New_Answer 1\\"}"
+                  mutation ($assessmentId: UUID!, $flashcardId: UUID!) {
+                    mutateFlashcardSet(assessmentId: $assessmentId) {
+                      _internal_noauth_updateFlashcard(input: {
+                        itemId: $flashcardId,
+                        sides: [
+                          {
+                            label: "New_Side 1",
+                            isQuestion: true,
+                            isAnswer: false,
+                            text: "{text: \\"New_Question 1\\"}"
+                          },
+                          {
+                            label: "New_Side 2",
+                            isQuestion: false,
+                            isAnswer: true,
+                            text: "{text: \\"New_Answer 1\\"}"
+                          }
+                        ]
+                      }) {
+                        itemId
+                        sides {
+                          label
+                          isQuestion
+                          isAnswer
+                          text
+                        }
+                      }
+                    }
                   }
-                ]
-              }) {
-                itemId
-                sides {
-                  label
-                  isQuestion
-                  isAnswer
-                  text
-                }
-              }
-            }
-          }
-        """;
+                """;
 
         // Execute the update mutation query
         final Flashcard updatedFlashcard = tester.document(query)

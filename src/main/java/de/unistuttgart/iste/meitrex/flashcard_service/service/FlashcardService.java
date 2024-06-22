@@ -100,7 +100,7 @@ public class FlashcardService {
         final List<FlashcardEntity> entities = flashcardRepository.findByItemIdIn(ids);
 
         ids.removeAll(entities.stream().map(FlashcardEntity::getItemId).toList());
-        if(!ids.isEmpty()) {
+        if (!ids.isEmpty()) {
             throw new EntityNotFoundException("Flashcards with ids "
                     + ids.stream().map(UUID::toString).collect(Collectors.joining(", "))
                     + " not found.");
@@ -153,6 +153,7 @@ public class FlashcardService {
 
         flashcardSetRepository.deleteAllById(dto.getContentIds());
     }
+
     /**
      * helper function to make sure received event message is complete
      *
@@ -170,17 +171,18 @@ public class FlashcardService {
      * @param itemId the id of the item
      */
     private void publishItemChangeEvent(final UUID itemId) {
-        topicPublisher.notifyItemChanges(itemId,CrudOperation.DELETE);
+        topicPublisher.notifyItemChanges(itemId, CrudOperation.DELETE);
 
     }
 
     /**
      * for each flashcard of the deleted flashcard set publish a itemchanged event
+     *
      * @param flashcardSetId the id of the flashcardset to delete
      */
-    private void publishDeletedFlashcardSet(UUID flashcardSetId){
-        FlashcardSetEntity flashcardSet=flashcardSetRepository.findById(flashcardSetId).get();
-        for(FlashcardEntity flashcard:flashcardSet.getFlashcards()){
+    private void publishDeletedFlashcardSet(UUID flashcardSetId) {
+        FlashcardSetEntity flashcardSet = flashcardSetRepository.findById(flashcardSetId).get();
+        for (FlashcardEntity flashcard : flashcardSet.getFlashcards()) {
             publishItemChangeEvent(flashcard.getItemId());
         }
     }
