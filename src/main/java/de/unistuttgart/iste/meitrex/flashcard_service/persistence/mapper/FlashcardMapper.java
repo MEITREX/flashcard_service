@@ -1,9 +1,9 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.persistence.mapper;
 
-import de.unistuttgart.iste.gits.generated.dto.*;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSideEntity;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

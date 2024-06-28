@@ -1,9 +1,10 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
-import de.unistuttgart.iste.gits.common.testutil.*;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser.UserRoleInCourse;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser.UserRoleInCourse;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardProgressDataEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
@@ -18,7 +19,7 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 
 @GraphQlApiTest
 @TablesToDelete({"flashcard_side", "flashcard", "flashcard_set"})

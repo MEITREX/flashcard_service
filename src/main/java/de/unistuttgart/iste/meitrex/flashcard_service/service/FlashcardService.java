@@ -1,15 +1,15 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.service;
 
-import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
-import de.unistuttgart.iste.gits.common.event.CrudOperation;
-import de.unistuttgart.iste.gits.common.exception.IncompleteEventMessageException;
-import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
+import de.unistuttgart.iste.meitrex.common.event.CrudOperation;
+import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.validation.FlashcardValidator;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

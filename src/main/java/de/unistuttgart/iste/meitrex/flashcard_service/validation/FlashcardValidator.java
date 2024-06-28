@@ -1,9 +1,9 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.validation;
 
-import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardInput;
-import de.unistuttgart.iste.gits.generated.dto.CreateFlashcardSetInput;
-import de.unistuttgart.iste.gits.generated.dto.FlashcardSideInput;
-import de.unistuttgart.iste.gits.generated.dto.UpdateFlashcardInput;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateFlashcardInput;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateFlashcardSetInput;
+import de.unistuttgart.iste.meitrex.generated.dto.FlashcardSideInput;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateFlashcardInput;
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;
 

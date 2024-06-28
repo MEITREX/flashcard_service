@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity;
 
-import de.unistuttgart.iste.gits.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

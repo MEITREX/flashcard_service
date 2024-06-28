@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.controller;
 
-import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
+import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.meitrex.flashcard_service.service.FlashcardService;
 import io.dapr.Topic;
 import io.dapr.client.domain.CloudEvent;

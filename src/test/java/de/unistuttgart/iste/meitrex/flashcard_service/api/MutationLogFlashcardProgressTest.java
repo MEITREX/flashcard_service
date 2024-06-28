@@ -1,9 +1,12 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
-import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.common.event.ContentProgressedEvent;
-import de.unistuttgart.iste.gits.common.testutil.*;
-import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.meitrex.common.event.ContentProgressedEvent;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
+import de.unistuttgart.iste.meitrex.common.testutil.MockTestPublisherConfiguration;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.test_utils.TestUtils;
@@ -19,7 +22,7 @@ import org.springframework.test.context.ContextConfiguration;
 import java.util.List;
 import java.util.UUID;
 
-import static de.unistuttgart.iste.gits.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;

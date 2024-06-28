@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.exception;
 
-import de.unistuttgart.iste.gits.common.exception.ExceptionToGraphQlErrorConverter;
+import de.unistuttgart.iste.meitrex.common.exception.ExceptionToGraphQlErrorConverter;
 import graphql.GraphQLError;
 import graphql.schema.DataFetchingEnvironment;
 import lombok.extern.slf4j.Slf4j;

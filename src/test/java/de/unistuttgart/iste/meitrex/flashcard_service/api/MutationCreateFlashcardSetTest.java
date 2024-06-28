@@ -1,10 +1,10 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
-import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.gits.generated.dto.Flashcard;
-import de.unistuttgart.iste.gits.generated.dto.FlashcardSet;
-import de.unistuttgart.iste.gits.generated.dto.FlashcardSide;
+import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.generated.dto.Flashcard;
+import de.unistuttgart.iste.meitrex.generated.dto.FlashcardSet;
+import de.unistuttgart.iste.meitrex.generated.dto.FlashcardSide;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.graphql.test.tester.GraphQlTester;

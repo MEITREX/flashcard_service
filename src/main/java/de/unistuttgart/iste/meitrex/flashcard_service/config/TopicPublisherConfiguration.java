@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.config;
 
 
-import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 import io.dapr.client.DaprClientBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

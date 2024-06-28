@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.service;
 
-import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
-import de.unistuttgart.iste.gits.common.event.CrudOperation;
-import de.unistuttgart.iste.gits.common.exception.IncompleteEventMessageException;
+import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
+import de.unistuttgart.iste.meitrex.common.event.CrudOperation;
+import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;

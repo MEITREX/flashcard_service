@@ -1,10 +1,7 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.service;
 
-import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
-import de.unistuttgart.iste.gits.common.event.ContentProgressedEvent;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.*;
-import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
+import de.unistuttgart.iste.meitrex.common.event.ContentProgressedEvent;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardProgressDataEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardProgressDataLogEntity;
@@ -14,6 +11,7 @@ import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.Fla
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardProgressDataRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
