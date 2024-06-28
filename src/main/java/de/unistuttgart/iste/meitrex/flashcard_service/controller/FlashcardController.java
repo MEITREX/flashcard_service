@@ -1,12 +1,12 @@
-package de.unistuttgart.iste.gits.flashcard_service.controller;
+package de.unistuttgart.iste.meitrex.flashcard_service.controller;
 
 import de.unistuttgart.iste.gits.common.exception.NoAccessToCourseException;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser.UserRoleInCourse;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
-import de.unistuttgart.iste.gits.flashcard_service.service.FlashcardService;
-import de.unistuttgart.iste.gits.flashcard_service.service.FlashcardUserProgressDataService;
 import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.service.FlashcardService;
+import de.unistuttgart.iste.meitrex.flashcard_service.service.FlashcardUserProgressDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.*;

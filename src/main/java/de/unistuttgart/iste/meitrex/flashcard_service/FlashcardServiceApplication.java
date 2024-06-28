@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.gits.flashcard_service;
+package de.unistuttgart.iste.meitrex.flashcard_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

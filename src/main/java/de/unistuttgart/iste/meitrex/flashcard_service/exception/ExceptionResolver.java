@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.gits.flashcard_service.exception;
+package de.unistuttgart.iste.meitrex.flashcard_service.exception;
 
 import de.unistuttgart.iste.gits.common.exception.ExceptionToGraphQlErrorConverter;
 import graphql.GraphQLError;

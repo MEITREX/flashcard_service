@@ -1,14 +1,15 @@
-package de.unistuttgart.iste.gits.flashcard_service.api;
+package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
-import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.test_utils.TestUtils;
 import jakarta.transaction.Transactional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
@@ -78,7 +79,7 @@ class MutationDeleteFlashcardTest {
 
         // assert that the flashcard is missing from the flashcard repository
         assertThat(flashcardRepository.count()).isEqualTo(3);
-        assertThat(flashcardRepository.findById(flashcardToDelete)).isNotPresent();
+        Assertions.assertThat(flashcardRepository.findById(flashcardToDelete)).isNotPresent();
     }
 
     @Test

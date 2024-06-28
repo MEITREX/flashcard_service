@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.gits.flashcard_service.config;
+package de.unistuttgart.iste.meitrex.flashcard_service.config;
 
 import de.unistuttgart.iste.gits.common.user_handling.RequestHeaderUserProcessor;
 import lombok.SneakyThrows;

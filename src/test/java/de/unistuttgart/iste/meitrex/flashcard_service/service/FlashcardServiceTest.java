@@ -1,19 +1,21 @@
-package de.unistuttgart.iste.gits.flashcard_service.service;
+package de.unistuttgart.iste.meitrex.flashcard_service.service;
 
 import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.gits.common.event.CrudOperation;
 import de.unistuttgart.iste.gits.common.exception.IncompleteEventMessageException;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardRepository;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
-import de.unistuttgart.iste.gits.flashcard_service.validation.FlashcardValidator;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.mapper.FlashcardMapper;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.validation.FlashcardValidator;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.modelmapper.ModelMapper;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;

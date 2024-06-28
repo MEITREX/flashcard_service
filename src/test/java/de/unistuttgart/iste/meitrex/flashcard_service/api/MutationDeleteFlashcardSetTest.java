@@ -1,12 +1,15 @@
-package de.unistuttgart.iste.gits.flashcard_service.api;
+package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.gits.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.gits.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.*;
-import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSideRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.test_utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;

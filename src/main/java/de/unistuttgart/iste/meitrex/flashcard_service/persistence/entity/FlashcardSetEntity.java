@@ -1,11 +1,16 @@
-package de.unistuttgart.iste.gits.flashcard_service.persistence.entity;
+package de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity;
 
 import de.unistuttgart.iste.gits.common.persistence.IWithId;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Entity(name = "FlashcardSet")
 @Table(indexes = {

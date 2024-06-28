@@ -1,12 +1,14 @@
-package de.unistuttgart.iste.gits.flashcard_service.controller;
+package de.unistuttgart.iste.meitrex.flashcard_service.controller;
 
 import de.unistuttgart.iste.gits.common.event.ContentChangeEvent;
-import de.unistuttgart.iste.gits.flashcard_service.service.FlashcardService;
+import de.unistuttgart.iste.meitrex.flashcard_service.service.FlashcardService;
 import io.dapr.Topic;
 import io.dapr.client.domain.CloudEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 /**

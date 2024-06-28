@@ -1,17 +1,27 @@
-package de.unistuttgart.iste.gits.flashcard_service.service;
+package de.unistuttgart.iste.meitrex.flashcard_service.service;
 
 import de.unistuttgart.iste.gits.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.gits.common.event.ContentProgressedEvent;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.*;
 import de.unistuttgart.iste.gits.generated.dto.*;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardProgressDataEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardProgressDataLogEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.mapper.FlashcardMapper;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardProgressDataLogRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardProgressDataRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Service

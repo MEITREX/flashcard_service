@@ -1,13 +1,15 @@
-package de.unistuttgart.iste.gits.flashcard_service.api;
+package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
 import de.unistuttgart.iste.gits.common.testutil.*;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.gits.common.user_handling.LoggedInUser.UserRoleInCourse;
 import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.*;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.entity.FlashcardProgressDataEntity.PrimaryKey;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardProgressDataRepository;
-import de.unistuttgart.iste.gits.flashcard_service.persistence.repository.FlashcardSetRepository;
-import de.unistuttgart.iste.gits.flashcard_service.test_utils.TestUtils;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardProgressDataEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardProgressDataRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
+import de.unistuttgart.iste.meitrex.flashcard_service.test_utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
@@ -50,22 +52,22 @@ class QueryDueFlashcardsByCourseIdTest {
         flashcardProgressDataRepository.saveAll(List.of(
                 // due
                 FlashcardProgressDataEntity.builder()
-                        .primaryKey(new PrimaryKey(flashCardsSet1.get(0).getId(), loggedInUser.getId()))
+                        .primaryKey(new FlashcardProgressDataEntity.PrimaryKey(flashCardsSet1.get(0).getId(), loggedInUser.getId()))
                         .nextLearn(OffsetDateTime.now().minusDays(2))
                         .build(),
                 // not due
                 FlashcardProgressDataEntity.builder()
-                        .primaryKey(new PrimaryKey(flashCardsSet1.get(1).getId(), loggedInUser.getId()))
+                        .primaryKey(new FlashcardProgressDataEntity.PrimaryKey(flashCardsSet1.get(1).getId(), loggedInUser.getId()))
                         .nextLearn(null)
                         .build(),
                 // due
                 FlashcardProgressDataEntity.builder()
-                        .primaryKey(new PrimaryKey(flashCardsSet2.get(0).getId(), loggedInUser.getId()))
+                        .primaryKey(new FlashcardProgressDataEntity.PrimaryKey(flashCardsSet2.get(0).getId(), loggedInUser.getId()))
                         .nextLearn(OffsetDateTime.now().minusDays(1))
                         .build(),
                 // not due
                 FlashcardProgressDataEntity.builder()
-                        .primaryKey(new PrimaryKey(flashCardsSet2.get(1).getId(), loggedInUser.getId()))
+                        .primaryKey(new FlashcardProgressDataEntity.PrimaryKey(flashCardsSet2.get(1).getId(), loggedInUser.getId()))
                         .nextLearn(OffsetDateTime.now().plusDays(1))
                         .build()
         ));
