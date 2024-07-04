@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -220,6 +221,7 @@ public class FlashcardUserProgressDataService {
             return;
         }
         List<Response> responses = new ArrayList<>();
+        dataLogEntities.sort(Comparator.comparing(FlashcardProgressDataLogEntity::getLastLearned));
         for (FlashcardProgressDataLogEntity log : dataLogEntities) {
             FlashcardProgressDataEntity progressDataEntity = log.getFlashcardProgressData();
             UUID flashcardID = progressDataEntity.getPrimaryKey().getFlashcardID();
