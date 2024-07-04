@@ -1,6 +1,8 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.validation;
 
+
 import de.unistuttgart.iste.meitrex.generated.dto.*;
+
 import jakarta.validation.ValidationException;
 import org.springframework.stereotype.Component;
 

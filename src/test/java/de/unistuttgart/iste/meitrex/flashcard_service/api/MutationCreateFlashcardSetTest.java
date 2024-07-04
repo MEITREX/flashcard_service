@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -84,6 +85,7 @@ class MutationCreateFlashcardSetTest {
                             }
                         }
                         """;
+
 
         final FlashcardSet createdFlashcardSet = tester.document(query)
                 .variable("assessmentId", assessmentId)

@@ -5,6 +5,7 @@ import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.*;
+
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.test_utils.TestUtils;
@@ -19,8 +20,10 @@ import org.springframework.test.annotation.Commit;
 import java.util.List;
 import java.util.UUID;
 
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMembershipInCourseWithId;
+
 
 @GraphQlApiTest
 @TablesToDelete({"flashcard_side", "flashcard", "flashcard_set"})
@@ -76,6 +79,7 @@ class MutationCreateFlashcardTest {
                   }
                 }
                 """;
+
 
         final UUID setId = sets.get(0).getAssessmentId();
 
@@ -152,6 +156,7 @@ class MutationCreateFlashcardTest {
                 }
                 """;
 
+
         final UUID setId = sets.get(0).getAssessmentId();
 
         // Execute the mutation and check for expected errors
@@ -161,6 +166,7 @@ class MutationCreateFlashcardTest {
                 .execute()
                 .errors()
                 .expect(responseError -> responseError.getMessage() != null && responseError.getMessage().toLowerCase().contains("flashcards must have at least one question side and one answer side"));
+
 
 
     }
@@ -200,6 +206,7 @@ class MutationCreateFlashcardTest {
                 }
                 """;
 
+
         final UUID setId = sets.get(0).getAssessmentId();
 
         // Execute the mutation and check for expected errors
@@ -209,6 +216,7 @@ class MutationCreateFlashcardTest {
                 .execute()
                 .errors()
                 .expect(responseError -> responseError.getMessage() != null && responseError.getMessage().toLowerCase().contains("flashcard side must must be at least a question or an answer"));
+
 
 
     }

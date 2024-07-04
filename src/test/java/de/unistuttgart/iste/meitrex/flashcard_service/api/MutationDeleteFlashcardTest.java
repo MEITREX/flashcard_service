@@ -9,6 +9,7 @@ import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.Fla
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.test_utils.TestUtils;
 import jakarta.transaction.Transactional;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
@@ -78,7 +79,7 @@ class MutationDeleteFlashcardTest {
 
         // assert that the flashcard is missing from the flashcard repository
         assertThat(flashcardRepository.count()).isEqualTo(3);
-        assertThat(flashcardRepository.findById(flashcardToDelete)).isNotPresent();
+        Assertions.assertThat(flashcardRepository.findById(flashcardToDelete)).isNotPresent();
     }
 
     @Test

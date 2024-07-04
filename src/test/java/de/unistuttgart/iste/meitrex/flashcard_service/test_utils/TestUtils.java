@@ -1,6 +1,9 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.test_utils;
 
-import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.*;
+
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSideEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;

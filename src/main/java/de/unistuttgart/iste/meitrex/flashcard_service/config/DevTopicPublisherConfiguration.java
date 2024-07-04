@@ -4,7 +4,9 @@ package de.unistuttgart.iste.meitrex.flashcard_service.config;
 import de.unistuttgart.iste.meitrex.common.dapr.MockTopicPublisher;
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * This is a dev-config for the TopicPublisher. It is intended to be used for development only.

@@ -6,13 +6,16 @@ import de.unistuttgart.iste.meitrex.common.event.Response;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.*;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.*;
+
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Service
