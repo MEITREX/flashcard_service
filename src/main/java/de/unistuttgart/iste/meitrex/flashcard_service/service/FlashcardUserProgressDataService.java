@@ -221,7 +221,6 @@ public class FlashcardUserProgressDataService {
             return;
         }
         List<Response> responses = new ArrayList<>();
-        dataLogEntities.sort(Comparator.comparing(FlashcardProgressDataLogEntity::getLastLearned));
         for (FlashcardProgressDataLogEntity log : dataLogEntities) {
             FlashcardProgressDataEntity progressDataEntity = log.getFlashcardProgressData();
             UUID flashcardID = progressDataEntity.getPrimaryKey().getFlashcardID();
