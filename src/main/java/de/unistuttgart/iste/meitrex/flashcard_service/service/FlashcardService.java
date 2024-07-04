@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -181,9 +182,12 @@ public class FlashcardService {
      * @param flashcardSetId the id of the flashcardset to delete
      */
     private void publishDeletedFlashcardSet(UUID flashcardSetId) {
-        FlashcardSetEntity flashcardSet = flashcardSetRepository.findById(flashcardSetId).get();
-        for (FlashcardEntity flashcard : flashcardSet.getFlashcards()) {
-            publishItemChangeEvent(flashcard.getItemId());
+        Optional<FlashcardSetEntity> flashcardSetOptional = flashcardSetRepository.findById(flashcardSetId);
+        if(flashcardSetOptional.isPresent()){
+            FlashcardSetEntity flashcardSet=flashcardSetOptional.get();
+            for (FlashcardEntity flashcard : flashcardSet.getFlashcards()) {
+                publishItemChangeEvent(flashcard.getItemId());
+            }
         }
     }
 }

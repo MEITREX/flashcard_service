@@ -45,7 +45,6 @@ class QueryFlashcardTest {
                 expectedSets.get(0).getFlashcards().get(0),
                 expectedSets.get(1).getFlashcards().get(1)
         );
-        List<UUID> ids = List.of(expectedSets.get(0).getFlashcards().get(0).getItemId(), expectedSets.get(1).getFlashcards().get(1).getItemId());
         final String query = """
                 query($ids: [UUID!]!) {
                   flashcardsByIds(itemIds: $ids) {
