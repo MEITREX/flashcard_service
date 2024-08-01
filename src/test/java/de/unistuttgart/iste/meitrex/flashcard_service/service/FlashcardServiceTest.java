@@ -1,5 +1,8 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.service;
 
+
+import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
+
 import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.meitrex.common.event.CrudOperation;
 import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
@@ -27,7 +30,10 @@ class FlashcardServiceTest {
     private final FlashcardSetRepository flashcardSetRepository = Mockito.mock(FlashcardSetRepository.class);
     private final FlashcardMapper flashcardMapper = new FlashcardMapper(new ModelMapper());
     private final FlashcardValidator flashcardValidator = new FlashcardValidator();
-    private final FlashcardService flashcardService = new FlashcardService(flashcardRepository, flashcardSetRepository, flashcardMapper, flashcardValidator);
+
+    private final TopicPublisher topicPublisher = Mockito.mock(TopicPublisher.class);
+    private final FlashcardService flashcardService = new FlashcardService(flashcardRepository, flashcardSetRepository, flashcardMapper, flashcardValidator, topicPublisher);
+
     @Test
     void removeContentIds() {
         //init
@@ -51,6 +57,7 @@ class FlashcardServiceTest {
         assertDoesNotThrow(() -> flashcardService.deleteFlashcardSetIfContentIsDeleted(contentChangeEvent));
         verify(flashcardSetRepository, times(1)).deleteAllById(any());
     }
+
     @Test
     void removeContentIdsWithNoIdsToBeRemovedTest() {
         //init

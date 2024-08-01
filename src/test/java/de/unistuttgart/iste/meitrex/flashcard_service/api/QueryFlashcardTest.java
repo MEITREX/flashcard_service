@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
-import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+
+import de.unistuttgart.iste.meitrex.common.testutil.*;
+
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser.UserRoleInCourse;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
@@ -43,16 +43,14 @@ class QueryFlashcardTest {
     @Transactional
     void testQueryFlashcardsByIds(final GraphQlTester tester) {
         final List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
-
         final List<FlashcardEntity> flashcardsToQuery = List.of(
                 expectedSets.get(0).getFlashcards().get(0),
                 expectedSets.get(1).getFlashcards().get(1)
         );
-
         final String query = """
                 query($ids: [UUID!]!) {
-                  flashcardsByIds(ids: $ids) {
-                    id
+                  flashcardsByIds(itemIds: $ids) {
+                    itemId
                     sides {
                       label
                       isQuestion
@@ -64,7 +62,7 @@ class QueryFlashcardTest {
                 """;
 
         final List<Flashcard> actualFlashcards = tester.document(query)
-                .variable("ids", flashcardsToQuery.stream().map(FlashcardEntity::getId))
+                .variable("ids", flashcardsToQuery.stream().map(FlashcardEntity::getItemId))
                 .execute()
                 .path("flashcardsByIds")
                 .entityList(Flashcard.class)

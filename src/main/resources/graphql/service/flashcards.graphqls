@@ -5,9 +5,9 @@ and which sides he has to guess.
 """
 type Flashcard {
     """
-    Unique identifier of this flashcard.
+    Unique identifier of this flashcard, which is the id of the corresponding item
     """
-    id: UUID!
+    itemId: UUID!
     """
     List of sides of this flashcard.
     """
@@ -78,6 +78,10 @@ type FlashcardSide {
 
 input CreateFlashcardInput {
     """
+    id of the item the flashcard belongs to
+    """
+    itemId:UUID
+    """
     List of sides of this flashcard. Must be at least two sides.
     """
     sides: [FlashcardSideInput!]! @ContainerSize(min: 2)
@@ -104,9 +108,9 @@ input FlashcardSideInput {
 
 input UpdateFlashcardInput {
     """
-    Id of the flashcard to update.
+    Id of the flashcard to update, which is the id of the corresponding item.
     """
-    id: UUID!
+    itemId: UUID!
     """
     List of sides of this flashcard. Must be at least two sides.
     """

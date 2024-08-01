@@ -8,6 +8,9 @@ import java.util.UUID;
 
 @Entity(name = "FlashcardProgressDataLog")
 @Data
+@Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class FlashcardProgressDataLogEntity {
@@ -30,4 +33,8 @@ public class FlashcardProgressDataLogEntity {
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
     private FlashcardProgressDataEntity flashcardProgressData;
+
+    public boolean getSuccess() {
+        return success;
+    }
 }

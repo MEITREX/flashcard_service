@@ -28,6 +28,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         uses: gradle/gradle-build-action@v3
+
         with:
           arguments: cleanTest test jacocoTestReport sonar
 

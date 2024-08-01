@@ -14,6 +14,7 @@ public interface FlashcardSetRepository extends MeitrexRepository<FlashcardSetEn
 
     /**
      * Find all flashcard sets by course id.
+     *
      * @param courseId the course id
      * @return the list of flashcard sets
      */

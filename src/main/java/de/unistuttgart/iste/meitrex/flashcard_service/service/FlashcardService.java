@@ -3,6 +3,9 @@ package de.unistuttgart.iste.meitrex.flashcard_service.service;
 import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.meitrex.common.event.CrudOperation;
 import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
+
+import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
+
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.mapper.FlashcardMapper;
@@ -17,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -30,6 +34,8 @@ public class FlashcardService {
     private final FlashcardSetRepository flashcardSetRepository;
     private final FlashcardMapper flashcardMapper;
     private final FlashcardValidator flashcardValidator;
+
+    private final TopicPublisher topicPublisher;
 
     public Flashcard createFlashcard(final UUID assessmentId, final CreateFlashcardInput flashcardInput) {
         flashcardValidator.validateCreateFlashcardInput(flashcardInput);
@@ -50,8 +56,8 @@ public class FlashcardService {
     public Flashcard updateFlashcard(final UpdateFlashcardInput input) {
         flashcardValidator.validateUpdateFlashcardInput(input);
 
-        final FlashcardEntity oldFlashcard = flashcardRepository.findById(input.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Flashcard with id %s not found.".formatted(input.getId())));
+        final FlashcardEntity oldFlashcard = flashcardRepository.findById(input.getItemId())
+                .orElseThrow(() -> new EntityNotFoundException("Flashcard with id %s not found.".formatted(input.getItemId())));
 
         FlashcardEntity updatedFlashcard = flashcardMapper.dtoToEntity(input);
         updatedFlashcard.setParentSet(oldFlashcard.getParentSet());
@@ -63,10 +69,11 @@ public class FlashcardService {
 
     public UUID deleteFlashcard(final UUID assessmentId, final UUID flashcardId) {
         final FlashcardSetEntity set = requireFlashcardSetExisting(assessmentId);
-        if (!set.getFlashcards().removeIf(x -> x.getId().equals(flashcardId))) {
+        if (!set.getFlashcards().removeIf(x -> x.getItemId().equals(flashcardId))) {
             throw new EntityNotFoundException("Flashcard with id %s not found.".formatted(flashcardId));
         }
         flashcardSetRepository.save(set);
+        publishItemChangeEvent(flashcardId);
         return flashcardId;
     }
 
@@ -82,6 +89,7 @@ public class FlashcardService {
 
     public UUID deleteFlashcardSet(final UUID uuid) {
         requireFlashcardSetExisting(uuid);
+        publishDeletedFlashcardSet(uuid);
         flashcardSetRepository.deleteById(uuid);
         return uuid;
     }
@@ -92,10 +100,10 @@ public class FlashcardService {
     }
 
     public List<Flashcard> getFlashcardsByIds(final List<UUID> ids) {
-        final List<FlashcardEntity> entities = flashcardRepository.findByIdIn(ids);
+        final List<FlashcardEntity> entities = flashcardRepository.findByItemIdIn(ids);
 
-        ids.removeAll(entities.stream().map(FlashcardEntity::getId).toList());
-        if(!ids.isEmpty()) {
+        ids.removeAll(entities.stream().map(FlashcardEntity::getItemId).toList());
+        if (!ids.isEmpty()) {
             throw new EntityNotFoundException("Flashcards with ids "
                     + ids.stream().map(UUID::toString).collect(Collectors.joining(", "))
                     + " not found.");
@@ -148,6 +156,7 @@ public class FlashcardService {
 
         flashcardSetRepository.deleteAllById(dto.getContentIds());
     }
+
     /**
      * helper function to make sure received event message is complete
      *
@@ -157,6 +166,30 @@ public class FlashcardService {
     private void checkCompletenessOfDto(final ContentChangeEvent dto) throws IncompleteEventMessageException {
         if (dto.getOperation() == null || dto.getContentIds() == null) {
             throw new IncompleteEventMessageException(IncompleteEventMessageException.ERROR_INCOMPLETE_MESSAGE);
+        }
+    }
+
+    /***
+     * helper function, that creates a ItemChange Event and publish it, when a flashcard was deleted
+     * @param itemId the id of the item
+     */
+    private void publishItemChangeEvent(final UUID itemId) {
+        topicPublisher.notifyItemChanges(itemId, CrudOperation.DELETE);
+
+    }
+
+    /**
+     * for each flashcard of the deleted flashcard set publish a itemchanged event
+     *
+     * @param flashcardSetId the id of the flashcardset to delete
+     */
+    private void publishDeletedFlashcardSet(UUID flashcardSetId) {
+        Optional<FlashcardSetEntity> flashcardSetOptional = flashcardSetRepository.findById(flashcardSetId);
+        if(flashcardSetOptional.isPresent()){
+            FlashcardSetEntity flashcardSet=flashcardSetOptional.get();
+            for (FlashcardEntity flashcard : flashcardSet.getFlashcards()) {
+                publishItemChangeEvent(flashcard.getItemId());
+            }
         }
     }
 }

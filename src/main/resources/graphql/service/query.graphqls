@@ -3,7 +3,7 @@ type Query {
     Get flashcards by their ids.
     🔒 The user must be enrolled in the course the flashcards belong to. Otherwise an error is thrown.
     """
-    flashcardsByIds(ids: [UUID!]!): [Flashcard!]!
+    flashcardsByIds(itemIds: [UUID!]!): [Flashcard!]!
     """
     Get flashcard sets by their assessment ids.
     Returns a list of flashcard sets in the same order as the provided ids.

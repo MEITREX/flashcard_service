@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.test_utils;
 
+
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSideEntity;
@@ -15,6 +16,7 @@ public class TestUtils {
 
     /**
      * Helper method which creates some flashcard sets and saves them to the repository.
+     *
      * @param repo The repository to save the flashcard sets to.
      * @return Returns the created flashcard sets.
      */
@@ -26,7 +28,7 @@ public class TestUtils {
         set1.setCourseId(courseId);
 
         FlashcardEntity flashcard1 = new FlashcardEntity();
-        flashcard1.setId(UUID.randomUUID());
+        flashcard1.setItemId(UUID.randomUUID());
         flashcard1.setParentSet(set1);
         flashcard1.setSides(List.of(
                 new FlashcardSideEntity(UUID.randomUUID(),
@@ -44,7 +46,7 @@ public class TestUtils {
         ));
 
         FlashcardEntity flashcard2 = new FlashcardEntity();
-        flashcard2.setId(UUID.randomUUID());
+        flashcard2.setItemId(UUID.randomUUID());
         flashcard2.setParentSet(set1);
         flashcard2.setSides(List.of(
                 new FlashcardSideEntity(UUID.randomUUID(),
@@ -68,7 +70,7 @@ public class TestUtils {
         set2.setCourseId(courseId);
 
         FlashcardEntity flashcard3 = new FlashcardEntity();
-        flashcard3.setId(UUID.randomUUID());
+        flashcard3.setItemId(UUID.randomUUID());
         flashcard3.setParentSet(set2);
         flashcard3.setSides(List.of(
                 new FlashcardSideEntity(UUID.randomUUID(),
@@ -86,7 +88,7 @@ public class TestUtils {
         ));
 
         FlashcardEntity flashcard4 = new FlashcardEntity();
-        flashcard4.setId(UUID.randomUUID());
+        flashcard4.setItemId(UUID.randomUUID());
         flashcard4.setParentSet(set2);
         flashcard4.setSides(List.of(
                 new FlashcardSideEntity(UUID.randomUUID(),

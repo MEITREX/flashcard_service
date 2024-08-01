@@ -5,9 +5,9 @@ import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
 import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
-import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;
-import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
-import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSideRepository;
+
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.*;
+
 import de.unistuttgart.iste.meitrex.flashcard_service.test_utils.TestUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

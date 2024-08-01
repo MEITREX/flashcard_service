@@ -2,9 +2,8 @@ package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
-import de.unistuttgart.iste.meitrex.generated.dto.Flashcard;
-import de.unistuttgart.iste.meitrex.generated.dto.FlashcardSet;
-import de.unistuttgart.iste.meitrex.generated.dto.FlashcardSide;
+
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.graphql.test.tester.GraphQlTester;
@@ -27,64 +26,72 @@ class MutationCreateFlashcardSetTest {
     void testCreateFlashcardSet(final GraphQlTester tester) {
         final UUID assessmentId = UUID.randomUUID();
         final UUID courseId = UUID.randomUUID();
+        final UUID itemId1 = UUID.randomUUID();
+        final UUID itemId2 = UUID.randomUUID();
         final String query =
-            """    
-            mutation ($courseId: UUID!, $assessmentId: UUID!){
-                _internal_noauth_createFlashcardSet(courseId: $courseId, assessmentId: $assessmentId, input: {
-                    flashcards: [
-                        {
-                            sides: [
-                                {
-                                    label: "Side 1",
-                                    isQuestion: true,
-                                    isAnswer: false,
-                                    text: "Question 1"
-                                },
-                                {
-                                    label: "Side 2",
-                                    isQuestion: false,
-                                    isAnswer: true,
-                                    text: "Answer 1"
+                """    
+                            mutation ($courseId: UUID!, $assessmentId: UUID!,$itemId1:UUID!,$itemId2:UUID!){
+                                _internal_noauth_createFlashcardSet(courseId: $courseId, assessmentId: $assessmentId, input: {
+                                    flashcards: [
+                                        {
+                                            itemId:$itemId1,
+                                            sides: [
+                                                {
+                                                    label: "Side 1",
+                                                    isQuestion: true,
+                                                    isAnswer: false,
+                                                    text: "Question 1"
+                                                },
+                                                {
+                                                    label: "Side 2",
+                                                    isQuestion: false,
+                                                    isAnswer: true,
+                                                    text: "Answer 1"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            itemId:$itemId2,
+                                            sides: [
+                                                {
+                                                    label: "Side 1",
+                                                    isQuestion: true,
+                                                    isAnswer: false,
+                                                    text: "Question 2"
+                                                },
+                                                {
+                                                    label: "Side 2",
+                                                    isQuestion: false,
+                                                    isAnswer: true,
+                                                    text: "Answer 2"
+                                                }
+                                            ]
+                                        }
+                                    ]
                                 }
-                            ]
-                        },
-                        {
-                            sides: [
-                                {
-                                    label: "Side 1",
-                                    isQuestion: true,
-                                    isAnswer: false,
-                                    text: "Question 2"
-                                },
-                                {
-                                    label: "Side 2",
-                                    isQuestion: false,
-                                    isAnswer: true,
-                                    text: "Answer 2"
-                                }
-                            ]
+                            )
+                            {
+                               assessmentId
+                               courseId
+                                 flashcards {
+                                    itemId
+                                     sides {
+                                     label
+                                     isQuestion
+                                     isAnswer
+                                     text
+                                 }
+                               }
+                            }
                         }
-                    ]
-                }
-            )
-            {
-               assessmentId
-               courseId
-                 flashcards {
-                     sides {
-                     label
-                     isQuestion
-                     isAnswer
-                     text
-                 }
-               }
-            }
-        }
-        """;
+                        """;
+
 
         final FlashcardSet createdFlashcardSet = tester.document(query)
                 .variable("assessmentId", assessmentId)
                 .variable("courseId", courseId)
+                .variable("itemId1", itemId1)
+                .variable("itemId2", itemId2)
                 .execute()
                 .path("_internal_noauth_createFlashcardSet").entity(FlashcardSet.class).get();
 
@@ -98,6 +105,7 @@ class MutationCreateFlashcardSetTest {
 
         final Flashcard flashcard1 = flashcards.get(0);
         assertThat(flashcard1.getSides(), hasSize(2));
+        assertThat(flashcard1.getItemId(), is(itemId1));
 
         final FlashcardSide flashcard1Side1 = flashcard1.getSides().get(0);
         assertThat(flashcard1Side1.getLabel(), is("Side 1"));
@@ -113,6 +121,7 @@ class MutationCreateFlashcardSetTest {
 
         final Flashcard flashcard2 = flashcards.get(1);
         assertThat(flashcard2.getSides(), hasSize(2));
+        assertThat(flashcard2.getItemId(), is(itemId2));
 
         final FlashcardSide flashcard2Side1 = flashcard2.getSides().get(0);
         assertThat(flashcard2Side1.getLabel(), is("Side 1"));

@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -14,7 +15,8 @@ import java.util.UUID;
  */
 @Repository
 public interface FlashcardRepository extends JpaRepository<FlashcardEntity, UUID>, JpaSpecificationExecutor<FlashcardEntity> {
-    List<FlashcardEntity> findByIdIn(List<UUID> ids);
+    List<FlashcardEntity> findByItemIdIn(List<UUID> ids);
 
 
+    Optional<FlashcardEntity> findByItemId(UUID itemId);
 }

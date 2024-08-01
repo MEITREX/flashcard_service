@@ -14,8 +14,7 @@ import java.util.UUID;
 public class FlashcardEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID id;
+    private UUID itemId;
 
     @OneToMany(mappedBy = "flashcard", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FlashcardSideEntity> sides;

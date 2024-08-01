@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
-import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+
+import de.unistuttgart.iste.meitrex.common.testutil.*;
+
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser.UserRoleInCourse;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
@@ -49,7 +49,7 @@ class QueryFlashcardSetTest {
                         assessmentId,
                         courseId,
                         flashcards {
-                            id,
+                            itemId,
                             sides {
                               label,
                               isQuestion,

@@ -21,7 +21,7 @@ import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMem
 
 @GraphQlApiTest
 @TablesToDelete({"flashcard_side", "flashcard", "flashcard_set"})
-class TestAuthorization {
+public class TestAuthorization {
 
     @Autowired
     private FlashcardSetRepository flashcardSetRepository;
@@ -37,49 +37,23 @@ class TestAuthorization {
     @Test
     @Transactional
     @Commit
-    void testUpdateFlashcardOnlyForAdmins(final GraphQlTester tester) {
-        final List<FlashcardSetEntity> set = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
-
-        final UUID setOfFlashcard = set.get(0).getAssessmentId();
-        // Perform the update operation
-        final UUID flashcardToUpdate = set.get(0).getFlashcards().stream().findAny().orElseThrow().getId();
+    void testDeleteFlashcardOnlyForAdmins(final GraphQlTester tester) {
+        final List<FlashcardSetEntity> expectedSets = testUtils.populateFlashcardSetRepository(flashcardSetRepository, courseId);
 
         final String query = """
-                  mutation ($assessmentId: UUID!, $flashcardId: UUID!) {
+                mutation($assessmentId: UUID!, $flashcardId: UUID!) {
                     mutateFlashcardSet(assessmentId: $assessmentId) {
-                      updateFlashcard(input: {
-                        id: $flashcardId,
-                        sides: [
-                          {
-                            label: "New_Side 1",
-                            isQuestion: true,
-                            isAnswer: false,
-                            text: "{text: \\"New_Question 1\\"}"
-                          },
-                          {
-                            label: "New_Side 2",
-                            isQuestion: false,
-                            isAnswer: true,
-                            text: "{text: \\"New_Answer 1\\"}"
-                          }
-                        ]
-                      }) {
-                        id
-                        sides {
-                          label
-                          isQuestion
-                          isAnswer
-                          text
-                        }
-                      }
+                        deleteFlashcard(id: $flashcardId)
                     }
-                  }
+                }
                 """;
 
-        // Execute the update mutation query
+        final UUID setToDeleteFrom = expectedSets.get(0).getAssessmentId();
+        final UUID flashcardToDelete = expectedSets.get(0).getFlashcards().stream().findAny().orElseThrow().getItemId();
+
         tester.document(query)
-                .variable("assessmentId", setOfFlashcard)
-                .variable("flashcardId", flashcardToUpdate)
+                .variable("assessmentId", setToDeleteFrom)
+                .variable("flashcardId", flashcardToDelete)
                 .execute()
                 .errors()
                 .satisfy(AuthorizationAsserts::assertIsMissingUserRoleError);
@@ -88,4 +62,5 @@ class TestAuthorization {
 
 
 }
+
 

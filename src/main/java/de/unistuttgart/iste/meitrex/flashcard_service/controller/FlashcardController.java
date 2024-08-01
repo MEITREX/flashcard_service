@@ -1,5 +1,8 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.controller;
 
+import de.unistuttgart.iste.meitrex.generated.dto.Flashcard;
+import de.unistuttgart.iste.meitrex.generated.dto.FlashcardSet;
+
 import de.unistuttgart.iste.meitrex.common.exception.NoAccessToCourseException;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser.UserRoleInCourse;
@@ -28,7 +31,7 @@ public class FlashcardController {
     private final FlashcardUserProgressDataService progressDataService;
 
     @QueryMapping
-    public List<Flashcard> flashcardsByIds(@Argument(name = "ids") final List<UUID> ids,
+    public List<Flashcard> flashcardsByIds(@Argument(name = "itemIds") final List<UUID> ids,
                                            @ContextValue final LoggedInUser currentUser) {
         final List<UUID> courseIds = flashcardService.getCourseIdsForFlashcardIds(ids);
 
@@ -67,7 +70,7 @@ public class FlashcardController {
     @SchemaMapping(typeName = "Flashcard", field = "userProgressData")
     public FlashcardProgressData flashcardUserProgressData(final Flashcard flashcard,
                                                            @ContextValue final LoggedInUser currentUser) {
-        return progressDataService.getProgressData(flashcard.getId(), currentUser.getId());
+        return progressDataService.getProgressData(flashcard.getItemId(), currentUser.getId());
     }
 
     @MutationMapping
@@ -82,9 +85,14 @@ public class FlashcardController {
     }
 
     @SchemaMapping(typeName = "FlashcardSetMutation")
-    public Flashcard createFlashcard(@Argument(name = "input") final CreateFlashcardInput input,
-                                     final FlashcardSetMutation mutation) {
+    public Flashcard _internal_noauth_createFlashcard(@Argument(name = "input") final CreateFlashcardInput input,
+                                                      final FlashcardSetMutation mutation) {
         return flashcardService.createFlashcard(mutation.getAssessmentId(), input);
+    }
+
+    @SchemaMapping(typeName = "FlashcardSetMutation")
+    public Flashcard _internal_noauth_updateFlashcard(@Argument(name = "input") final UpdateFlashcardInput input) {
+        return flashcardService.updateFlashcard(input);
     }
 
     @SchemaMapping(typeName = "FlashcardSetMutation")

@@ -2,11 +2,9 @@ package de.unistuttgart.iste.meitrex.flashcard_service.api;
 
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 import de.unistuttgart.iste.meitrex.common.event.ContentProgressedEvent;
-import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.common.testutil.InjectCurrentUserHeader;
-import de.unistuttgart.iste.meitrex.common.testutil.MockTestPublisherConfiguration;
-import de.unistuttgart.iste.meitrex.common.testutil.TablesToDelete;
+import de.unistuttgart.iste.meitrex.common.testutil.*;
 import de.unistuttgart.iste.meitrex.common.user_handling.LoggedInUser;
+import de.unistuttgart.iste.meitrex.common.event.Response;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.test_utils.TestUtils;
@@ -44,23 +42,23 @@ class MutationLogFlashcardProgressTest {
     private final LoggedInUser loggedInUser = userWithMembershipInCourseWithId(courseId, LoggedInUser.UserRoleInCourse.ADMINISTRATOR);
 
     private static final String mutation = """
-                mutation logFlashcardProgress($id: UUID!, $successful: Boolean!) {
-                    logFlashcardLearned(
-                       input: {
-                        flashcardId: $id,
-                        successful: $successful
-                       }
-                    ) {
-                        success
-                        nextLearnDate
-                        flashcardSetProgress {
-                            correctness
-                            percentageLearned
-                        }
+            mutation logFlashcardProgress($id: UUID!, $successful: Boolean!) {
+                logFlashcardLearned(
+                   input: {
+                    flashcardId: $id,
+                    successful: $successful
+                   }
+                ) {
+                    success
+                    nextLearnDate
+                    flashcardSetProgress {
+                        correctness
+                        percentageLearned
                     }
-                    
                 }
-                """;
+                
+            }
+            """;
 
     /**
      * Tests that the mutation "logFlashcardProgress" works as expected
@@ -73,8 +71,8 @@ class MutationLogFlashcardProgressTest {
 
         FlashcardSetEntity flashcardSetEntity = flashcardSet.get(0);
         final UUID flashcardSetId = flashcardSetEntity.getAssessmentId();
-        final UUID flashcardId1 = flashcardSetEntity.getFlashcards().get(0).getId();
-        final UUID flashcardId2 = flashcardSetEntity.getFlashcards().get(1).getId();
+        final UUID flashcardId1 = flashcardSetEntity.getFlashcards().get(0).getItemId();
+        final UUID flashcardId2 = flashcardSetEntity.getFlashcards().get(1).getItemId();
 
         runMutationLogFlashcardLearned(graphQlTester, flashcardId1, true)
                 .path("logFlashcardLearned.success").entity(Boolean.class).isEqualTo(true)
@@ -98,6 +96,7 @@ class MutationLogFlashcardProgressTest {
                 .success(true)
                 .timeToComplete(null)
                 .hintsUsed(0)
+                .responses(List.of(Response.builder().itemId(flashcardId1).response(1).build(), Response.builder().itemId(flashcardId2).response(0).build()))
                 .build();
 
         verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent);
@@ -115,8 +114,17 @@ class MutationLogFlashcardProgressTest {
 
         runMutationLogFlashcardLearned(graphQlTester, flashcardId2, true)
                 .errors().verify();
+        final ContentProgressedEvent expectedEvent2 = ContentProgressedEvent.builder()
+                .userId(loggedInUser.getId())
+                .contentId(flashcardSetId)
+                .correctness(1.0)
+                .success(true)
+                .timeToComplete(null)
+                .hintsUsed(0)
+                .responses(List.of(Response.builder().itemId(flashcardId1).response(1).build(), Response.builder().itemId(flashcardId2).response(1).build()))
+                .build();
 
-        verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent);
+        verify(topicPublisher).notifyUserWorkedOnContent(expectedEvent2);
     }
 
     @NotNull

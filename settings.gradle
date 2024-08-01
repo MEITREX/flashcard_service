@@ -6,5 +6,6 @@ sourceControl {
     }
     gitRepository(uri('https://github.com/MEITREX/common_test')) {
         producesModule('de.unistuttgart.iste.meitrex:meitrex-common-test')
+
     }
 }

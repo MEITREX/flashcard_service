@@ -56,7 +56,7 @@ class MutationDeleteFlashcardTest {
                 """;
 
         final UUID setToDeleteFrom = expectedSets.get(0).getAssessmentId();
-        final UUID flashcardToDelete = expectedSets.get(0).getFlashcards().stream().findAny().orElseThrow().getId();
+        final UUID flashcardToDelete = expectedSets.get(0).getFlashcards().stream().findAny().orElseThrow().getItemId();
 
         tester.document(query)
                 .variable("assessmentId", setToDeleteFrom)
@@ -74,7 +74,7 @@ class MutationDeleteFlashcardTest {
                 .orElseThrow()
                 .getFlashcards()
                 .stream()
-                .filter(x -> x.getId() == flashcardToDelete))
+                .filter(x -> x.getItemId() == flashcardToDelete))
                 .isEmpty();
 
         // assert that the flashcard is missing from the flashcard repository
