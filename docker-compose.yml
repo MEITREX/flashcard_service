@@ -1,18 +1,18 @@
-version: "3"
 services:
-  database-flashcard:
-    image: postgres:alpine
+  database:
+    image: pgvector/pgvector:pg16
     restart: always
     expose:
-      - 6032
+      - 5432
     ports:
-      - "6032:5432"
+      - "5432:5432"
     volumes:
-      - flashcarddata:/var/lib/postgresql/data
+      - dbdata:/var/lib/postgresql/data
+      - ./../flashcard_service/pg-init-scripts:/docker-entrypoint-initdb.d
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=flashcard_service
+      - POSTGRES_CREATE_DB_FLASHCARD_SERVICE=flashcard_service
   app-flashcard:
     build:
       context: ./../flashcard_service # necessary because otherwise docker-compose overrides the context path when merging multiple docker-compose.yml files
@@ -22,9 +22,9 @@ services:
       - "6000:6000"
       - "6001:6001"
     depends_on:
-      - database-flashcard
+      - database
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database-flashcard:5432/flashcard_service
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/flashcard_service
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
   dapr-flashcard:
@@ -47,7 +47,7 @@ services:
     expose:
       - "6379"
 volumes:
-  flashcarddata:
+  dbdata:
   testdata:
 
 networks:
