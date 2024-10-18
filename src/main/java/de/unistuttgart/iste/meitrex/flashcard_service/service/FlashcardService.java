@@ -1,5 +1,7 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.service;
 
+import de.unistuttgart.iste.meitrex.common.event.AssessmentContentMutatedEvent;
+import de.unistuttgart.iste.meitrex.common.event.AssessmentType;
 import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
 import de.unistuttgart.iste.meitrex.common.event.CrudOperation;
 import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
@@ -8,6 +10,7 @@ import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
 
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSetEntity;
+import de.unistuttgart.iste.meitrex.flashcard_service.persistence.entity.FlashcardSideEntity;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.mapper.FlashcardMapper;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardRepository;
 import de.unistuttgart.iste.meitrex.flashcard_service.persistence.repository.FlashcardSetRepository;
@@ -19,9 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -49,6 +50,8 @@ public class FlashcardService {
 
         set.getFlashcards().add(flashcard);
 
+        publishAssessmentContentMutatedEvent(set);
+
         return flashcardMapper.entityToDto(flashcard);
     }
 
@@ -64,6 +67,8 @@ public class FlashcardService {
 
         updatedFlashcard = flashcardRepository.save(updatedFlashcard);
 
+        publishAssessmentContentMutatedEvent(updatedFlashcard.getParentSet());
+
         return flashcardMapper.entityToDto(updatedFlashcard);
     }
 
@@ -74,6 +79,9 @@ public class FlashcardService {
         }
         flashcardSetRepository.save(set);
         publishItemChangeEvent(flashcardId);
+
+        publishAssessmentContentMutatedEvent(set);
+
         return flashcardId;
     }
 
@@ -84,14 +92,10 @@ public class FlashcardService {
         mappedEntity.setAssessmentId(assessmentId);
         mappedEntity.setCourseId(courseId);
         final FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.save(mappedEntity);
-        return flashcardMapper.flashcardSetEntityToDto(flashcardSetEntity);
-    }
 
-    public UUID deleteFlashcardSet(final UUID uuid) {
-        requireFlashcardSetExisting(uuid);
-        publishDeletedFlashcardSet(uuid);
-        flashcardSetRepository.deleteById(uuid);
-        return uuid;
+        publishAssessmentContentMutatedEvent(flashcardSetEntity);
+
+        return flashcardMapper.flashcardSetEntityToDto(flashcardSetEntity);
     }
 
     public FlashcardSetEntity requireFlashcardSetExisting(final UUID uuid) {
@@ -179,6 +183,19 @@ public class FlashcardService {
     }
 
     /**
+     * Helper method to raise an AssessmentContentMutatedEvent dapr event for the specified flashcard set.
+     * @param flashcardSetEntity The flashcard set for which to raise the event for.
+     */
+    private void publishAssessmentContentMutatedEvent(final FlashcardSetEntity flashcardSetEntity) {
+        topicPublisher.notifyAssessmentContentMutated(new AssessmentContentMutatedEvent(
+                flashcardSetEntity.getCourseId(),
+                flashcardSetEntity.getAssessmentId(),
+                AssessmentType.FLASHCARDS,
+                generateTaskInformation(flashcardSetEntity)
+        ));
+    }
+
+    /**
      * for each flashcard of the deleted flashcard set publish a itemchanged event
      *
      * @param flashcardSetId the id of the flashcardset to delete
@@ -191,5 +208,42 @@ public class FlashcardService {
                 publishItemChangeEvent(flashcard.getItemId());
             }
         }
+    }
+
+    /**
+     * Helper method to generate TaskInformation objects for a given flashcard set.
+     * @param flashcardSet The flashcard set for which to generate the task information.
+     * @return List containing the task information.
+     */
+    private List<AssessmentContentMutatedEvent.TaskInformation> generateTaskInformation(
+            final FlashcardSetEntity flashcardSet) {
+        final List<AssessmentContentMutatedEvent.TaskInformation> results =
+                new ArrayList<>(flashcardSet.getFlashcards().size());
+
+        for(final FlashcardEntity flashcard : flashcardSet.getFlashcards()) {
+            final StringBuilder sb = new StringBuilder();
+
+            sb.append("Flashcard\n\n");
+            // sort the flashcard sides such that questions appear before answers
+            List<FlashcardSideEntity> sortedSides = flashcard.getSides().stream()
+                    .sorted(Comparator.comparing(x -> x.isQuestion() ? 0 : 1))
+                    .toList();
+            for(FlashcardSideEntity side : sortedSides) {
+                if(side.isQuestion())
+                    sb.append("Question Side:\n");
+                else if(side.isAnswer())
+                    sb.append("Answer Side:\n");
+
+                sb.append(side.getLabel());
+                sb.append(": ");
+                sb.append(side.getText());
+                sb.append("\n\n");
+            }
+            results.add(new AssessmentContentMutatedEvent.TaskInformation(
+                    flashcard.getItemId(),
+                    sb.toString().trim()));
+        }
+
+        return results;
     }
 }
