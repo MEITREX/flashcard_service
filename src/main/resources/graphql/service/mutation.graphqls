@@ -12,13 +12,6 @@ type Mutation {
     _internal_noauth_createFlashcardSet(courseId: UUID!, assessmentId: UUID!, input: CreateFlashcardSetInput!): FlashcardSet!
 
     """
-    Deletes a flashcard set. Throws an error if the flashcard set does not exist.
-    The contained flashcards are deleted as well.
-    """
-    deleteFlashcardSet(input: UUID!): UUID!
-    @deprecated(reason: "Only for development, will be removed in production. Use deleteAssessment in contents service instead.")
-
-    """
     Modify a flashcard set.
     🔒 The user must be an admin the course the flashcard set is in to perform this action.
     """
