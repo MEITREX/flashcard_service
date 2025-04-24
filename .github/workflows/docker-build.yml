@@ -1,11 +1,9 @@
 name: Building Docker Image
 
 on:
-  workflow_run:
-    workflows:
-      - Testing CI pipeline
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
   docker-build:
