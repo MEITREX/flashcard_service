@@ -54,7 +54,7 @@ class MutationDeleteFlashcardSetTest {
 
         final String query = """
                 mutation($assessmentId: UUID!) {
-                    deleteFlashcardSet(input: $assessmentId)
+                    deleteFlashcardSet(assessmentId: $assessmentId)
                 }
                 """;
 
@@ -82,7 +82,7 @@ class MutationDeleteFlashcardSetTest {
 
         final String query = """
                 mutation($assessmentId: UUID!) {
-                    deleteFlashcardSet(input: $assessmentId)
+                    deleteFlashcardSet(assessmentId: $assessmentId)
                 }
                 """;
 

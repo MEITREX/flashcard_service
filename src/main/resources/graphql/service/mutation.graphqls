@@ -17,6 +17,12 @@ type Mutation {
     """
     mutateFlashcardSet(assessmentId: UUID!): FlashcardSetMutation!
 
+     """
+    Delete a flashcard set.
+    """
+    deleteFlashcardSet(assessmentId: UUID!): UUID!
+    @deprecated(reason: "Only use if you specifically only want to delete the flashcard set and not the whole assessment. Otherwise, use deleteAssessment in contents service instead.")
+
     """
     Logs that a user has learned a flashcard.
     🔒 The user must be enrolled in the course the flashcard set is in to perform this action.
