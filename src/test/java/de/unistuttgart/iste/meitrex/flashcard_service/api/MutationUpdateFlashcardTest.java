@@ -22,6 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.annotation.Commit;
+import org.springframework.test.context.ContextConfiguration;
+import de.unistuttgart.iste.meitrex.common.testutil.MockTestPublisherConfiguration;
 
 import java.util.List;
 import java.util.UUID;
@@ -30,6 +32,7 @@ import static de.unistuttgart.iste.meitrex.common.testutil.TestUsers.userWithMem
 import static org.assertj.core.api.Assertions.assertThat;
 
 @GraphQlApiTest
+@ContextConfiguration(classes = MockTestPublisherConfiguration.class)
 @TablesToDelete({"flashcard_side", "flashcard", "flashcard_set"})
 class MutationUpdateFlashcardTest {
 

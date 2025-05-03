@@ -16,6 +16,7 @@ import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.graphql.test.tester.HttpGraphQlTester;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ContextConfiguration;
+import de.unistuttgart.iste.meitrex.common.testutil.MockTestPublisherConfiguration;
 
 import java.util.List;
 import java.util.UUID;
