@@ -113,6 +113,11 @@ public class FlashcardController {
     }
 
     @MutationMapping
+    public UUID deleteFlashcardSet(@Argument final UUID assessmentId) {
+        return flashcardService.deleteFlashcardSet(assessmentId);
+    }
+
+    @MutationMapping
     public FlashcardLearnedFeedback logFlashcardLearned(@Argument("input") final LogFlashcardLearnedInput input,
                                                         @ContextValue final LoggedInUser currentUser) {
         final UUID courseId = flashcardService.getCourseIdsForFlashcardIds(List.of(input.getFlashcardId())).get(0);

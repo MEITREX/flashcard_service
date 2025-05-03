@@ -98,6 +98,14 @@ public class FlashcardService {
         return flashcardMapper.flashcardSetEntityToDto(flashcardSetEntity);
     }
 
+    public UUID deleteFlashcardSet(final UUID assessmentId) {
+        requireFlashcardSetExisting(assessmentId);
+        publishDeletedFlashcardSet(assessmentId);
+        flashcardSetRepository.deleteById(assessmentId);
+
+        return assessmentId;
+    }
+
     public FlashcardSetEntity requireFlashcardSetExisting(final UUID uuid) {
         return flashcardSetRepository.findById(uuid)
                 .orElseThrow(() -> new EntityNotFoundException("Flashcard set with id %s not found".formatted(uuid)));
