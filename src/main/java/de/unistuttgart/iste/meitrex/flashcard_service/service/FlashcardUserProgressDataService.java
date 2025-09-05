@@ -247,6 +247,7 @@ public class FlashcardUserProgressDataService {
                         .contentId(assessmentId)
                         .userId(userId)
                         .hintsUsed(0)
+                        .contentType(ContentProgressedEvent.ContentType.FLASHCARDS)
                         .success(true)
                         .timeToComplete(null)
                         .correctness(correctness)
