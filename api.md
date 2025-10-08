@@ -55,10 +55,9 @@
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>flashcardsByIds</strong></td>
+<td colspan="2" valign="top"><strong id="query.flashcardsbyids">flashcardsByIds</strong></td>
 <td valign="top">[<a href="#flashcard">Flashcard</a>!]!</td>
 <td>
-
 
 Get flashcards by their ids.
 🔒 The user must be enrolled in the course the flashcards belong to. Otherwise an error is thrown.
@@ -66,15 +65,14 @@ Get flashcards by their ids.
 </td>
 </tr>
 <tr>
-<td colspan="2" align="right" valign="top">ids</td>
+<td colspan="2" align="right" valign="top">itemIds</td>
 <td valign="top">[<a href="#uuid">UUID</a>!]!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>findFlashcardSetsByAssessmentIds</strong></td>
+<td colspan="2" valign="top"><strong id="query.findflashcardsetsbyassessmentids">findFlashcardSetsByAssessmentIds</strong></td>
 <td valign="top">[<a href="#flashcardset">FlashcardSet</a>]!</td>
 <td>
-
 
 Get flashcard sets by their assessment ids.
 Returns a list of flashcard sets in the same order as the provided ids.
@@ -89,10 +87,9 @@ Each element is null if the corresponding id is not found.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>dueFlashcardsByCourseId</strong></td>
+<td colspan="2" valign="top"><strong id="query.dueflashcardsbycourseid">dueFlashcardsByCourseId</strong></td>
 <td valign="top">[<a href="#flashcard">Flashcard</a>!]!</td>
 <td>
-
 
 Get flashcards of a course that are due to be reviewed.
 🔒 The user must be enrolled in the course the flashcards belong to. Otherwise an error is thrown.
@@ -108,7 +105,6 @@ Get flashcards of a course that are due to be reviewed.
 </table>
 
 ## Mutation
-
 Mutations for the flashcard service. Provides mutations for creating, updating, and deleting flashcard as well as
 creating and deleting flashcard sets. To update a flashcard set, update, delete, and create flashcards individually.
 
@@ -123,10 +119,9 @@ creating and deleting flashcard sets. To update a flashcard set, update, delete,
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>_internal_noauth_createFlashcardSet</strong></td>
+<td colspan="2" valign="top"><strong id="mutation._internal_noauth_createflashcardset">_internal_noauth_createFlashcardSet</strong></td>
 <td valign="top"><a href="#flashcardset">FlashcardSet</a>!</td>
 <td>
-
 
 Creates a new flashcard set. Mutation is only accessible internally within the system by other
 services and the gateway.
@@ -151,32 +146,9 @@ any permissions check and should not be called without any validation of the cal
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>deleteFlashcardSet</strong> ⚠️</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td>
-
-
-Deletes a flashcard set. Throws an error if the flashcard set does not exist.
-The contained flashcards are deleted as well.
-
-<p>⚠️ <strong>DEPRECATED</strong></p>
-<blockquote>
-
-Only for development, will be removed in production. Use deleteAssessment in contents service instead.
-
-</blockquote>
-</td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">input</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>mutateFlashcardSet</strong></td>
+<td colspan="2" valign="top"><strong id="mutation.mutateflashcardset">mutateFlashcardSet</strong></td>
 <td valign="top"><a href="#flashcardsetmutation">FlashcardSetMutation</a>!</td>
 <td>
-
 
 Modify a flashcard set.
 🔒 The user must be an admin the course the flashcard set is in to perform this action.
@@ -189,10 +161,29 @@ Modify a flashcard set.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>logFlashcardLearned</strong></td>
-<td valign="top"><a href="#flashcardlearnedfeedback">FlashcardLearnedFeedback</a>!</td>
+<td colspan="2" valign="top"><strong id="mutation.deleteflashcardset">deleteFlashcardSet</strong> ⚠️</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
 
+Delete a flashcard set.
+
+<p>⚠️ <strong>DEPRECATED</strong></p>
+<blockquote>
+
+Only use if you specifically only want to delete the flashcard set and not the whole assessment. Otherwise, use deleteAssessment in contents service instead.
+
+</blockquote>
+</td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">assessmentId</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong id="mutation.logflashcardlearned">logFlashcardLearned</strong></td>
+<td valign="top"><a href="#flashcardlearnedfeedback">FlashcardLearnedFeedback</a>!</td>
+<td>
 
 Logs that a user has learned a flashcard.
 🔒 The user must be enrolled in the course the flashcard set is in to perform this action.
@@ -211,7 +202,6 @@ Logs that a user has learned a flashcard.
 
 ### Flashcard
 
-
 A flashcard is a set of two or more sides. Each side has a label and a text.
 The label is used to specify which side of the flashcard is being shown to the user first for learning
 and which sides he has to guess.
@@ -227,30 +217,27 @@ and which sides he has to guess.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
+<td colspan="2" valign="top"><strong id="flashcard.itemid">itemId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
 
-
-Unique identifier of this flashcard.
+Unique identifier of this flashcard, which is the id of the corresponding item
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>sides</strong></td>
+<td colspan="2" valign="top"><strong id="flashcard.sides">sides</strong></td>
 <td valign="top">[<a href="#flashcardside">FlashcardSide</a>!]!</td>
 <td>
-
 
 List of sides of this flashcard.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>userProgressData</strong></td>
+<td colspan="2" valign="top"><strong id="flashcard.userprogressdata">userProgressData</strong></td>
 <td valign="top"><a href="#flashcardprogressdata">FlashcardProgressData</a>!</td>
 <td>
-
 
 Progress data of the flashcard, specific to given users.
 If userId is not provided, the progress data of the current user is returned.
@@ -261,7 +248,6 @@ If userId is not provided, the progress data of the current user is returned.
 </table>
 
 ### FlashcardLearnedFeedback
-
 
 Feedback for the logFlashcardLearned mutation.
 
@@ -276,30 +262,27 @@ Feedback for the logFlashcardLearned mutation.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>success</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardlearnedfeedback.success">success</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
-
 
 Whether the flashcard was learned correctly.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>nextLearnDate</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardlearnedfeedback.nextlearndate">nextLearnDate</strong></td>
 <td valign="top"><a href="#datetime">DateTime</a>!</td>
 <td>
-
 
 Next date when the flashcard should be learned again.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>flashcardSetProgress</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardlearnedfeedback.flashcardsetprogress">flashcardSetProgress</strong></td>
 <td valign="top"><a href="#flashcardsetprogress">FlashcardSetProgress</a>!</td>
 <td>
-
 
 Progress of the whole flashcard set.
 
@@ -321,10 +304,9 @@ Progress of the whole flashcard set.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>lastLearned</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardprogressdata.lastlearned">lastLearned</strong></td>
 <td valign="top"><a href="#datetime">DateTime</a></td>
 <td>
-
 
 The date the user learned the flashcard.
 This is null it the user has not learned the content item once.
@@ -332,20 +314,18 @@ This is null it the user has not learned the content item once.
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>learningInterval</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardprogressdata.learninginterval">learningInterval</strong></td>
 <td valign="top"><a href="#int">Int</a></td>
 <td>
-
 
 The learning interval in days for the content item.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>nextLearn</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardprogressdata.nextlearn">nextLearn</strong></td>
 <td valign="top"><a href="#datetime">DateTime</a></td>
 <td>
-
 
 The next time the content should be learned.
 Calculated using the date the user completed the content item and the learning interval.
@@ -369,30 +349,27 @@ This is null if the user has not completed the content item once.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardprogressdatalog.id">id</strong></td>
 <td valign="top"><a href="#uuid">UUID</a></td>
 <td>
-
 
 The id of the Log
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>learnedAt</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardprogressdatalog.learnedat">learnedAt</strong></td>
 <td valign="top"><a href="#datetime">DateTime</a>!</td>
 <td>
-
 
 The date the user learned the flashcard.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>success</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardprogressdatalog.success">success</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
-
 
 Whether the user knew the flashcard or not.
 
@@ -402,7 +379,6 @@ Whether the user knew the flashcard or not.
 </table>
 
 ### FlashcardSet
-
 
 A set of flashcards. A flashcard set belongs to exactly one assessment. Therefore, the uuid of the assessment
 also serves as the identifier of a flashcard set.
@@ -418,10 +394,9 @@ also serves as the identifier of a flashcard set.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>assessmentId</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardset.assessmentid">assessmentId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
-
 
 The uuid of the assessment this flashcard set belongs to.
 This also serves as the identifier of this flashcard set.
@@ -429,20 +404,18 @@ This also serves as the identifier of this flashcard set.
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>courseId</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardset.courseid">courseId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
-
 
 Id of the course this flashcard set belongs to.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>flashcards</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardset.flashcards">flashcards</strong></td>
 <td valign="top">[<a href="#flashcard">Flashcard</a>!]!</td>
 <td>
-
 
 List of flashcards in this set.
 
@@ -464,22 +437,22 @@ List of flashcards in this set.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>assessmentId</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsetmutation.assessmentid">assessmentId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
-
 
 ID of the flashcard set that is being modified.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>createFlashcard</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsetmutation._internal_noauth_createflashcard">_internal_noauth_createFlashcard</strong></td>
 <td valign="top"><a href="#flashcard">Flashcard</a>!</td>
 <td>
 
-
 Creates a new flashcard. Throws an error if the flashcard set does not exist.
+⚠️ This mutation is only accessible internally in the system and allows the caller to create Flashcards without
+any permissions check and should not be called without any validation of the caller's permissions. ⚠️
 
 </td>
 </tr>
@@ -489,12 +462,13 @@ Creates a new flashcard. Throws an error if the flashcard set does not exist.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>updateFlashcard</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsetmutation._internal_noauth_updateflashcard">_internal_noauth_updateFlashcard</strong></td>
 <td valign="top"><a href="#flashcard">Flashcard</a>!</td>
 <td>
 
-
 Updates a flashcard. Throws an error if the flashcard does not exist.
+⚠️ This mutation is only accessible internally in the system and allows the caller to update Flashcards without
+any permissions check and should not be called without any validation of the caller's permissions. ⚠️
 
 </td>
 </tr>
@@ -504,10 +478,9 @@ Updates a flashcard. Throws an error if the flashcard does not exist.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>deleteFlashcard</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsetmutation.deleteflashcard">deleteFlashcard</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
-
 
 Deletes the flashcard with the specified ID. Throws an error if the flashcard does not exist.
 
@@ -534,20 +507,18 @@ Deletes the flashcard with the specified ID. Throws an error if the flashcard do
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>percentageLearned</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsetprogress.percentagelearned">percentageLearned</strong></td>
 <td valign="top"><a href="#float">Float</a>!</td>
 <td>
-
 
 Percentage of how many flashcards in the set have been learned.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>correctness</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsetprogress.correctness">correctness</strong></td>
 <td valign="top"><a href="#float">Float</a>!</td>
 <td>
-
 
 Percentage of how many flashcards have been learned correctly of the ones that have been learned.
 
@@ -569,40 +540,36 @@ Percentage of how many flashcards have been learned correctly of the ones that h
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>text</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardside.text">text</strong></td>
 <td valign="top"><a href="#json">JSON</a>!</td>
 <td>
-
 
 Text of this flashcard side as rich text in SlateJS json.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>label</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardside.label">label</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
 <td>
-
 
 Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>isQuestion</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardside.isquestion">isQuestion</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
-
 
 Whether this side is a question, i.e. should be shown to the user to guess the other sides or not.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>isAnswer</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardside.isanswer">isAnswer</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
-
 
 Whether this side is also an answer. Some Flashcards can have their sides be used as both questions or answers for the other sides
 
@@ -612,7 +579,6 @@ Whether this side is also an answer. Some Flashcards can have their sides be use
 </table>
 
 ### PaginationInfo
-
 
 Return type for information about paginated results.
 
@@ -627,50 +593,45 @@ Return type for information about paginated results.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>page</strong></td>
+<td colspan="2" valign="top"><strong id="paginationinfo.page">page</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td>
-
 
 The current page number.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>size</strong></td>
+<td colspan="2" valign="top"><strong id="paginationinfo.size">size</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td>
-
 
 The number of elements per page.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>totalElements</strong></td>
+<td colspan="2" valign="top"><strong id="paginationinfo.totalelements">totalElements</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td>
-
 
 The total number of elements across all pages.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>totalPages</strong></td>
+<td colspan="2" valign="top"><strong id="paginationinfo.totalpages">totalPages</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td>
-
 
 The total number of pages.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>hasNext</strong></td>
+<td colspan="2" valign="top"><strong id="paginationinfo.hasnext">hasNext</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
-
 
 Whether there is a next page.
 
@@ -693,10 +654,18 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>sides</strong></td>
-<td valign="top">[<a href="#flashcardsideinput">FlashcardSideInput</a>!]!</td>
+<td colspan="2" valign="top"><strong id="createflashcardinput.itemid">itemId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
 <td>
 
+id of the item the flashcard belongs to
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong id="createflashcardinput.sides">sides</strong></td>
+<td valign="top">[<a href="#flashcardsideinput">FlashcardSideInput</a>!]!</td>
+<td>
 
 List of sides of this flashcard. Must be at least two sides.
 
@@ -717,10 +686,9 @@ List of sides of this flashcard. Must be at least two sides.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>flashcards</strong></td>
+<td colspan="2" valign="top"><strong id="createflashcardsetinput.flashcards">flashcards</strong></td>
 <td valign="top">[<a href="#createflashcardinput">CreateFlashcardInput</a>!]!</td>
 <td>
-
 
 List of flashcards in this set.
 
@@ -730,7 +698,6 @@ List of flashcards in this set.
 </table>
 
 ### DateTimeFilter
-
 
 Filter for date values.
 If multiple filters are specified, they are combined with AND.
@@ -745,20 +712,18 @@ If multiple filters are specified, they are combined with AND.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>after</strong></td>
+<td colspan="2" valign="top"><strong id="datetimefilter.after">after</strong></td>
 <td valign="top"><a href="#datetime">DateTime</a></td>
 <td>
-
 
 If specified, filters for dates after the specified value.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>before</strong></td>
+<td colspan="2" valign="top"><strong id="datetimefilter.before">before</strong></td>
 <td valign="top"><a href="#datetime">DateTime</a></td>
 <td>
-
 
 If specified, filters for dates before the specified value.
 
@@ -779,40 +744,36 @@ If specified, filters for dates before the specified value.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>text</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsideinput.text">text</strong></td>
 <td valign="top"><a href="#json">JSON</a>!</td>
 <td>
-
 
 Text of this flashcard side.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>label</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsideinput.label">label</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
 <td>
-
 
 Label of this flashcard side. E.g. "Front" or "Back", or "Question" or "Answer".
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>isQuestion</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsideinput.isquestion">isQuestion</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
-
 
 Whether this side is a question, i.e. should be shown to the user to guess the other sides or not.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>isAnswer</strong></td>
+<td colspan="2" valign="top"><strong id="flashcardsideinput.isanswer">isAnswer</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
-
 
 Whether this side is also an answer. Some Flashcards can have their sides be used as both questions or answers for the other sides
 
@@ -822,7 +783,6 @@ Whether this side is also an answer. Some Flashcards can have their sides be use
 </table>
 
 ### IntFilter
-
 
 Filter for integer values.
 If multiple filters are specified, they are combined with AND.
@@ -837,30 +797,27 @@ If multiple filters are specified, they are combined with AND.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>equals</strong></td>
+<td colspan="2" valign="top"><strong id="intfilter.equals">equals</strong></td>
 <td valign="top"><a href="#int">Int</a></td>
 <td>
-
 
 An integer value to match exactly.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>greaterThan</strong></td>
+<td colspan="2" valign="top"><strong id="intfilter.greaterthan">greaterThan</strong></td>
 <td valign="top"><a href="#int">Int</a></td>
 <td>
-
 
 If specified, filters for values greater than to the specified value.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>lessThan</strong></td>
+<td colspan="2" valign="top"><strong id="intfilter.lessthan">lessThan</strong></td>
 <td valign="top"><a href="#int">Int</a></td>
 <td>
-
 
 If specified, filters for values less than to the specified value.
 
@@ -881,20 +838,18 @@ If specified, filters for values less than to the specified value.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>flashcardId</strong></td>
+<td colspan="2" valign="top"><strong id="logflashcardlearnedinput.flashcardid">flashcardId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
-
 
 The id of the flashcard that was learned.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>successful</strong></td>
+<td colspan="2" valign="top"><strong id="logflashcardlearnedinput.successful">successful</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
-
 
 If the user knew the flashcard or not.
 
@@ -915,30 +870,27 @@ If the user knew the flashcard or not.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>flashcardSetId</strong></td>
+<td colspan="2" valign="top"><strong id="logflashcardsetlearnedinput.flashcardsetid">flashcardSetId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
-
 
 The id of the flashcard that was learned.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>userId</strong></td>
+<td colspan="2" valign="top"><strong id="logflashcardsetlearnedinput.userid">userId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
-
 
 The id of the user that learned the flashcard.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>percentageSuccess</strong></td>
+<td colspan="2" valign="top"><strong id="logflashcardsetlearnedinput.percentagesuccess">percentageSuccess</strong></td>
 <td valign="top"><a href="#float">Float</a>!</td>
 <td>
-
 
 The percentage of flashcards in the set that the user knew.
 
@@ -948,7 +900,6 @@ The percentage of flashcards in the set that the user knew.
 </table>
 
 ### Pagination
-
 
 Specifies the page size and page number for paginated results.
 
@@ -962,10 +913,9 @@ Specifies the page size and page number for paginated results.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>page</strong></td>
+<td colspan="2" valign="top"><strong id="pagination.page">page</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td>
-
 
 The page number, starting at 0.
 If not specified, the default value is 0.
@@ -975,10 +925,9 @@ If this value is larger than the number of pages, an empty page is returned.
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>size</strong></td>
+<td colspan="2" valign="top"><strong id="pagination.size">size</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td>
-
 
 The number of elements per page.
 
@@ -988,7 +937,6 @@ The number of elements per page.
 </table>
 
 ### StringFilter
-
 
 Filter for string values.
 If multiple filters are specified, they are combined with AND.
@@ -1003,30 +951,27 @@ If multiple filters are specified, they are combined with AND.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>equals</strong></td>
+<td colspan="2" valign="top"><strong id="stringfilter.equals">equals</strong></td>
 <td valign="top"><a href="#string">String</a></td>
 <td>
-
 
 A string value to match exactly.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>contains</strong></td>
+<td colspan="2" valign="top"><strong id="stringfilter.contains">contains</strong></td>
 <td valign="top"><a href="#string">String</a></td>
 <td>
-
 
 A string value that must be contained in the field that is being filtered.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>ignoreCase</strong></td>
+<td colspan="2" valign="top"><strong id="stringfilter.ignorecase">ignoreCase</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td>
-
 
 If true, the filter is case-insensitive.
 
@@ -1047,20 +992,18 @@ If true, the filter is case-insensitive.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
+<td colspan="2" valign="top"><strong id="updateflashcardinput.itemid">itemId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
 
-
-Id of the flashcard to update.
+Id of the flashcard to update, which is the id of the corresponding item.
 
 </td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>sides</strong></td>
+<td colspan="2" valign="top"><strong id="updateflashcardinput.sides">sides</strong></td>
 <td valign="top">[<a href="#flashcardsideinput">FlashcardSideInput</a>!]!</td>
 <td>
-
 
 List of sides of this flashcard. Must be at least two sides.
 
@@ -1073,13 +1016,14 @@ List of sides of this flashcard. Must be at least two sides.
 
 ### SortDirection
 
-
 Specifies the sort direction, either ascending or descending.
 
 <table>
 <thead>
+<tr>
 <th align="left">Value</th>
 <th align="left">Description</th>
+</tr>
 </thead>
 <tbody>
 <tr>
@@ -1097,45 +1041,31 @@ Specifies the sort direction, either ascending or descending.
 
 ### Boolean
 
-Built-in Boolean
+The `Boolean` scalar type represents `true` or `false`.
 
 ### Date
 
-An RFC-3339 compliant Full Date Scalar
-
 ### DateTime
-
-A slightly refined version of RFC-3339 compliant DateTime Scalar
 
 ### Float
 
-Built-in Float
+The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
 
 ### Int
 
-Built-in Int
+The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1.
 
 ### JSON
 
-A JSON scalar
-
 ### LocalTime
-
-24-hour clock time value string in the format `hh:mm:ss` or `hh:mm:ss.sss`.
 
 ### String
 
-Built-in String
+The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 
 ### Time
 
-An RFC-3339 compliant Full Time Scalar
-
 ### UUID
 
-A universally unique identifier compliant UUID Scalar
-
 ### Url
-
-A Url scalar
 

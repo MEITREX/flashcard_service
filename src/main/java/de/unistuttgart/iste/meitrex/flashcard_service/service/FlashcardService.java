@@ -1,9 +1,6 @@
 package de.unistuttgart.iste.meitrex.flashcard_service.service;
 
-import de.unistuttgart.iste.meitrex.common.event.AssessmentContentMutatedEvent;
-import de.unistuttgart.iste.meitrex.common.event.AssessmentType;
-import de.unistuttgart.iste.meitrex.common.event.ContentChangeEvent;
-import de.unistuttgart.iste.meitrex.common.event.CrudOperation;
+import de.unistuttgart.iste.meitrex.common.event.*;
 import de.unistuttgart.iste.meitrex.common.exception.IncompleteEventMessageException;
 
 import de.unistuttgart.iste.meitrex.common.dapr.TopicPublisher;
@@ -94,6 +91,20 @@ public class FlashcardService {
         final FlashcardSetEntity flashcardSetEntity = flashcardSetRepository.save(mappedEntity);
 
         publishAssessmentContentMutatedEvent(flashcardSetEntity);
+
+        String title = "You have a new Flashcard set!";
+        String message = "New Flashcard set!";
+
+        String pageLink = "/courses/" + courseId + "/flashcards/" + assessmentId;
+        topicPublisher.notificationEvent(
+                courseId,
+                null,
+                ServerSource.FLASHCARD,
+                pageLink,
+                title,
+                message
+        );
+        log.info("Published notification for Flashcard set={} to course={}", assessmentId, courseId);
 
         return flashcardMapper.flashcardSetEntityToDto(flashcardSetEntity);
     }
